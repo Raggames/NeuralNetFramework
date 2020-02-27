@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NeuralNetwork.Scripts.Data;
+using NeuralNetwork.Utils;
 using UnityEngine;
 
 namespace NeuralNetwork
@@ -454,11 +455,9 @@ namespace NeuralNetwork
                             averageCoefficient += previousIterationsCoefficients[i];
                         }
                         averageCoefficient /= previousIterationsCoefficients.Count;
-                        
-                        double downgradeRatio = averageCoefficient / actualCoeff;
-                        downgradeRatio *= TrainingRateChangePurcentage / 100;
-                        Debug.Log(averageCoefficient + " > average coeff, " + actualTrainingRate + " actual, " + downgradeRatio + " > downgradeRatio.");
-                        actualTrainingRate += downgradeRatio;
+                        double downgradeDelta = ((actualCoeff - averageCoefficient)/averageCoefficient)*TrainingRateChangePurcentage/100;
+                        Debug.Log(averageCoefficient + " > average coeff, " + actualTrainingRate + " actual, " + downgradeDelta + " > downgradeRatio.");
+                        actualTrainingRate += downgradeDelta;
                         TrainingRate = actualTrainingRate;
                         epochsWithoutDNAEvolutionCount = 0;
                         Debug.Log("Training Rate Increased");
@@ -470,10 +469,9 @@ namespace NeuralNetwork
                 {
                     previousIterationsCoefficients.Clear();
                     double actualTrainingRate = NetData.NetworkTrainingRate;
-                    double upgradeRatio = bestCoeff / actualCoeff;
-                    upgradeRatio *= TrainingRateChangePurcentage / 100;
-                    actualTrainingRate /= upgradeRatio;
-                    Debug.Log("actualTrainingRate" + actualTrainingRate);
+                    Debug.Log("actualTrainingRate" + actualTrainingRate + " best" + bestCoeff + " actualcoeff" + actualCoeff);
+                    double upgradeDelta = ((bestCoeff - actualCoeff) / bestCoeff) * TrainingRateChangePurcentage / 100;
+                    actualTrainingRate -= upgradeDelta;
                     TrainingRate = actualTrainingRate;
                     Debug.Log("Training Rate Decreased");
                 }

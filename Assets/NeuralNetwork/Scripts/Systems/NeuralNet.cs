@@ -216,7 +216,6 @@ namespace NeuralNetwork
         }
         private void SetDNARandom(int WeightsCount)  //On Network first Initialisation
         {
-            Debug.Log("Set DNA Randomly");
             DNA randomDna = new DNA();
             randomDna.Weights = new List<double>();
             randomDna.Biases = new List<double>();
@@ -238,7 +237,6 @@ namespace NeuralNetwork
             
             double inputBias = GetBias(InputLayer);
             randomDna.Biases.Add(inputBias);
-            index++;
             for (int i = 0; i < HiddenLayers.Count; i++)
             {
                 for (int j = 0; j < HiddenLayers[i].NeuronsInLayer.Count; j++)
@@ -253,7 +251,6 @@ namespace NeuralNetwork
                 }
                 double hiddenBias = GetBias(HiddenLayers[i]);
                 randomDna.Biases.Add(hiddenBias);
-                index++;
             }
            
                 for (int j = 0; j < OutputLayer.NeuronsInLayer.Count; j++)

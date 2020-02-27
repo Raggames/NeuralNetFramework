@@ -121,95 +121,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &25092308
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 25092309}
-  - component: {fileID: 25092310}
-  m_Layer: 0
-  m_Name: NeuralNetManager_Jumper (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &25092309
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 25092308}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1140883166}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &25092310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 25092308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b238d9112b0451bb984daaaa658c64c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetWorkPrefab: {fileID: 3956378676603637949, guid: 9f3bc6cd886bc384f9b891d15f8f9ae8,
-    type: 3}
-  IANetworkName: Jumper IA
-  NetData:
-    HasData: 0
-    NeuralNetworkName: 
-    StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
-    NetworkBestResults: []
-    NotationCoefficient: 0
-    DNAVersion: 0
-  SaveNetDataFileName: Jumper_NewArchitecture_1
-  NeuralNetworkInstances: []
-  ActualBestDNA:
-    InstanceWeights: []
-    InstanceBiases: []
-    NotationCoefficient: 0
-    Results: []
-  EvaluateDNAForInstancesIteration: []
-  InstancesEndedCount: 0
-  NetworkFunction: 1
-  NetworkMode: 0
-  ForceGeneticsRandomization: 0
-  AbsoluteValues: 0
-  ComputeActivationFunctionType: 0
-  OutputActivationFunctionType: 5
-  isNeuralNetTraining: 0
-  isNeuralNetExecuting: 0
-  LoadFromBlueprint: 0
-  NewTraining: 1
-  LoadFromJson: 0
-  Bias: 0
-  TrainingRate: 4
-  Epochs: 100000
-  TrainingBatchSize: 20
-  AdjustTrainingRateAutomatically: 0
-  TrainingRateChangePurcentage: 0
-  TrainingRateEvolution: 1
-  EpochsCount: 0
-  evaluateIterationValueToActualDna: 1
-  DNAVersion: 0
-  TrainingBestResults: []
-  InternalParameters: []
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,7 +317,7 @@ GameObject:
   - component: {fileID: 879517444}
   - component: {fileID: 879517445}
   m_Layer: 0
-  m_Name: Jumper_Version 4
+  m_Name: Jumper_Version 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -424,7 +335,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1140883166}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &879517445
 MonoBehaviour:
@@ -452,7 +363,7 @@ MonoBehaviour:
     NetworkBestResults: []
     NotationCoefficient: 0
     DNAVersion: 0
-  SaveNetDataFileName: Jumper_v5_dna_Average_AverageForcePositive
+  SaveNetDataFileName: Jumper_v5_dna_Average_AverageForcePositive_2
   NeuralNetworkInstances: []
   ActualBestDNA:
     InstanceWeights: []
@@ -476,8 +387,8 @@ MonoBehaviour:
   TrainingRate: 1
   Epochs: 200
   TrainingBatchSize: 20
-  AdjustTrainingRateAutomatically: 0
-  TrainingRateChangePurcentage: 4.7
+  AdjustTrainingRateAutomatically: 1
+  TrainingRateChangePurcentage: 11.3
   TrainingRateEvolution: 3
   EpochsCount: 0
   evaluateIterationValueToActualDna: 1
@@ -595,10 +506,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2082705360}
-  - {fileID: 3411974960598436718}
   - {fileID: 879517444}
-  - {fileID: 1975158019}
-  - {fileID: 25092309}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -725,22 +633,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EventSystem: {fileID: 0}
-  m_InputOverride: {fileID: 0}
-  m_DefaultInput: {fileID: 0}
-  m_PrevActionTime: 0
-  m_LastMoveVector: {x: 0, y: 0}
-  m_ConsecutiveMoveCount: 0
-  m_LastMousePosition: {x: 0, y: 0}
-  m_MousePosition: {x: 0, y: 0}
-  m_CurrentFocusedGameObject: {fileID: 0}
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!114 &1646535466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -753,14 +645,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SystemInputModules: []
-  m_CurrentInputModule: {fileID: 0}
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
-  m_CurrentSelected: {fileID: 0}
-  m_HasFocus: 1
-  m_SelectionGuard: 0
 --- !u!4 &1646535467
 Transform:
   m_ObjectHideFlags: 0
@@ -775,95 +659,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1975158018
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1975158019}
-  - component: {fileID: 1975158020}
-  m_Layer: 0
-  m_Name: NeuralNetManager_Jumper_1I/H3/H3/O2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1975158019
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1975158018}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1140883166}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1975158020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1975158018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b238d9112b0451bb984daaaa658c64c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetWorkPrefab: {fileID: 3956378676603637949, guid: 22d3f7267bc0f6443bb70da936a6602d,
-    type: 3}
-  IANetworkName: Jumper 3 _ 1/H3/H3/O2
-  NetData:
-    HasData: 0
-    NeuralNetworkName: 
-    StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
-    NetworkBestResults: []
-    NotationCoefficient: 0
-    DNAVersion: 0
-  SaveNetDataFileName: Jumper3_DNA_1
-  NeuralNetworkInstances: []
-  ActualBestDNA:
-    InstanceWeights: []
-    InstanceBiases: []
-    NotationCoefficient: 0
-    Results: []
-  EvaluateDNAForInstancesIteration: []
-  InstancesEndedCount: 0
-  NetworkFunction: 1
-  NetworkMode: 0
-  ForceGeneticsRandomization: 0
-  AbsoluteValues: 0
-  ComputeActivationFunctionType: 0
-  OutputActivationFunctionType: 5
-  isNeuralNetTraining: 0
-  isNeuralNetExecuting: 0
-  LoadFromBlueprint: 0
-  NewTraining: 1
-  LoadFromJson: 0
-  Bias: 0
-  TrainingRate: 1
-  Epochs: 100
-  TrainingBatchSize: 2
-  AdjustTrainingRateAutomatically: 0
-  TrainingRateChangePurcentage: 0
-  TrainingRateEvolution: 3
-  EpochsCount: 0
-  evaluateIterationValueToActualDna: 1
-  DNAVersion: 0
-  TrainingBestResults: []
-  InternalParameters: []
 --- !u!4 &2082705360 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
@@ -880,7 +675,7 @@ PrefabInstance:
     - target: {fileID: 1667507808708166026, guid: ce8b8456640d0e24a8e30746fd4850d0,
         type: 3}
       propertyPath: m_Name
-      value: NeuralNetManager
+      value: Compute Data Test _ Version 1
       objectReference: {fileID: 0}
     - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
         type: 3}
@@ -939,92 +734,3 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce8b8456640d0e24a8e30746fd4850d0, type: 3}
---- !u!114 &3411974960598436717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3411974960598436719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b238d9112b0451bb984daaaa658c64c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetWorkPrefab: {fileID: 3956378676603637949, guid: 9f3bc6cd886bc384f9b891d15f8f9ae8,
-    type: 3}
-  IANetworkName: Jumper IA
-  NetData:
-    HasData: 0
-    NeuralNetworkName: 
-    StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
-    NetworkBestResults: []
-    NotationCoefficient: 0
-    DNAVersion: 0
-  SaveNetDataFileName: JumperNewDNA_1
-  NeuralNetworkInstances: []
-  ActualBestDNA:
-    InstanceWeights: []
-    InstanceBiases: []
-    NotationCoefficient: 0
-    Results: []
-  EvaluateDNAForInstancesIteration: []
-  InstancesEndedCount: 0
-  NetworkFunction: 1
-  NetworkMode: 0
-  ForceGeneticsRandomization: 0
-  AbsoluteValues: 0
-  ComputeActivationFunctionType: 0
-  OutputActivationFunctionType: 5
-  isNeuralNetTraining: 0
-  isNeuralNetExecuting: 0
-  LoadFromBlueprint: 0
-  NewTraining: 0
-  LoadFromJson: 1
-  Bias: 0
-  TrainingRate: 1.93942211870518
-  Epochs: 100000
-  TrainingBatchSize: 20
-  AdjustTrainingRateAutomatically: 0
-  TrainingRateChangePurcentage: 0
-  TrainingRateEvolution: 1
-  EpochsCount: 0
-  evaluateIterationValueToActualDna: 1
-  DNAVersion: 0
-  TrainingBestResults: []
-  InternalParameters: []
---- !u!4 &3411974960598436718
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3411974960598436719}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1140883166}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &3411974960598436719
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3411974960598436718}
-  - component: {fileID: 3411974960598436717}
-  m_Layer: 0
-  m_Name: NeuralNetManager_Jumper
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
