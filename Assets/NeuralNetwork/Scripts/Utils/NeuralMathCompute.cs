@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace NeuralNetwork.Utils
 {
@@ -53,6 +54,18 @@ namespace NeuralNetwork.Utils
             // Since |x| < 10^-4, |x|^3 < 10^-12, relative error less than 10^-8
             return (-0.5 * x + 1.0) * x;
         }
+
+        public static double AverageFromList(List<double> entry)
+        {
+            double result = 0;
+            for (int i = 0; i < entry.Count; i++)
+            {
+                result += entry[i];
+            }
+
+            return result / entry.Count;
+        }
+
 
     }
 }

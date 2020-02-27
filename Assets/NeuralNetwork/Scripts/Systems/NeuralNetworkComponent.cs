@@ -17,7 +17,11 @@ namespace NeuralNetwork
             NeuralNet = GetComponent<NeuralNet>();
             if (NetOutput.Length == 0)
             {
-                NetOutput = new NetOutput[NeuralNet.OutputLayer.NeuronsInLayer.Count];
+                NetOutput = new NetOutput[NeuralNet.OutputLayerConstruct[0].NeuronCount];
+            }
+            if (NetInput.Length == 0)
+            {
+                NetOutput = new NetOutput[NeuralNet.InputLayerConstruct[0].NeuronCount];
             }
         }
 
@@ -31,6 +35,7 @@ namespace NeuralNetwork
             if (NeuralNet.IsTraining || NeuralNet.IsExecuting)
             {
                 inputStreamOn = true;
+                Debug.Log("InputToNeuralNet");
                 for (int i = 0; i < NeuralNet.InputLayer.NeuronsInLayer.Count; i++)
                 {
                     NeuralNet.InputLayer.NeuronsInLayer[i].Inputs.Clear();

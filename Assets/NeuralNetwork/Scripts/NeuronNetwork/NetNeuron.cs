@@ -36,7 +36,7 @@ namespace NeuralNetwork
             {
                 if (CheckInputs(Inputs, 1))
                 {
-                    double computedValue = CalculateWeight(Inputs, PreviousNeurons, NetLayer.LayerBias, NetLayer.NeuralNet.NeuralNetworkManager.ComputeActivationFunctionType);
+                    double computedValue = CalculateWeight(Inputs, PreviousNeurons, NetLayer.LayerBias);
                     foreach (var neuron in ConnectedNeuronsList)
                     {
                        // neuron.Inputs.Add(computedValue);
@@ -50,7 +50,7 @@ namespace NeuralNetwork
             {
                 if (CheckInputs(Inputs, PreviousNeurons))
                 {
-                    double computedValue = CalculateWeight(Inputs, PreviousNeurons, NetLayer.LayerBias, NetLayer.NeuralNet.NeuralNetworkManager.ComputeActivationFunctionType);
+                    double computedValue = CalculateWeight(Inputs, PreviousNeurons, NetLayer.LayerBias);
                     foreach (var neuron in ConnectedNeuronsList)
                     {
                         //neuron.Inputs.Add(computedValue);
@@ -64,7 +64,7 @@ namespace NeuralNetwork
             {
                 if (CheckInputs(Inputs, PreviousNeurons))
                 {
-                    double computedValue = CalculateOutput(Inputs, PreviousNeurons, NetLayer.LayerBias, NetLayer.NeuralNet.NeuralNetworkManager.OutputActivationFunctionType);
+                    double computedValue = CalculateOutput(Inputs, PreviousNeurons, NetLayer.LayerBias);
                     NetLayer.NeuralNet.ComputeNeuralNetOutput(computedValue, OutputIndex);
                 }
             }
@@ -76,7 +76,7 @@ namespace NeuralNetwork
             return input_values.Count >= previousNeurons;
         }
 
-        double CalculateOutput(List<double> input_values, int previousNeurons, double bias, NeuralNetworkManager.EOutputActivationFunctionType activationFunctionType)
+        double CalculateOutput(List<double> input_values, int previousNeurons, double bias)
         {
             double computedOutput = 0;
             for (int i = 0; i < previousNeurons; i++)
@@ -84,35 +84,38 @@ namespace NeuralNetwork
                 computedOutput += input_values[i] * Weights[i];
             }
             computedOutput += bias;
-            if (activationFunctionType == NeuralNetworkManager.EOutputActivationFunctionType.Sigmoid)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Sigmoid)
             {
                 computedOutput = NeuralMathCompute.Sigmoid(computedOutput);
             }
-            if (activationFunctionType == NeuralNetworkManager.EOutputActivationFunctionType.Softmax)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Softmax)
             {
                 computedOutput = NeuralMathCompute.Softmax(computedOutput);
             }
-            if (activationFunctionType == NeuralNetworkManager.EOutputActivationFunctionType.Linear)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Linear)
             {
                 computedOutput = NeuralMathCompute.Linear(computedOutput);
             }
-            if (activationFunctionType == NeuralNetworkManager.EOutputActivationFunctionType.Boolean)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Boolean)
             {
                 computedOutput = NeuralMathCompute.Boolean(computedOutput);
             }
-            if (activationFunctionType == NeuralNetworkManager.EOutputActivationFunctionType.Average)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Average)
             {
                 computedOutput /= (previousNeurons);
             }
-
-            if (activationFunctionType == NeuralNetworkManager.EOutputActivationFunctionType.AverageForcePositive)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.AverageForcePositive)
             {
                 computedOutput /= previousNeurons;
-                if (computedOutput < 0) computedOutput = -computedOutput;
+                return computedOutput < 0 ? computedOutput : -computedOutput;
+            }
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Tanh)
+            {
+                computedOutput = Math.Tanh(computedOutput);
             }
             return computedOutput;
         }
-        double CalculateWeight(List<double> input_values, int previousNeurons, double bias, NeuralNetworkManager.EComputeActivationFunctionType activationFunctionType)
+        double CalculateWeight(List<double> input_values, int previousNeurons, double bias)
         {
             double computedValue = 0;
             for (int i = 0; i < previousNeurons; i++)
@@ -121,26 +124,35 @@ namespace NeuralNetwork
             }
             computedValue += bias;
             //
-            if (activationFunctionType == NeuralNetworkManager.EComputeActivationFunctionType.Sigmoid)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Sigmoid)
             {
                 computedValue = NeuralMathCompute.Sigmoid(computedValue);
             }
-            if (activationFunctionType == NeuralNetworkManager.EComputeActivationFunctionType.Softmax)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Softmax)
             {
                 computedValue = NeuralMathCompute.Softmax(computedValue);
             }
-            if (activationFunctionType == NeuralNetworkManager.EComputeActivationFunctionType.Linear)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Linear)
             {
                 computedValue = NeuralMathCompute.Linear(computedValue);
             }
-            if (activationFunctionType == NeuralNetworkManager.EComputeActivationFunctionType.Boolean)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Boolean)
             {
                 computedValue = NeuralMathCompute.Boolean(computedValue);
             }
-
-            if (activationFunctionType == NeuralNetworkManager.EComputeActivationFunctionType.Average)
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Average)
             {
                 computedValue /= (previousNeurons);
+            }
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.AverageForcePositive)
+            {
+                computedValue /= previousNeurons;
+                return computedValue < 0 ? computedValue : -computedValue;
+            }
+
+            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Tanh)
+            {
+                computedValue = Math.Tanh(computedValue);
             }
             return computedValue;
         }

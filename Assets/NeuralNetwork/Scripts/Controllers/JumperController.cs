@@ -15,7 +15,7 @@ namespace DefaultNamespace
         public float Timer;
         private Vector3 startPos;
 
-        private bool isDead;
+        [SerializeField] private bool isDead;
         private void Start()
         {
             Rigidbody = GetComponent<Rigidbody>();
@@ -46,6 +46,7 @@ namespace DefaultNamespace
                 //EvaluationParameters[1] = JumpForce;
                 this.NeuralNetworkComponent.InstanceEnd(EvaluationParameters, this);
                 isDead = true;
+                gameObject.SetActive(false);
             }
             
         }
@@ -57,16 +58,17 @@ namespace DefaultNamespace
             EvaluationParameters[0] = Timer;
             transform.position = startPos;
             Rigidbody.velocity = Vector3.zero;
+            Debug.Log("Reset" + gameObject.activeSelf + isDead);
+
         }
 
 
         private void Update()
         {
-            if (NeuralNetworkComponent.inputStreamOn)
+            if (NeuralNetworkComponent.inputStreamOn && !isDead)
             {
                 if (transform.position.y > 9.4)
                 {
-                    Debug.Log("trop haut");
                     OnInstanceFail();   
                 }
 
@@ -75,15 +77,13 @@ namespace DefaultNamespace
                     OnInstanceFail(); 
                 }
                
-                if(isDead) gameObject.SetActive(false);
                 DistanceToUp = Vector3.Distance(transform.position, new Vector3(transform.position.x,10,transform.position.z));
                 DistanceToDown = Vector3.Distance(transform.position, new Vector3(transform.position.x,0,transform.position.z));
-              
-               
                 SetInputs();
                 OnOutput();
                 Timer += Time.deltaTime;
             }
+           
             
             
         }

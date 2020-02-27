@@ -363,7 +363,7 @@ MonoBehaviour:
     NetworkBestResults: []
     NotationCoefficient: 0
     DNAVersion: 0
-  SaveNetDataFileName: Jumper_v5_dna_Average_AverageForcePositive_2
+  SaveNetDataFileName: DNAjumperV7
   NeuralNetworkInstances: []
   ActualBestDNA:
     InstanceWeights: []
@@ -374,22 +374,23 @@ MonoBehaviour:
   InstancesEndedCount: 0
   NetworkFunction: 1
   NetworkMode: 0
-  ForceGeneticsRandomization: 0
+  ForceGeneticsRandomization: 1
   AbsoluteValues: 0
-  ComputeActivationFunctionType: 4
-  OutputActivationFunctionType: 5
   isNeuralNetTraining: 0
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
-  NewTraining: 1
-  LoadFromJson: 0
-  Bias: 0
+  NewTraining: 0
+  LoadFromJson: 1
+  TrainMode: 0
+  SaveMode: 0
   TrainingRate: 1
+  MaxTrainingRate: 1.2
   Epochs: 200
   TrainingBatchSize: 20
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 11.3
   TrainingRateEvolution: 3
+  previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   evaluateIterationValueToActualDna: 1
   DNAVersion: 0
@@ -505,11 +506,110 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2082705360}
+  - {fileID: 1426587841}
   - {fileID: 879517444}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1426587840
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1426587841}
+  - component: {fileID: 1426587842}
+  m_Layer: 0
+  m_Name: Compute Data Test _ Version 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1426587841
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426587840}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1140883166}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1426587842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426587840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b238d9112b0451bb984daaaa658c64c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NetWorkPrefab: {fileID: 3956378676603637949, guid: 902cf4a7912a4fa4ea1941348c44dc2d,
+    type: 3}
+  IANetworkName: Find Vector 3
+  NetData:
+    HasData: 0
+    NeuralNetworkName: 
+    StartTrainingRate: 0
+    NeuralNetworkDna:
+      Weights: []
+      Biases: []
+    NetworkTrainingRate: 0
+    NetworkBestResults: []
+    NotationCoefficient: 0
+    DNAVersion: 0
+  SaveNetDataFileName: FindVector3
+  NeuralNetworkInstances: []
+  ActualBestDNA:
+    InstanceWeights: []
+    InstanceBiases: []
+    NotationCoefficient: 0
+    Results: []
+  EvaluateDNAForInstancesIteration: []
+  InstancesEndedCount: 0
+  NetworkFunction: 0
+  NetworkMode: 0
+  ForceGeneticsRandomization: 0
+  AbsoluteValues: 0
+  isNeuralNetTraining: 0
+  isNeuralNetExecuting: 0
+  LoadFromBlueprint: 0
+  NewTraining: 1
+  LoadFromJson: 0
+  TrainMode: 0
+  SaveMode: 0
+  TrainingRate: 0.5
+  MaxTrainingRate: 0.5
+  Epochs: 10000
+  TrainingBatchSize: 1
+  AdjustTrainingRateAutomatically: 1
+  TrainingRateChangePurcentage: 4
+  TrainingRateEvolution: 50
+  previousIterationsCoefficientAverage: 0
+  EpochsCount: 0
+  evaluateIterationValueToActualDna: 0
+  DNAVersion: 0
+  TrainingBestResults:
+  - 0
+  - 0
+  - 0
+  InternalParameters:
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
 --- !u!1 &1453942306
 GameObject:
   m_ObjectHideFlags: 0
@@ -659,78 +759,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &2082705360 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-    type: 3}
-  m_PrefabInstance: {fileID: 1667507807852003658}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1667507807852003658
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1140883166}
-    m_Modifications:
-    - target: {fileID: 1667507808708166026, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_Name
-      value: Compute Data Test _ Version 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667507808708166027, guid: ce8b8456640d0e24a8e30746fd4850d0,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: ce8b8456640d0e24a8e30746fd4850d0, type: 3}

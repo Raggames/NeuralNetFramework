@@ -56,22 +56,30 @@ MonoBehaviour:
   InputLayerConstruct:
   - NeuronCount: 2
     LayerBias: 0
+    ActivationFunctionType: 0
   HiddenLayerConstruct:
   - NeuronCount: 9
     LayerBias: 1
+    ActivationFunctionType: 5
   - NeuronCount: 12
     LayerBias: 1
+    ActivationFunctionType: 5
   - NeuronCount: 15
     LayerBias: 1
+    ActivationFunctionType: 5
   - NeuronCount: 12
     LayerBias: 1
+    ActivationFunctionType: 5
   - NeuronCount: 12
     LayerBias: 1
+    ActivationFunctionType: 5
   - NeuronCount: 12
     LayerBias: 1
+    ActivationFunctionType: 5
   OutputLayerConstruct:
   - NeuronCount: 2
     LayerBias: 0.5
+    ActivationFunctionType: 6
   _NetData:
     HasData: 0
     NeuralNetworkName: 
@@ -89,7 +97,6 @@ MonoBehaviour:
   InstanceID: 0
   IsExecuting: 0
   IsTraining: 0
-  EpochsRemaining: 0
   NeuralNetConnections: 0
   _cycleResults: []
 --- !u!114 &5349856995082661673
@@ -192,6 +199,7 @@ MonoBehaviour:
   JumpForce: 0
   Rigidbody: {fileID: 0}
   Timer: 0
+  isDead: 0
 --- !u!114 &5409818577457985001
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,7 +35,6 @@ namespace NeuralNetwork
         public int InstanceID;
         public bool IsExecuting;
         public bool IsTraining;
-        public int EpochsRemaining;
      
        
         public int NeuralNetConnections;
@@ -49,6 +48,7 @@ namespace NeuralNetwork
             NetLayer inputLayer = new NetLayer();
             inputLayer.ThisLayerType = NetLayer.LayerType.Input;
             inputLayer.LayerBias = input[0].LayerBias;
+            inputLayer.ActivationFunction = input[0].ActivationFunctionType;
             InputLayer = inputLayer;
             for (int i = 0; i < input[0].NeuronCount; i++)
             {
@@ -61,6 +61,7 @@ namespace NeuralNetwork
                 NetLayer netLayer = new NetLayer();
                 netLayer.ThisLayerType = NetLayer.LayerType.Hidden;
                 netLayer.LayerBias = hiddens[i].LayerBias;
+                netLayer.ActivationFunction = hiddens[i].ActivationFunctionType;
                 HiddenLayers.Add(netLayer);
                 for (int j = 0; j < hiddens[i].NeuronCount; j++)
                 {
@@ -71,6 +72,7 @@ namespace NeuralNetwork
             NetLayer outputLayer = new NetLayer();
             outputLayer.ThisLayerType = NetLayer.LayerType.Output;
             outputLayer.LayerBias = output[0].LayerBias;
+            outputLayer.ActivationFunction = output[0].ActivationFunctionType;
             OutputLayer = outputLayer;
             for (int i = 0; i < output[0].NeuronCount; i++)
             {
@@ -83,14 +85,14 @@ namespace NeuralNetwork
                 _cycleResults.Add(0);
             }
         }
-        public void InitializeNeuralNetwork(NeuralNetworkManager.ENetworkMode eNetworkMode, int epochs = 0, int instanceID = 0, NeuralNetworkManager neuralNetworkManager = null)
+        public void InitializeNeuralNetwork(NeuralNetworkManager.ENetworkMode eNetworkMode, int epochs = 0, int instanceID = 0, NeuralNetworkManager neuralNetworkManager = null, NetData netData = null)
         {
             Debug.Log("Starting Initialisation");
             CreateNetwork(InputLayerConstruct, HiddenLayerConstruct, OutputLayerConstruct);
+            _NetData = netData;
             NeuralNetworkManager = neuralNetworkManager;
             NeuralNetConnections = ComputeNumberOfWeights();
             InstanceID = instanceID;
-            EpochsRemaining = epochs;
             InputLayer.NeuralNet = this;
             foreach (var hidden in HiddenLayers)
             {
@@ -186,7 +188,7 @@ namespace NeuralNetwork
                 if(!NeuralNetworkManager.NewTraining) SetDNAFromData(_NetData, NeuralNetworkManager.ForceGeneticsRandomization, NeuralNetworkManager.TrainingRate);
             }
 
-            if (NeuralNetworkManager.NetworkMode == NeuralNetwork.NeuralNetworkManager.ENetworkMode.Train)
+            if (NeuralNetworkManager.NetworkMode == NeuralNetwork.NeuralNetworkManager.ENetworkMode.Execute)
             {
                 SetDNAFromData(_NetData, NeuralNetworkManager.EForceRandomization.No, NeuralNetworkManager.TrainingRate);
             }
@@ -396,11 +398,10 @@ namespace NeuralNetwork
                 {
                     if (this.NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.ComputeData)
                     {
-                        EvaluateNeuralNetworkEfficiency(_cycleResults, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
+                        EvaluateInstanceForIteration(_cycleResults, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
                     }
                 }
                 _countResultsEntry = 0;
-               
             }
         }
         private void ValuesToNetOutput(List<double> results)
@@ -416,20 +417,36 @@ namespace NeuralNetwork
         }
         public void RestartInstance(NeuralNetworkManager.ENetworkMode eNetworkMode, NetData netData, bool DNAHasUpgrade, bool forceInstanceDNAReset)
         {
-            if (eNetworkMode == NeuralNetworkManager.ENetworkMode.Train)
+            if (NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.ComputeData)
             {
-                if (DNAHasUpgrade || forceInstanceDNAReset)
+                if (eNetworkMode == NeuralNetworkManager.ENetworkMode.Train)
                 {
-                    SetDNAFromData(netData, NeuralNetworkManager.ForceGeneticsRandomization, NeuralNetworkManager.TrainingRate);
-                    Debug.Log("Set DNA from Data");
+                    if (DNAHasUpgrade || forceInstanceDNAReset)
+                    {
+                        SetDNAFromData(netData, NeuralNetworkManager.ForceGeneticsRandomization, NeuralNetworkManager.TrainingRate);
+                        Debug.Log("Set DNA from Data");
+                    }
                 }
             }
-            // if no DNA upgrade
-            NeuralNetworkComponent.Restart();
+
+            if (NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.ControlEntity)
+            {
+                if (eNetworkMode == NeuralNetworkManager.ENetworkMode.Train)
+                {
+                    if (DNAHasUpgrade || forceInstanceDNAReset)
+                    {
+                        SetDNAFromData(netData, NeuralNetworkManager.ForceGeneticsRandomization, NeuralNetworkManager.TrainingRate);
+                        Debug.Log("Set DNA from Data");
+                    }
+                }
+                if(!gameObject.activeSelf) gameObject.SetActive(true);
+                // if no DNA upgrade
+                NeuralNetworkComponent.Restart();
+            }
+            
         }
         private void StartInstance(NeuralNetworkManager.ENetworkMode eNetworkMode)
         {
-            EpochsRemaining--;
             if (eNetworkMode == NeuralNetworkManager.ENetworkMode.Train)
             {
                 IsTraining = true;
@@ -448,18 +465,18 @@ namespace NeuralNetwork
                 if (NeuralNetworkManager.NetworkFunction ==
                     NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ControlEntity)
                 {
-                    EvaluateNeuralNetworkEfficiency(paramatersForEvaluation, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
+                    EvaluateInstanceForIteration(paramatersForEvaluation, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
                 
                 }
             }
-            else
+            if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Execute)
             {
                 Debug.Log("Bypass Training Feedback Evaluation");
                 NeuralNetworkManager.BypassTrainingFeedBackEvaluationAndStartNextEpoch();
             }
             
         }
-        private void EvaluateNeuralNetworkEfficiency(List<double> externalParameters, NeuralNetworkManager.ENetworkFunction networkFunction, NeuralNetworkManager.EAbsoluteValues absoluteValues)
+        private void EvaluateInstanceForIteration(List<double> externalParameters, NeuralNetworkManager.ENetworkFunction networkFunction, NeuralNetworkManager.EAbsoluteValues absoluteValues)
         {
             List<double> allCoeffs = new List<double>();
             double computedCoeff = 0;
@@ -471,6 +488,7 @@ namespace NeuralNetwork
                     for (int i = 0; i < externalParameters.Count; i++)
                     {
                         divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
+                        Debug.Log(divider);
                         allCoeffs.Add(Mathf.Abs((float)NeuralNetworkManager.InternalParameters[i] - (float)externalParameters[i]));
                         computedCoeff += allCoeffs[i];
                     }
@@ -519,6 +537,7 @@ namespace NeuralNetwork
         {
             public int NeuronCount;
             public double LayerBias;
+            public NetLayer.EActivationFunctionType ActivationFunctionType;
         }
         [Serializable]
         public struct DNA

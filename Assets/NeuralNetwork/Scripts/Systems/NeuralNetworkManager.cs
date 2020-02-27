@@ -53,27 +53,7 @@ namespace NeuralNetwork
             ControlEntity,
         }
 
-        public EComputeActivationFunctionType ComputeActivationFunctionType;
-        public enum EComputeActivationFunctionType
-        {
-            Sigmoid,
-            Softmax,
-            Linear,
-            Boolean,
-            Average,
-        }
-        
-        public EOutputActivationFunctionType OutputActivationFunctionType;
-        public enum EOutputActivationFunctionType
-        {
-            Sigmoid,
-            Softmax,
-            Linear,
-            Boolean,
-            Average,
-            AverageForcePositive,
-
-        }
+       
         [SerializeField] public bool isNeuralNetTraining;
         [SerializeField] public bool isNeuralNetExecuting;
         
@@ -82,9 +62,25 @@ namespace NeuralNetwork
 
         [Header("Training Setup")] 
         public bool NewTraining = true;//check if instances is new or has already iterated
-        public bool LoadFromJson;
-        public double Bias;
+        public bool LoadFromJson;//will be removed after saving architecture refactoring
+        public ETrainMode TrainMode;
+        public enum ETrainMode
+        {
+            NewTraining,
+            LoadFromJson,
+        }
+
+        public ESaveMode SaveMode;
+        public enum ESaveMode
+        {
+            Override,
+            New,
+        }
+         
+        [Header("Training Options")]
+        
         public double TrainingRate;//gradient d'update des weights
+        public double MaxTrainingRate;
         public int Epochs;//Iterations of training
         public int TrainingBatchSize;//number of instances trained at the same time
 
@@ -95,6 +91,7 @@ namespace NeuralNetwork
         private bool ForceInstanceDNAReset; //if iteration don't get any upgrade avec n = TrainingRateEvolution epochs, reset on DNA data
         private int epochsWithoutDNAEvolutionCount;
         private List<double> previousIterationsCoefficients = new List<double>();
+        [SerializeField] private double previousIterationsCoefficientAverage;
         
         public int EpochsCount;
         public EEvaluateIterationValueToActualDNA evaluateIterationValueToActualDna;
@@ -111,19 +108,7 @@ namespace NeuralNetwork
         
         #endregion
         
-        void Start()
-        {
-            NeuralNetworkInstances.Clear();
-            if (NewTraining)
-            {
-                ResetNetData(NetData);
-                
-            }
-            
-            
-        }
-
-        void ResetNetData(NetData netData)
+        private void ResetNetData(NetData netData)
         {
             netData.HasData = false;
             netData.NeuralNetworkName = "";
@@ -148,16 +133,16 @@ namespace NeuralNetwork
         }
         public void Execute()
         {
-            InitializeExecuting(NetWorkPrefab, NetworkMode);
+            if(!isNeuralNetExecuting) InitializeExecuting(NetWorkPrefab, NetworkMode);
         }
 
         void SetManagerData()
         {
-            if (NewTraining)
+            if (TrainMode == ETrainMode.NewTraining)
             {
-                NetData = new NetData();
+                ResetNetData(NetData);
             }
-            if (!NewTraining)
+            if (TrainMode == ETrainMode.LoadFromJson)
             {
                 if (LoadFromJson)
                 {
@@ -181,7 +166,7 @@ namespace NeuralNetwork
                 
             }
         }
-        void InitializeTraining(GameObject networkPrefab, ENetworkMode eNetworkMode, int batchSize, int epochs)
+        private void InitializeTraining(GameObject networkPrefab, ENetworkMode eNetworkMode, int batchSize, int epochs)
         {
             isNeuralNetTraining = true;
             isNeuralNetExecuting = false;
@@ -191,9 +176,8 @@ namespace NeuralNetwork
             {
                 GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
                 NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
-                _instance._NetData = NetData;
                 NeuralNetworkInstances.Add(_instance);
-                _instance.InitializeNeuralNetwork(eNetworkMode, epochs, _instanceID, this);
+                _instance.InitializeNeuralNetwork(eNetworkMode, epochs, _instanceID, this, NetData);
                _instanceID++;
             }
             if (NewTraining)
@@ -201,7 +185,7 @@ namespace NeuralNetwork
                 if (NetworkFunction == ENetworkFunction.ComputeData)
                 {
                     TrainingBestResults = new double[NeuralNetworkInstances[0].OutputLayer.NeuronsInLayer.Count];
-                    InternalParameters = new double[NeuralNetworkInstances[0].OutputLayer.NeuronsInLayer.Count];
+                    //InternalParameters = new double[NeuralNetworkInstances[0].OutputLayer.NeuronsInLayer.Count];
                 }
 
                 if (NetworkFunction == ENetworkFunction.ControlEntity)
@@ -216,10 +200,11 @@ namespace NeuralNetwork
         {
             isNeuralNetTraining = false;
             isNeuralNetExecuting = true;
+            SetManagerData();
             GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
             NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
             NeuralNetworkInstances.Add(_instance);
-            _instance.InitializeNeuralNetwork(eNetworkMode, 1, 0, this);
+            _instance.InitializeNeuralNetwork(eNetworkMode, 1, 0, this, NetData);
         }
 
         public void OnInstanceHasEnd(NeuralNet instanceNetwork, double computedCoeff, List<double> result, List<double> allCoeffs)
@@ -242,10 +227,10 @@ namespace NeuralNetwork
         }
         void CompareDNAsAndSaveBest(NeuralNetworkEvaluate evaluatedDNA, NeuralNet instanceNetwork)
         {
-            EvaluateInstancesForIteration(evaluatedDNA, ActualBestDNA);
+            EvaluateAllInstancesForIteration(evaluatedDNA, ActualBestDNA);
         }
 
-        private void EvaluateInstancesForIteration(NeuralNetworkEvaluate evaluationInstance, NeuralNetworkEvaluate ActualDna)
+        private void EvaluateAllInstancesForIteration(NeuralNetworkEvaluate evaluationInstance, NeuralNetworkEvaluate ActualDna)
         {
             EvaluateDNAForInstancesIteration.Add(evaluationInstance);
             if (ActualBestDNA.InstanceWeights.Count == 0)
@@ -406,9 +391,8 @@ namespace NeuralNetwork
                     {
                         instanceNet.IsTraining = false;
                         instanceNet.IsExecuting = false;
-                        instanceNet.EpochsRemaining = Epochs;
+                        EpochsCount = 0;
                     }
-
                     Debug.Log("ENDING TRAINING");
                 }
 
@@ -428,9 +412,7 @@ namespace NeuralNetwork
         {
             foreach (var netInstance in neuralNets)
             {
-                if(!netInstance.gameObject.activeSelf) netInstance.gameObject.SetActive(true);
                 netInstance.RestartInstance(NetworkMode, NetData, DNAHasUpgrade, ForceInstanceDNAReset);
-                
             }
             EvaluateDNAForInstancesIteration.Clear();
             ForceInstanceDNAReset = false;
@@ -445,11 +427,65 @@ namespace NeuralNetwork
                 {
                     epochsWithoutDNAEvolutionCount++;
                     previousIterationsCoefficients.Add(bestCoeff);
+                    previousIterationsCoefficientAverage =
+                        NeuralMathCompute.AverageFromList(previousIterationsCoefficients);
                     if (epochsWithoutDNAEvolutionCount > TrainingRateEvolution)
                     {
                         ForceInstanceDNAReset = true;
+                        if (evaluateIterationValueToActualDna ==
+                            EEvaluateIterationValueToActualDNA.IterationResultsSuperior)
+                        {
+                            double averageCoefficient = 0;
+                            double actualTrainingRate = TrainingRate;
+                            for (int i = 0; i < previousIterationsCoefficients.Count; i++)
+                            {
+                                averageCoefficient += previousIterationsCoefficients[i];
+                            }
+                            averageCoefficient /= previousIterationsCoefficients.Count;
+                            double downgradeDelta = ((actualCoeff - averageCoefficient)/averageCoefficient)*TrainingRateChangePurcentage/100;
+                            Debug.Log(averageCoefficient + " > average coeff, " + actualTrainingRate + " actual, " + downgradeDelta + " > downgradeRatio.");
+                            actualTrainingRate += downgradeDelta;
+                            TrainingRate = actualTrainingRate;
+                            TrainingRate = Mathf.Clamp((float)TrainingRate, 0.000001f, (float)MaxTrainingRate);
+                        }
+                        else
+                        {
+                            previousIterationsCoefficients.Clear();
+                            previousIterationsCoefficientAverage = 0;
+                            double actualTrainingRate = TrainingRate;
+                            Debug.Log("actualTrainingRate" + actualTrainingRate + " best" + bestCoeff + " actualcoeff" + actualCoeff);
+                            double upgradeDelta = ((bestCoeff - actualCoeff) / bestCoeff) * TrainingRateChangePurcentage / 100;
+                            actualTrainingRate -= upgradeDelta;
+                            TrainingRate = actualTrainingRate;
+                            TrainingRate = Mathf.Clamp((float)TrainingRate, 0.000001f, (float)MaxTrainingRate);
+                            Debug.Log("Training Rate Decreased");
+                        }
+                        
+                        epochsWithoutDNAEvolutionCount = 0;
+                        Debug.Log("Training Rate Increased");
+
+                    }
+                }
+
+                if (dnaHasUpgrade)
+                {
+                    if (evaluateIterationValueToActualDna ==
+                        EEvaluateIterationValueToActualDNA.IterationResultsSuperior)
+                    {
+                        previousIterationsCoefficients.Clear();
+                        previousIterationsCoefficientAverage = 0;
+                        double actualTrainingRate = TrainingRate;
+                        Debug.Log("actualTrainingRate" + actualTrainingRate + " best" + bestCoeff + " actualcoeff" + actualCoeff);
+                        double upgradeDelta = ((bestCoeff - actualCoeff) / bestCoeff) * TrainingRateChangePurcentage / 100;
+                        actualTrainingRate -= upgradeDelta;
+                        TrainingRate = actualTrainingRate;
+                        TrainingRate = Mathf.Clamp((float)TrainingRate, 0.000001f, (float)MaxTrainingRate);
+                        Debug.Log("Training Rate Decreased");
+                    }
+                    else
+                    {
                         double averageCoefficient = 0;
-                        double actualTrainingRate = NetData.NetworkTrainingRate;
+                        double actualTrainingRate = TrainingRate;
                         for (int i = 0; i < previousIterationsCoefficients.Count; i++)
                         {
                             averageCoefficient += previousIterationsCoefficients[i];
@@ -459,21 +495,8 @@ namespace NeuralNetwork
                         Debug.Log(averageCoefficient + " > average coeff, " + actualTrainingRate + " actual, " + downgradeDelta + " > downgradeRatio.");
                         actualTrainingRate += downgradeDelta;
                         TrainingRate = actualTrainingRate;
-                        epochsWithoutDNAEvolutionCount = 0;
-                        Debug.Log("Training Rate Increased");
-
+                        TrainingRate = Mathf.Clamp((float)TrainingRate, 0.000001f, (float)MaxTrainingRate);
                     }
-                }
-
-                if (dnaHasUpgrade)
-                {
-                    previousIterationsCoefficients.Clear();
-                    double actualTrainingRate = NetData.NetworkTrainingRate;
-                    Debug.Log("actualTrainingRate" + actualTrainingRate + " best" + bestCoeff + " actualcoeff" + actualCoeff);
-                    double upgradeDelta = ((bestCoeff - actualCoeff) / bestCoeff) * TrainingRateChangePurcentage / 100;
-                    actualTrainingRate -= upgradeDelta;
-                    TrainingRate = actualTrainingRate;
-                    Debug.Log("Training Rate Decreased");
                 }
             }
             

@@ -18,6 +18,19 @@ namespace NeuralNetwork
         public LayerType ThisLayerType;
         public List<NetNeuron> NeuronsInLayer = new List<NetNeuron>();
        
+        public EActivationFunctionType ActivationFunction;
+        public enum EActivationFunctionType
+        {
+            Identity,
+            Sigmoid,
+            Tanh,
+            Softmax,
+            Linear,
+            Boolean,
+            Average,
+            AverageForcePositive,
+
+        }
     }
 
 }
