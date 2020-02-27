@@ -1,0 +1,463 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3956378676603637949
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3956378676603637950}
+  - component: {fileID: 3956378676603637951}
+  - component: {fileID: 5349856995082661673}
+  - component: {fileID: 2915373225853174091}
+  - component: {fileID: 6379266507164650778}
+  - component: {fileID: -371351333559247264}
+  - component: {fileID: 1537105352304596063}
+  - component: {fileID: -2841496516435445981}
+  m_Layer: 0
+  m_Name: NeuralNet_FindTheVector3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3956378676603637950
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3956378676603637951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37a7fcece38a4fa387abfce30f34efab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NeuralNetworkManager: {fileID: 0}
+  InputLayer:
+    NeuralNet: {fileID: 0}
+    LayerBias: 0
+    ThisLayerType: 0
+    NeuronsInLayer:
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+  HiddenLayers:
+  - NeuralNet: {fileID: 0}
+    LayerBias: 0
+    ThisLayerType: 1
+    NeuronsInLayer:
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+  - NeuralNet: {fileID: 0}
+    LayerBias: 0
+    ThisLayerType: 1
+    NeuronsInLayer:
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+  - NeuralNet: {fileID: 0}
+    LayerBias: 0
+    ThisLayerType: 1
+    NeuronsInLayer:
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: neuron
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+  OutputLayer:
+    NeuralNet: {fileID: 0}
+    LayerBias: 0
+    ThisLayerType: 2
+    NeuronsInLayer:
+    - NeuronID: X
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: Y
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+    - NeuronID: Z
+      PreviousNeurons: 0
+      ForwardNeurons: 0
+      OutputIndex: 0
+      Inputs: []
+      Bias: 0
+      Weights: []
+      ConnectedNeuronsList: []
+      NetLayer:
+        NeuralNet: {fileID: 0}
+        LayerBias: 0
+        ThisLayerType: 0
+        NeuronsInLayer: []
+  NeuralNetConnections: 0
+  _NetData: {fileID: 11400000, guid: 67642bc26203edf4482c234150ca442e, type: 2}
+  ActualDNA: []
+  InstanceID: 0
+  IsExecuting: 0
+  IsTraining: 0
+  EpochsRemaining: 0
+  NeuralNetworkComponent: {fileID: 0}
+  _cycleResults: []
+  _countResultsEntry: 0
+  _outputCount: 0
+--- !u!114 &5349856995082661673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3201fc1377e47cdb0e0f5b68202806a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NeuralNet: {fileID: 0}
+  NetInput:
+  - {fileID: 2915373225853174091}
+  - {fileID: 6379266507164650778}
+  NetOutput:
+  - {fileID: -371351333559247264}
+  - {fileID: 1537105352304596063}
+  - {fileID: -2841496516435445981}
+  inputStreamOn: 0
+--- !u!114 &2915373225853174091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InputName: Value_1
+  InputValue: -5
+--- !u!114 &6379266507164650778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InputName: Value_2
+  InputValue: 10
+--- !u!114 &-371351333559247264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OutputName: X
+  OutputValue: 0
+--- !u!114 &1537105352304596063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OutputName: Y
+  OutputValue: 0
+--- !u!114 &-2841496516435445981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OutputName: Z
+  OutputValue: 0

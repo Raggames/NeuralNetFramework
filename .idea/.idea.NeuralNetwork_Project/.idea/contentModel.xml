@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Rag\.Rider2018.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Rag\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_NeuralNetwork_Project.1942778097.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Rag\Documents\DEV\NeuralNetwork_project2020\NeuralNetwork_Project" t="IncludeRecursive">
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="NeuralNetwork" t="Include">
+          <e p="NetData.cs" t="Include" />
+          <e p="NetLayer.cs" t="Include" />
+          <e p="NetNeuron.cs" t="Include" />
+          <e p="NeuralNet.cs" t="Include" />
+          <e p="NeuralNetworkBluePrint.cs" t="Include" />
+          <e p="NeuralNetworkManager.cs" t="Include" />
+          <e p="Utils" t="Include">
+            <e p="NeuralCompute.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Library" t="ExcludeRecursive" />
+      <e p="NeuralNetwork_Project.sln" t="IncludeFlat" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
+    </e>
+  </component>
+</project>

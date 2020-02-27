@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8201f7cc-d654-438d-a534-dcc44a880ecb" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <splitter split-orientation="horizontal" split-proportion="0.43753883">
+      <split-first>
+        <leaf>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNet.cs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="150">
+                  <caret line="12" column="14" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="14" />
+                  <folding>
+                    <marker date="1582632795664" expanded="false" signature="6:52" ph="..." />
+                    <marker date="1582632795664" expanded="true" signature="77:4946" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="122:4944" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="389:422" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="469:2549" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="645:971" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="738:858" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="1085:1633" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="1178:1321" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="1392:1543" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="1781:1916" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="2035:2476" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="2309:2458" ph="{...}" />
+                    <marker date="1582632795664" expanded="false" signature="2587:3204" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="2778:3169" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="2841:2983" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="3005:3155" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="3304:3480" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="3425:3470" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="3533:3566" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="3639:4575" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="3782:3959" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="3851:3928" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4024:4298" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4100:4284" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4177:4266" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4377:4537" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4446:4523" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4622:4655" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4695:4728" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4796:4829" ph="{...}" />
+                    <marker date="1582632795664" expanded="true" signature="4872:4921" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetData.cs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="105">
+                  <caret line="9" column="64" selection-start-line="9" selection-start-column="64" selection-end-line="9" selection-end-column="64" />
+                  <folding>
+                    <marker date="1582627699419" expanded="false" signature="6:66" ph="..." />
+                    <marker date="1582627699419" expanded="true" signature="91:216" ph="{...}" />
+                    <marker date="1582627699419" expanded="true" signature="137:214" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkBluePrint.cs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state>
+                  <caret lean-forward="true" />
+                  <folding>
+                    <marker date="1582632504966" expanded="true" signature="6:52" ph="..." />
+                    <marker date="1582632504966" expanded="true" signature="77:463" ph="{...}" />
+                    <marker date="1582632504966" expanded="true" signature="238:461" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/Utils/NeuralCompute.cs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="105">
+                  <caret line="7" column="45" selection-start-line="7" selection-start-column="45" selection-end-line="7" selection-end-column="45" />
+                  <folding>
+                    <marker date="1582626003993" expanded="true" signature="44:221" ph="{...}" />
+                    <marker date="1582626003993" expanded="true" signature="84:219" ph="{...}" />
+                    <marker date="1582626003993" expanded="true" signature="141:213" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetNeuron.cs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="75">
+                  <caret line="6" column="22" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+                  <folding>
+                    <marker date="1582631581467" expanded="false" signature="6:47" ph="..." />
+                    <marker date="1582631581467" expanded="true" signature="72:822" ph="{...}" />
+                    <marker date="1582631581467" expanded="true" signature="120:820" ph="{...}" />
+                    <marker date="1582631581467" expanded="true" signature="408:805" ph="{...}" />
+                    <marker date="1582631581467" expanded="true" signature="511:556" ph="{...}" />
+                    <marker date="1582631581467" expanded="true" signature="613:658" ph="{...}" />
+                    <marker date="1582631581467" expanded="true" signature="715:760" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkManager.cs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="373">
+                  <caret line="41" column="10" lean-forward="true" selection-start-line="41" selection-start-column="10" selection-end-line="41" selection-end-column="10" />
+                  <folding>
+                    <marker date="1582632790222" expanded="true" signature="6:52" ph="..." />
+                    <marker date="1582632790222" expanded="true" signature="77:2248" ph="{...}" />
+                    <marker date="1582632790222" expanded="true" signature="133:2246" ph="{...}" />
+                    <marker date="1582632790222" expanded="true" signature="617:682" ph="{...}" />
+                    <marker date="1582632790222" expanded="true" signature="955:1135" ph="{...}" />
+                    <marker date="1582632790222" expanded="true" signature="1167:1200" ph="{...}" />
+                    <marker date="1582632790222" expanded="true" signature="1238:1271" ph="{...}" />
+                    <marker date="1582632790222" expanded="true" signature="1302:1395" ph="{...}" />
+                    <marker date="1582632790222" expanded="true" signature="1444:1813" ph="{...}" />
+                    <marker date="1582632790222" expanded="true" signature="1862:2231" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetLayer.cs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="75">
+                  <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+                  <folding>
+                    <marker date="1582631581470" expanded="false" signature="6:47" ph="..." />
+                    <marker date="1582631581470" expanded="true" signature="72:395" ph="{...}" />
+                    <marker date="1582631581470" expanded="true" signature="119:393" ph="{...}" />
+                    <marker date="1582631581470" expanded="true" signature="155:234" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetData.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkBluePrint.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetNeuron.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNet.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetLayer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NeuralNetwork/Utils/NeuralCompute.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/Utils/NeuralCompute.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkLayer.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkBehavior.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetwork.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetBehavior.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetLayer.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NetDataInstance.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NetData.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/Neuron.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NetLayer.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NetNeuron.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkBluePrint.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNet.cs" />
+        <option value="$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkManager.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="UnityExplorer" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="FileSystemExplorer" />
+      <pane id="UnityExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Project" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="48f920db:UnityExplorerNode$AssetsRoot" />
+            </path>
+            <path>
+              <item name="Project" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="48f920db:UnityExplorerNode$AssetsRoot" />
+              <item name="NeuralNetwork" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="Project" type="e068e287:UnityExplorerRootNode" />
+              <item name="Packages" type="4e2708dd:PackagesRoot" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-hidden-items" value="false" />
+        <option name="show-project-names" value="true" />
+      </pane>
+      <pane id="AssemblyExplorer" />
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8201f7cc-d654-438d-a534-dcc44a880ecb" name="Default Changelist" comment="" />
+      <created>1582625740487</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1582625740487</updated>
+      <workItem from="1582625742404" duration="7047000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="7047000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info id="Image Layers" />
+      <window_info id="Capture Tool" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14232409" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="NuGet" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Unity" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Unit Tests" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Errors In Solution" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/Utils/NeuralCompute.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="45" selection-start-line="7" selection-start-column="45" selection-end-line="7" selection-end-column="45" />
+          <folding>
+            <marker date="1582626003993" expanded="true" signature="44:221" ph="{...}" />
+            <marker date="1582626003993" expanded="true" signature="84:219" ph="{...}" />
+            <marker date="1582626003993" expanded="true" signature="141:213" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetDataInstance.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetBehavior.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="7" column="35" lean-forward="true" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetLayer.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+          <folding>
+            <marker date="1582631581470" expanded="false" signature="6:47" ph="..." />
+            <marker date="1582631581470" expanded="true" signature="72:395" ph="{...}" />
+            <marker date="1582631581470" expanded="true" signature="119:393" ph="{...}" />
+            <marker date="1582631581470" expanded="true" signature="155:234" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetNeuron.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="6" column="22" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+          <folding>
+            <marker date="1582631581467" expanded="false" signature="6:47" ph="..." />
+            <marker date="1582631581467" expanded="true" signature="72:822" ph="{...}" />
+            <marker date="1582631581467" expanded="true" signature="120:820" ph="{...}" />
+            <marker date="1582631581467" expanded="true" signature="408:805" ph="{...}" />
+            <marker date="1582631581467" expanded="true" signature="511:556" ph="{...}" />
+            <marker date="1582631581467" expanded="true" signature="613:658" ph="{...}" />
+            <marker date="1582631581467" expanded="true" signature="715:760" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NetData.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="9" column="64" selection-start-line="9" selection-start-column="64" selection-end-line="9" selection-end-column="64" />
+          <folding>
+            <marker date="1582627699419" expanded="false" signature="6:66" ph="..." />
+            <marker date="1582627699419" expanded="true" signature="91:216" ph="{...}" />
+            <marker date="1582627699419" expanded="true" signature="137:214" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkBluePrint.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+          <folding>
+            <marker date="1582632504966" expanded="true" signature="6:52" ph="..." />
+            <marker date="1582632504966" expanded="true" signature="77:463" ph="{...}" />
+            <marker date="1582632504966" expanded="true" signature="238:461" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNet.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="12" column="14" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="14" />
+          <folding>
+            <marker date="1582632795664" expanded="false" signature="6:52" ph="..." />
+            <marker date="1582632795664" expanded="true" signature="77:4946" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="122:4944" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="389:422" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="469:2549" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="645:971" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="738:858" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="1085:1633" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="1178:1321" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="1392:1543" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="1781:1916" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="2035:2476" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="2309:2458" ph="{...}" />
+            <marker date="1582632795664" expanded="false" signature="2587:3204" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="2778:3169" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="2841:2983" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="3005:3155" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="3304:3480" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="3425:3470" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="3533:3566" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="3639:4575" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="3782:3959" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="3851:3928" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4024:4298" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4100:4284" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4177:4266" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4377:4537" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4446:4523" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4622:4655" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4695:4728" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4796:4829" ph="{...}" />
+            <marker date="1582632795664" expanded="true" signature="4872:4921" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NeuralNetwork/NeuralNetworkManager.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="41" column="10" lean-forward="true" selection-start-line="41" selection-start-column="10" selection-end-line="41" selection-end-column="10" />
+          <folding>
+            <marker date="1582632790222" expanded="true" signature="6:52" ph="..." />
+            <marker date="1582632790222" expanded="true" signature="77:2248" ph="{...}" />
+            <marker date="1582632790222" expanded="true" signature="133:2246" ph="{...}" />
+            <marker date="1582632790222" expanded="true" signature="617:682" ph="{...}" />
+            <marker date="1582632790222" expanded="true" signature="955:1135" ph="{...}" />
+            <marker date="1582632790222" expanded="true" signature="1167:1200" ph="{...}" />
+            <marker date="1582632790222" expanded="true" signature="1238:1271" ph="{...}" />
+            <marker date="1582632790222" expanded="true" signature="1302:1395" ph="{...}" />
+            <marker date="1582632790222" expanded="true" signature="1444:1813" ph="{...}" />
+            <marker date="1582632790222" expanded="true" signature="1862:2231" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
