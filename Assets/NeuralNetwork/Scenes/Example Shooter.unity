@@ -643,7 +643,7 @@ MonoBehaviour:
     NetworkBestResults: []
     NotationCoefficient: 0
     DNAVersion: 0
-  SaveNetDataFileName: DNA_Shooter_V1
+  SaveNetDataFileName: DNA_Shooter_V2
   NeuralNetworkInstances: []
   ActualBestDNA:
     InstanceWeights: []
