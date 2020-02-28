@@ -8,6 +8,7 @@ namespace NeuralNetwork.Scripts.Data
     public class NetData
     {
         public bool HasData;
+        public bool NewTraining;
         public string NeuralNetworkName;
         public double StartTrainingRate;
         public NeuralNet.DNA NeuralNetworkDna = new NeuralNet.DNA();

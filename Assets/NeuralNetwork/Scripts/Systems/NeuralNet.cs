@@ -42,6 +42,8 @@ namespace NeuralNetwork
         private int _countResultsEntry;
         private int _outputCount;
         
+        
+        #region Initialisation
         private void CreateNetwork( List<Layer> input, List<Layer> hiddens,  List<Layer> output)
         {
             Debug.Log("Creating NeuralNet Network");
@@ -216,6 +218,9 @@ namespace NeuralNetwork
         {
             return layer.LayerBias;
         }
+        #endregion
+        
+        #region DNAManaging
         private void SetDNARandom(int WeightsCount)  //On Network first Initialisation
         {
             DNA randomDna = new DNA();
@@ -268,7 +273,6 @@ namespace NeuralNetwork
             randomDna.Biases.Add(outputBias);
 
             InstanceDNA = randomDna;
-            Debug.Log(index);
         }
         private void SetDNAFromData(NetData netData, NeuralNetworkManager.EForceRandomization forceRandomization, double trainingRate)
         {
@@ -384,6 +388,10 @@ namespace NeuralNetwork
             
             return randomized;
         }
+        
+        #endregion
+        
+        #region Output
         private void WaitForAllOutputResults(double result, int OutputIndex)
         {
             if (_countResultsEntry < _outputCount)
@@ -415,6 +423,9 @@ namespace NeuralNetwork
         {
             WaitForAllOutputResults(OutputResult, OutputNeuronIndex);
         }
+        #endregion
+        
+        #region InstanceManaging
         public void RestartInstance(NeuralNetworkManager.ENetworkMode eNetworkMode, NetData netData, bool DNAHasUpgrade, bool forceInstanceDNAReset)
         {
             if (NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.ComputeData)
@@ -531,7 +542,7 @@ namespace NeuralNetwork
             // for exemple, I want the result of the network to be as close as the wanted value as possible
             NeuralNetworkManager.OnInstanceHasEnd(this, computedCoeff, externalParameters, allCoeffs);
         }
-        
+        #endregion
         [Serializable]
         public struct Layer
         {

@@ -60,28 +60,29 @@ MonoBehaviour:
   HiddenLayerConstruct:
   - NeuronCount: 9
     LayerBias: 1
-    ActivationFunctionType: 5
+    ActivationFunctionType: 6
   - NeuronCount: 12
     LayerBias: 1
-    ActivationFunctionType: 5
+    ActivationFunctionType: 6
   - NeuronCount: 15
     LayerBias: 1
-    ActivationFunctionType: 5
+    ActivationFunctionType: 6
+  - NeuronCount: 12
+    LayerBias: 1
+    ActivationFunctionType: 6
   - NeuronCount: 12
     LayerBias: 1
     ActivationFunctionType: 5
   - NeuronCount: 12
     LayerBias: 1
-    ActivationFunctionType: 5
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 5
+    ActivationFunctionType: 6
   OutputLayerConstruct:
   - NeuronCount: 2
     LayerBias: 0.5
-    ActivationFunctionType: 6
+    ActivationFunctionType: 7
   _NetData:
     HasData: 0
+    NewTraining: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
     NeuralNetworkDna:

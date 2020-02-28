@@ -35,7 +35,6 @@ namespace NeuralNetwork
             if (NeuralNet.IsTraining || NeuralNet.IsExecuting)
             {
                 inputStreamOn = true;
-                Debug.Log("InputToNeuralNet");
                 for (int i = 0; i < NeuralNet.InputLayer.NeuronsInLayer.Count; i++)
                 {
                     NeuralNet.InputLayer.NeuronsInLayer[i].Inputs.Clear();

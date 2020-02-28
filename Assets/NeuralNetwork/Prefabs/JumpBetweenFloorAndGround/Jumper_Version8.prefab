@@ -11,14 +11,14 @@ GameObject:
   - component: {fileID: 3956378676603637950}
   - component: {fileID: 3956378676603637951}
   - component: {fileID: 5349856995082661673}
-  - component: {fileID: 2915373225853174091}
   - component: {fileID: 6379266507164650778}
   - component: {fileID: -2841496516435445981}
   - component: {fileID: 4187177287536674541}
   - component: {fileID: 6489733188150635247}
   - component: {fileID: 5262881103439324409}
+  - component: {fileID: 5409818577457985001}
   m_Layer: 0
-  m_Name: NeuralNet_Jumper 3
+  m_Name: Jumper_Version4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,25 +52,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NeuralNetworkManager: {fileID: 0}
-  InputLayerNeurons: 2
+  NeuralNetworkComponent: {fileID: 5349856995082661673}
+  InputLayerConstruct:
+  - NeuronCount: 2
+    LayerBias: 0
+    ActivationFunctionType: 0
   HiddenLayerConstruct:
-  - NeuronCount: 3
-  - NeuronCount: 3
-  OutputLayerNeurons: 2
+  - NeuronCount: 9
+    LayerBias: 1
+    ActivationFunctionType: 5
+  - NeuronCount: 12
+    LayerBias: 1
+    ActivationFunctionType: 5
+  - NeuronCount: 15
+    LayerBias: 1
+    ActivationFunctionType: 5
+  - NeuronCount: 12
+    LayerBias: 1
+    ActivationFunctionType: 5
+  - NeuronCount: 12
+    LayerBias: 1
+    ActivationFunctionType: 5
+  - NeuronCount: 12
+    LayerBias: 1
+    ActivationFunctionType: 5
+  OutputLayerConstruct:
+  - NeuronCount: 2
+    LayerBias: 0.5
+    ActivationFunctionType: 6
   _NetData:
     HasData: 0
     NeuralNetworkName: 
-    NeuralNetworkDNA: []
+    StartTrainingRate: 0
+    NeuralNetworkDna:
+      Weights: []
+      Biases: []
     NetworkTrainingRate: 0
     NetworkBestResults: []
     NotationCoefficient: 0
     DNAVersion: 0
-  ActualDNA: []
+  InstanceDNA:
+    Weights: []
+    Biases: []
   InstanceID: 0
   IsExecuting: 0
   IsTraining: 0
-  EpochsRemaining: 0
-  NeuralNetworkComponent: {fileID: 5349856995082661673}
   NeuralNetConnections: 0
   _cycleResults: []
 --- !u!114 &5349856995082661673
@@ -87,27 +113,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NeuralNet: {fileID: 3956378676603637951}
   NetInput:
-  - {fileID: 2915373225853174091}
   - {fileID: 6379266507164650778}
+  - {fileID: 5409818577457985001}
   NetOutput:
   - {fileID: -2841496516435445981}
   - {fileID: 4187177287536674541}
   Controller: {fileID: 5262881103439324409}
   inputStreamOn: 0
---- !u!114 &2915373225853174091
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3956378676603637949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputName: Distance Plafond
-  InputValue: 0
 --- !u!114 &6379266507164650778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +176,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &5262881103439324409
 MonoBehaviour:
@@ -183,9 +195,25 @@ MonoBehaviour:
   - 0
   DistanceToUp: 0
   DistanceToDown: 0
+  DistanceToRight: 0
   JumpForce: 0
   Rigidbody: {fileID: 0}
   Timer: 0
+  isDead: 0
+--- !u!114 &5409818577457985001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956378676603637949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InputName: Distance Plafond
+  InputValue: 0
 --- !u!1 &5041585173259987680
 GameObject:
   m_ObjectHideFlags: 0

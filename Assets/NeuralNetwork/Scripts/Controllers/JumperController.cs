@@ -58,7 +58,6 @@ namespace DefaultNamespace
             EvaluationParameters[0] = Timer;
             transform.position = startPos;
             Rigidbody.velocity = Vector3.zero;
-            Debug.Log("Reset" + gameObject.activeSelf + isDead);
 
         }
 

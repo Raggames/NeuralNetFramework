@@ -107,7 +107,7 @@ namespace NeuralNetwork
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.AverageForcePositive)
             {
                 computedOutput /= previousNeurons;
-                return computedOutput < 0 ? computedOutput : -computedOutput;
+                if (computedOutput < 0) computedOutput = -computedOutput;
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Tanh)
             {
@@ -147,7 +147,7 @@ namespace NeuralNetwork
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.AverageForcePositive)
             {
                 computedValue /= previousNeurons;
-                return computedValue < 0 ? computedValue : -computedValue;
+                if (computedValue < 0) computedValue = -computedValue;
             }
 
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Tanh)
