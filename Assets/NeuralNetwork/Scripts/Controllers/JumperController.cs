@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DefaultNamespace
+namespace NeuralNetwork.Scripts.Controllers
 {
     public class JumperController : NeuralNetworkController
     {
