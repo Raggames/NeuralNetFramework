@@ -28,8 +28,10 @@ namespace NeuralNetwork.Scripts.Controllers
         public Transform GunEnd;
         [SerializeField] private bool isDead;
         public int Points;
-        
 
+        private bool lastTankAlive;
+
+        public bool combo;
         // Start is called before the first frame update
         void Start()
         {
@@ -72,6 +74,7 @@ namespace NeuralNetwork.Scripts.Controllers
 
                 if (enemies.Count == 0)
                 {
+                    lastTankAlive = true;
                     Debug.Log("Last survivor");
                     OnInstanceFail();
                 }
@@ -86,6 +89,7 @@ namespace NeuralNetwork.Scripts.Controllers
                 Timer += Time.deltaTime;
                 if (Timer >= 30)
                 {
+                    lastTankAlive = true;
                     OnInstanceFail();
                 }
                 SetInputs();
@@ -196,8 +200,12 @@ namespace NeuralNetwork.Scripts.Controllers
         {
             if (!isDead)
             {
-                EvaluationParameters[0] = 30-Timer;
-                EvaluationParameters[1] = Points;
+                if (lastTankAlive)
+                {
+                    EvaluationParameters[0] = 30-Timer;
+                }
+                
+                EvaluationParameters[1] = Points*2;
                 this.NeuralNetworkComponent.InstanceEnd(EvaluationParameters, this);
                 isDead = true;
                 gameObject.SetActive(false);
@@ -208,9 +216,11 @@ namespace NeuralNetwork.Scripts.Controllers
         {
             isDead = false;
             RandomPosition();
+            lastTankAlive = false;
             Timer = 0;
+            combo = false;
             Points = 0;
-            EvaluationParameters[1] = Points*2;
+            EvaluationParameters[1] = Points;
             EvaluationParameters[0] = Timer;
         }
     }
