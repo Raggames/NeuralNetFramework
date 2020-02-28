@@ -13,8 +13,8 @@ namespace NeuralNetwork.Scripts.Data
         public double StartTrainingRate;
         public NeuralNet.DNA NeuralNetworkDna = new NeuralNet.DNA();
         public double NetworkTrainingRate;
-        public List<double> NetworkBestResults = new List<double>();
-        public double NotationCoefficient;
+        public List<NeuralNetworkPerformanceSolver> PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
+        public double PerformanceCoefficient;
         public int DNAVersion;
 
 

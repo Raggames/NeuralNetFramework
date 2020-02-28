@@ -6,6 +6,17 @@
     <e p="C:\Users\Rag\Documents\DEV\NeuralNetFramework" t="IncludeRecursive">
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
+        <e p="DebugGUI" t="Include">
+          <e p="Attributes" t="Include">
+            <e p="DebugGUIGraphAttribute.cs" t="Include" />
+            <e p="DebugGUIPrintAttribute.cs" t="Include" />
+          </e>
+          <e p="DebugGUI.cs" t="Include" />
+          <e p="Examples" t="Include">
+            <e p="DebugGUIExamples.cs" t="Include" />
+          </e>
+          <e p="README.txt" t="Include" />
+        </e>
         <e p="NeuralNetwork" t="Include">
           <e p="Prefabs" t="Include">
             <e p="Shooters" t="Include">
@@ -20,8 +31,8 @@
             <e p="Data" t="Include">
               <e p="NetData.cs" t="Include" />
               <e p="NeuralNetworkBluePrint.cs" t="Include" />
-              <e p="NeuralNetworkErrorParameter.cs" t="Include" />
               <e p="NeuralNetworkEvaluate.cs" t="Include" />
+              <e p="NeuralNetworkPerformanceSolver.cs" t="Include" />
               <e p="NeuralNetworkSerializer.cs" t="Include" />
             </e>
             <e p="NeuronNetwork" t="Include">

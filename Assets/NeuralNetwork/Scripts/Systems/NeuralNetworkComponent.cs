@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NeuralNetwork.Scripts.Data;
 using UnityEngine;
 
 namespace NeuralNetwork
@@ -63,9 +64,9 @@ namespace NeuralNetwork
             }
         }
 
-        public void InstanceEnd(List<double> parameters, NeuralNetworkController controller)
+        public void InstanceEnd(List<NeuralNetworkPerformanceSolver> parameters, NeuralNetworkController controller)
         {
-            this.NeuralNet.OnInstanceEnd(parameters, controller);
+            this.NeuralNet.OnInstanceEnd(parameters);
         }
 
         private void Update()

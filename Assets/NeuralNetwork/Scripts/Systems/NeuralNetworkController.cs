@@ -7,8 +7,8 @@ using UnityEngine;
 public abstract class NeuralNetworkController : MonoBehaviour
 {
     public NeuralNetworkComponent NeuralNetworkComponent;
-    public List<double> EvaluationParameters = new List<double>();
-    public List<NeuralNetworkErrorParameter> ErrorParameters = new List<NeuralNetworkErrorParameter>();
+
+    public List<NeuralNetworkPerformanceSolver> EvaluationParameters = new List<NeuralNetworkPerformanceSolver>();
     
         public abstract void SetInputs();
         public abstract void OnOutput();

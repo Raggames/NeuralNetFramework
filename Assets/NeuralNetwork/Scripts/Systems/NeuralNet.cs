@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using NeuralNetwork.Scripts.Data;
 using NeuralNetwork.Utils;
 using UnityEngine;
@@ -392,14 +393,15 @@ namespace NeuralNetwork
         #endregion
         
         #region Output
-        public void OnInstanceEnd(List<double> paramatersForEvaluation, NeuralNetworkController controller)
+        public void OnInstanceEnd(List<NeuralNetworkPerformanceSolver> paramatersForEvaluation)
         {
             if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Train)
             {
                 if (NeuralNetworkManager.NetworkFunction ==
                     NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ControlEntity)
                 {
-                    EvaluateInstanceForIteration(paramatersForEvaluation, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
+                    ComputeErrorParametersForIteration(paramatersForEvaluation);
+                   // EvaluateInstanceForIteration(paramatersForEvaluation, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
                 
                 }
             }
@@ -410,61 +412,88 @@ namespace NeuralNetwork
             }
             
         }
-        private void EvaluateInstanceForIteration(List<double> externalParameters, NeuralNetworkManager.ENetworkFunction networkFunction, NeuralNetworkManager.EAbsoluteValues absoluteValues)
+
+        private void ComputeErrorParametersForIteration(
+            List<NeuralNetworkPerformanceSolver> errorParameters)
         {
-            List<double> allCoeffs = new List<double>();
-            double computedCoeff = 0;
-            double divider = 0;
-            if (networkFunction == NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ComputeData)
+            // Compare Values to Actual DNA evaluation parameters values
+            double performanceIndex = 0; // so we need to set-up a performance value wich will compare values from ActualBestDna parameters to this instance parameters
+            List<NeuralNetworkPerformanceSolver> actualDnaSolvers = new List<NeuralNetworkPerformanceSolver>();
+            if (NeuralNetworkManager.ActualBestDNA.PerformanceSolvers.Count == errorParameters.Count)
             {
-                if (absoluteValues == NeuralNetworkManager.EAbsoluteValues.Yes)
-                {
-                    for (int i = 0; i < externalParameters.Count; i++)
-                    {
-                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
-                        Debug.Log(divider);
-                        allCoeffs.Add(Mathf.Abs((float)NeuralNetworkManager.InternalParameters[i] - (float)externalParameters[i]));
-                        computedCoeff += allCoeffs[i];
-                    }
-                    computedCoeff /= divider;
-                }
-                else
-                {
-                    for (int i = 0; i < externalParameters.Count; i++)
-                    {
-                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
-                        allCoeffs.Add((float)NeuralNetworkManager.InternalParameters[i] - (float)externalParameters[i]);
-                        computedCoeff += allCoeffs[i];
-                    }
-                    computedCoeff /= divider;
-                }
+                actualDnaSolvers =
+                    NeuralNetworkManager.ActualBestDNA.PerformanceSolvers; // getting the values from ActualBestDna
             }
-            if (networkFunction == NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ControlEntity)
+            else
             {
-                if (absoluteValues == NeuralNetworkManager.EAbsoluteValues.Yes)
-                {
-                    for (int i = 0; i < externalParameters.Count; i++)
-                    {
-                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
-                        allCoeffs.Add(Mathf.Abs((float)externalParameters[i]));
-                        computedCoeff += allCoeffs[i];
-                    }
-                    computedCoeff /= divider;
-                }
-                else
-                {
-                    for (int i = 0; i < externalParameters.Count; i++)
-                    {
-                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
-                        allCoeffs.Add((float)externalParameters[i]);
-                        computedCoeff += allCoeffs[i];
-                    }
-                    computedCoeff /= divider;
-                } 
+                Debug.Log("NeuralNetworkManager Actual DNA has not been initialized. Error.");
             }
-            // for exemple, I want the result of the network to be as close as the wanted value as possible
-            NeuralNetworkManager.OnInstanceHasEnd(this, computedCoeff, externalParameters, allCoeffs);
+            for (int i = 0; i < errorParameters.Count; i++)
+            {
+                double perfIndOfi = 0;
+                
+                if (errorParameters[i].ParameterType == EParameterType.ShouldBeInferior
+                ) // this instance value should be inferior as best dna value to consider it as better
+                {
+                    if (errorParameters[i].EvaluationParameter < actualDnaSolvers[i].EvaluationParameter)
+                    {
+                        perfIndOfi = actualDnaSolvers[i].EvaluationParameter -
+                                     errorParameters[i].EvaluationParameter; // value will be positive
+                        perfIndOfi *= errorParameters[i].EvaluationParameterWeight; // applying weight coeeficient
+                        performanceIndex += perfIndOfi;
+                    }
+                    else
+                    {
+                        performanceIndex -= perfIndOfi;
+                    }
+                }
+
+                if (errorParameters[i].ParameterType == EParameterType.ShouldBeSuperior
+                ) // this instance value should be superior as best dna value to consider it as better
+                {
+                    if (errorParameters[i].EvaluationParameter > actualDnaSolvers[i].EvaluationParameter)
+                    {
+                        perfIndOfi = errorParameters[i].EvaluationParameter -
+                                     actualDnaSolvers[i].EvaluationParameter;
+                        perfIndOfi *= errorParameters[i].EvaluationParameterWeight;
+                        performanceIndex += perfIndOfi;
+                    }
+                    else
+                    {
+                        performanceIndex -= perfIndOfi;
+                    }
+                }
+
+                if (errorParameters[i].ParameterType == EParameterType.ConvergeToExpectedValue)
+                {
+                    perfIndOfi = Mathf.Abs((float)errorParameters[i].EvaluationParameter - (float)errorParameters[i].ExpectedValue);
+                    if (perfIndOfi < Mathf.Abs((float) actualDnaSolvers[i].EvaluationParameter -
+                                               (float) errorParameters[i].ExpectedValue))
+                    {
+                        performanceIndex += perfIndOfi;
+                    }
+                    else
+                    {
+                        performanceIndex -= perfIndOfi;
+                    }
+                }
+               
+            }
+
+            bool instanceHasBestDna = false;
+            if (performanceIndex > 0)
+            {
+                Debug.Log("This instance has best DNA with a performance index of : " + performanceIndex);
+                instanceHasBestDna = true;
+            }
+            else
+            {
+                Debug.Log("Performance index is inferior than 0.");
+            }
+            NeuralNetworkManager.OnInstanceHasEnd(this, performanceIndex, errorParameters, instanceHasBestDna);
+
         }
+        
         private void WaitForAllOutputResults(double result, int OutputIndex)
         {
             if (_countResultsEntry < _outputCount)
@@ -479,7 +508,16 @@ namespace NeuralNetwork
                 {
                     if (this.NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.ComputeData)
                     {
-                        EvaluateInstanceForIteration(_cycleResults, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
+                        List<NeuralNetworkPerformanceSolver> solvers = new List<NeuralNetworkPerformanceSolver>();
+                        for (int i = 0; i < _cycleResults.Count; i++)
+                        {
+                            NeuralNetworkPerformanceSolver solver = new NeuralNetworkPerformanceSolver();
+                            solver.EvaluationParameter = _cycleResults[i];
+                            solver.ExpectedValue = NeuralNetworkManager.ActualBestDNA.PerformanceSolvers[i].ExpectedValue;
+                            solvers.Add(solver);
+                        }
+                        ComputeErrorParametersForIteration(solvers);
+                        //EvaluateInstanceForIteration(_cycleResults, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
                     }
                 }
                 _countResultsEntry = 0;

@@ -38,7 +38,7 @@ namespace NeuralNetwork.Scripts.Controllers
             Rigidbody = GetComponent<Rigidbody>();
             RandomPosition();
             startPos = transform.position;
-            Timer = 30;
+            Timer = 0;
             Debug.Log("Start");
             
         }
@@ -107,9 +107,10 @@ namespace NeuralNetwork.Scripts.Controllers
             else
             {
                 NeuralNetworkComponent.NetInput[0].InputValue = 0;
+                NeuralNetworkComponent.NetInput[1].InputValue = 0;
             }
-          
-           NeuralNetworkComponent.NetInput[2].InputValue = FireTimer;
+            NeuralNetworkComponent.NetInput[2].InputValue = FireTimer;
+            
         }
 
         public override void OnOutput()
@@ -205,12 +206,8 @@ namespace NeuralNetwork.Scripts.Controllers
         {
             if (!isDead)
             {
-                if (lastTankAlive)
-                {
-                    EvaluationParameters[0] = 30-Timer;
-                }
-                
-                EvaluationParameters[1] = Points*2;
+                EvaluationParameters[0].EvaluationParameter = Timer;
+                EvaluationParameters[1].EvaluationParameter = Points;
                 this.NeuralNetworkComponent.InstanceEnd(EvaluationParameters, this);
                 isDead = true;
                 gameObject.SetActive(false);
@@ -225,8 +222,6 @@ namespace NeuralNetwork.Scripts.Controllers
             Timer = 0;
             combo = false;
             Points = 0;
-            EvaluationParameters[1] = Points;
-            EvaluationParameters[0] = Timer;
         }
     }
 

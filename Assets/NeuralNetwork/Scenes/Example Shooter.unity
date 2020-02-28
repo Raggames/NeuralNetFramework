@@ -640,16 +640,26 @@ MonoBehaviour:
       Weights: []
       Biases: []
     NetworkTrainingRate: 0
-    NetworkBestResults: []
-    NotationCoefficient: 0
+    PerformanceSolvers: []
+    PerformanceCoefficient: 0
     DNAVersion: 0
-  SaveNetDataFileName: DNA_Shooter_V2
+  SaveNetDataFileName: DNA_Shooter_V4
   NeuralNetworkInstances: []
   ActualBestDNA:
     InstanceWeights: []
     InstanceBiases: []
-    NotationCoefficient: 0
-    Results: []
+    PerformanceSolvers:
+    - ParameterName: Time
+      EvaluationParameter: 30
+      EvaluationParameterWeight: 1
+      ParameterType: 0
+      ExpectedValue: 0
+    - ParameterName: Points
+      EvaluationParameter: 0
+      EvaluationParameterWeight: 3.069999933242798
+      ParameterType: 1
+      ExpectedValue: 0
+    PerformanceCoefficient: 0
   EvaluateDNAForInstancesIteration: []
   InstancesEndedCount: 0
   NetworkFunction: 1
@@ -661,7 +671,7 @@ MonoBehaviour:
   LoadFromBlueprint: 0
   NewTraining: 1
   LoadFromJson: 1
-  TrainMode: 1
+  TrainMode: 0
   SaveMode: 0
   TrainingRate: 1
   MaxTrainingRate: 1.2
@@ -672,10 +682,8 @@ MonoBehaviour:
   TrainingRateEvolution: 10
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
-  evaluateIterationValueToActualDna: 1
   DNAVersion: 0
   TrainingBestResults: []
-  InternalParameters: []
 --- !u!1 &913758364
 GameObject:
   m_ObjectHideFlags: 0

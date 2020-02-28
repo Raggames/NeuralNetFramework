@@ -96,17 +96,10 @@ namespace NeuralNetwork
         [SerializeField] private double previousIterationsCoefficientAverage;
         
         public int EpochsCount;
-        public EEvaluateIterationValueToActualDNA evaluateIterationValueToActualDna;
-        public enum EEvaluateIterationValueToActualDNA
-        {
-            IterationResultsInferior,
-            IterationResultsSuperior,
-        }
         
         [Header("Neural Network Evaluation")] 
         public int DNAVersion;
         public double[] TrainingBestResults;
-        public double[] InternalParameters;
         
         #endregion
 
@@ -138,8 +131,8 @@ namespace NeuralNetwork
             netData.DNAVersion = 0;
             netData.NeuralNetworkDna.Biases.Clear();
             netData.NeuralNetworkDna.Weights.Clear();
-            netData.NotationCoefficient = 0;
-            netData.NetworkBestResults.Clear();
+            netData.PerformanceCoefficient = 0;
+            netData.PerformanceSolvers.Clear();
         }
         
         public void Train()
@@ -156,7 +149,24 @@ namespace NeuralNetwork
         {
             if (TrainMode == ETrainMode.NewTraining)
             {
-                ResetNetData(NetData);
+                if (File.Exists(Application.dataPath + "/StreamingAssets/" + SaveNetDataFileName) && SaveMode == ESaveMode.Override)
+                {
+                    Debug.Log("An Existing save has been found, you should change the Save File Name if you don't wan't to override or set SaveMode to new file");
+                    
+                }
+                if (File.Exists(Application.dataPath + "/StreamingAssets/" + SaveNetDataFileName) && SaveMode == ESaveMode.New)
+                {
+                    Debug.Log("An Existing save has been found, setting File Name To New Name");
+                    Scripts.Data.NetData netData = LoadNetData(SaveNetDataFileName);
+                    SaveNetDataFileName = netData.NeuralNetworkName + "_newAutoSavedFiled";
+                    ResetNetData(NetData);
+                }
+
+                else
+                {
+                    ResetNetData(NetData);
+                }
+                
             }
             if (TrainMode == ETrainMode.LoadFromJson)
             {
@@ -165,15 +175,15 @@ namespace NeuralNetwork
                     NetData = LoadNetData(SaveNetDataFileName);
                     Debug.Log("Loaded from Json");
                     NewTraining = NetData.NewTraining;
-                    ActualBestDNA.Results = NetData.NetworkBestResults;
+                    ActualBestDNA.PerformanceSolvers = NetData.PerformanceSolvers;
                     ActualBestDNA.InstanceWeights = NetData.NeuralNetworkDna.Weights;
                     ActualBestDNA.InstanceBiases = NetData.NeuralNetworkDna.Biases;
-                    ActualBestDNA.NotationCoefficient = NetData.NotationCoefficient;
+                    ActualBestDNA.PerformanceCoefficient = NetData.PerformanceCoefficient;
                     TrainingRate = NetData.NetworkTrainingRate;
-                    TrainingBestResults = new double[ActualBestDNA.Results.Count];
-                    for (int j = 0; j < ActualBestDNA.Results.Count; j++)
+                    TrainingBestResults = new double[ActualBestDNA.PerformanceSolvers.Count];
+                    for (int j = 0; j < ActualBestDNA.PerformanceSolvers.Count; j++)
                     {
-                        TrainingBestResults[j] = ActualBestDNA.Results[j];
+                        TrainingBestResults[j] = ActualBestDNA.PerformanceSolvers[j].EvaluationParameter;
                     }
                 }
                 if (!LoadFromJson)
@@ -187,15 +197,15 @@ namespace NeuralNetwork
         {
             NetData = LoadNetData(SaveNetDataFileName);
             Debug.Log("Loaded from Json");
-            ActualBestDNA.Results = NetData.NetworkBestResults;
+            ActualBestDNA.PerformanceSolvers = NetData.PerformanceSolvers;
             ActualBestDNA.InstanceWeights = NetData.NeuralNetworkDna.Weights;
             ActualBestDNA.InstanceBiases = NetData.NeuralNetworkDna.Biases;
-            ActualBestDNA.NotationCoefficient = NetData.NotationCoefficient;
+            ActualBestDNA.PerformanceCoefficient = NetData.PerformanceCoefficient;
             TrainingRate = NetData.NetworkTrainingRate;
-            TrainingBestResults = new double[ActualBestDNA.Results.Count];
-            for (int j = 0; j < ActualBestDNA.Results.Count; j++)
+            TrainingBestResults = new double[ActualBestDNA.PerformanceSolvers.Count];
+            for (int j = 0; j < ActualBestDNA.PerformanceSolvers.Count; j++)
             {
-                TrainingBestResults[j] = ActualBestDNA.Results[j];
+                TrainingBestResults[j] = ActualBestDNA.PerformanceSolvers[j].EvaluationParameter;
             }
         }
         private void InitializeTraining(GameObject networkPrefab, ENetworkMode eNetworkMode, int batchSize, int epochs)
@@ -248,138 +258,66 @@ namespace NeuralNetwork
 
         #endregion
         #region Evaluating
-        public void OnInstanceHasEnd(NeuralNet instanceNetwork, double computedCoeff, List<double> result, List<double> allCoeffs)
+        public void OnInstanceHasEnd(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
         {
             InstancesEndedCount++;
-            NeuralNetworkEvaluate _instanceNetworkEvaluate = new NeuralNetworkEvaluate(); 
-            NeuralNet.DNA dna = new NeuralNet.DNA();
-            dna = GetInstanceDNA(instanceNetwork);
-            _instanceNetworkEvaluate.InstanceWeights = new List<double>();
-            _instanceNetworkEvaluate.InstanceBiases = new List<double>();
-            _instanceNetworkEvaluate.InstanceWeights = dna.Weights;
-            _instanceNetworkEvaluate.InstanceBiases = dna.Biases;
-            _instanceNetworkEvaluate.Results = new List<double>();
-            foreach (var res in result)
+            if (instancehasBestDna)
             {
-                _instanceNetworkEvaluate.Results.Add(res);
+                DNAHasUpgrade = true;
+                NeuralNetworkEvaluate _instanceNetworkEvaluate = new NeuralNetworkEvaluate();
+                NeuralNet.DNA dna = new NeuralNet.DNA();
+                dna = GetInstanceDNA(instanceNetwork);
+                _instanceNetworkEvaluate.InstanceWeights = new List<double>();
+                _instanceNetworkEvaluate.InstanceBiases = new List<double>();
+                _instanceNetworkEvaluate.InstanceWeights = dna.Weights;
+                _instanceNetworkEvaluate.InstanceBiases = dna.Biases;
+                _instanceNetworkEvaluate.PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
+                _instanceNetworkEvaluate.PerformanceSolvers = solvers;
+                _instanceNetworkEvaluate.PerformanceCoefficient = computedCoeff;
+                EvaluateDNAForInstancesIteration.Add(_instanceNetworkEvaluate);
             }
-            _instanceNetworkEvaluate.NotationCoefficient = computedCoeff;
-            CompareDNAsAndSaveBest(_instanceNetworkEvaluate, instanceNetwork);
-        }
-        void CompareDNAsAndSaveBest(NeuralNetworkEvaluate evaluatedDNA, NeuralNet instanceNetwork)
-        {
-            EvaluateAllInstancesForIteration(evaluatedDNA, ActualBestDNA);
-        }
-
-        private void EvaluateAllInstancesForIteration(NeuralNetworkEvaluate evaluationInstance, NeuralNetworkEvaluate ActualDna)
-        {
-            EvaluateDNAForInstancesIteration.Add(evaluationInstance);
-            if (ActualBestDNA.InstanceWeights.Count == 0)
+            if (InstancesEndedCount >= NeuralNetworkInstances.Count - 1)
             {
-                if (InstancesEndedCount >= NeuralNetworkInstances.Count-1)
+                var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateDNAForInstancesIteration);
+                if (NetData.HasData == false)
                 {
-                    var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateDNAForInstancesIteration, evaluateIterationValueToActualDna);
                     ActualBestDNA = best;
-                    HandleAndDisplayResults(best.Results);
-                    SaveNetData(best.InstanceWeights, best.InstanceBiases, best.Results, best.NotationCoefficient);
+                    HandleAndDisplayResults(best.PerformanceSolvers);
+                    SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers, best.PerformanceCoefficient);
                     DNAVersion = NetData.DNAVersion;
                     EvaluateDNAForInstancesIteration.Clear();
-                    DNAHasUpgrade = true;
-                    Debug.Log("DNA Version has been upgraded");
+                    Debug.Log("Net Data was empty, actual iteration best DNA was saved.");
                     StartNextEpoch();
-                    
-                } 
-               
-            }
-            else
-            {
-                if (InstancesEndedCount >= NeuralNetworkInstances.Count-1)
+                }
+                else
                 {
-                    var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateDNAForInstancesIteration, evaluateIterationValueToActualDna);
-                    if (evaluateIterationValueToActualDna == EEvaluateIterationValueToActualDNA.IterationResultsInferior)
-                    {
-                        if (best.NotationCoefficient < ActualBestDNA.NotationCoefficient)
-                        {
-                            DNAHasUpgrade = true;
-                            ManageTrainingRateOnFeedback(DNAHasUpgrade, best.NotationCoefficient, ActualBestDNA.NotationCoefficient);
-                            ActualBestDNA = best;
-                            HandleAndDisplayResults(best.Results);
-                            SaveNetData(best.InstanceWeights, best.InstanceBiases, best.Results, best.NotationCoefficient);
-                            DNAVersion = NetData.DNAVersion;
-                            EvaluateDNAForInstancesIteration.Clear();
-                            
-                            Debug.Log("DNA Version has been upgraded");
-                        }
-                        else
-                        {
-                            ManageTrainingRateOnFeedback(DNAHasUpgrade, best.NotationCoefficient, ActualDna.NotationCoefficient);
-                        }
-                    }
-                    
-                    if (evaluateIterationValueToActualDna == EEvaluateIterationValueToActualDNA.IterationResultsSuperior)
-                    {
-                        if (best.NotationCoefficient > ActualBestDNA.NotationCoefficient)
-                        {
-                            DNAHasUpgrade = true;
-                            ManageTrainingRateOnFeedback(DNAHasUpgrade, best.NotationCoefficient, ActualBestDNA.NotationCoefficient);
-                            Debug.Log(best.NotationCoefficient + " best and actual : " + ActualBestDNA.NotationCoefficient);
-                            ActualBestDNA = best;
-                            HandleAndDisplayResults(best.Results);
-                            SaveNetData(best.InstanceWeights, best.InstanceBiases, best.Results, best.NotationCoefficient);
-                            DNAVersion = NetData.DNAVersion;
-                            EvaluateDNAForInstancesIteration.Clear();
-                            
-                            Debug.Log("DNA Version has been upgraded");
-                        }
-                        else
-                        {
-                            Debug.Log(best.NotationCoefficient + " best and actual : " + ActualBestDNA.NotationCoefficient);
-                            ManageTrainingRateOnFeedback(DNAHasUpgrade, best.NotationCoefficient, ActualDna.NotationCoefficient);
-                        }
-                    }
-                    
-                    StartNextEpoch();
-                } 
+                    ManageTrainingRateOnFeedback(DNAHasUpgrade, best.PerformanceCoefficient, ActualBestDNA.PerformanceCoefficient);
+                    ActualBestDNA = best;
+                    HandleAndDisplayResults(best.PerformanceSolvers);
+                    SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers, best.PerformanceCoefficient);
+                    DNAVersion = NetData.DNAVersion;
+                    EvaluateDNAForInstancesIteration.Clear();
+                }
+                ManageTrainingRateOnFeedback(DNAHasUpgrade, best.PerformanceCoefficient, best.PerformanceCoefficient);
+                StartNextEpoch();
             }
+            
+        }
+        private NeuralNetworkEvaluate ReturnBestCoefficientNetworkForThisIteration(List<NeuralNetworkEvaluate> evaluateDnaForInstancesIteration)
+        {
+            evaluateDnaForInstancesIteration.Sort(delegate(NeuralNetworkEvaluate evaluate, NeuralNetworkEvaluate networkEvaluate)
+                {
+                    return evaluate.PerformanceCoefficient.CompareTo(networkEvaluate.PerformanceCoefficient);
+                });
+            Debug.Log(evaluateDnaForInstancesIteration[evaluateDnaForInstancesIteration.Count-1].PerformanceCoefficient + " is the best coefficient");
+            return evaluateDnaForInstancesIteration[evaluateDnaForInstancesIteration.Count - 1];
         }
 
         public void BypassTrainingFeedBackEvaluationAndStartNextEpoch()
         {
             StartNextEpoch();
         }
-        private NeuralNetworkEvaluate ReturnBestCoefficientNetworkForThisIteration(List<NeuralNetworkEvaluate> entry, EEvaluateIterationValueToActualDNA bestValueToActualDnaType)
-        {
-            entry.Sort(delegate(NeuralNetworkEvaluate A, NeuralNetworkEvaluate B)
-            {
-                return A.NotationCoefficient.CompareTo(B.NotationCoefficient); 
-            });
-            NeuralNetworkEvaluate toReturn = new NeuralNetworkEvaluate();
-            if (bestValueToActualDnaType == EEvaluateIterationValueToActualDNA.IterationResultsSuperior)
-            {
-                if (entry[0].NotationCoefficient > entry[entry.Count - 1].NotationCoefficient)
-                {
-                    toReturn = entry[0];
-                }
-                else
-                {
-                    toReturn = entry[entry.Count - 1];
-                }
-            }
-
-            if (bestValueToActualDnaType == EEvaluateIterationValueToActualDNA.IterationResultsInferior)
-            {
-                if (entry[0].NotationCoefficient < entry[entry.Count - 1].NotationCoefficient)
-                {
-                    toReturn = entry[0];
-                }
-                else
-                {
-                    toReturn = entry[entry.Count - 1];
-                }
-            }
-           
-            return toReturn;
-        }
+        
 
         private NeuralNet.DNA GetInstanceDNA(NeuralNet instanceNetwork)
         {
@@ -475,54 +413,6 @@ namespace NeuralNetwork
                     if (epochsWithoutDNAEvolutionCount > TrainingRateEvolution)
                     {
                         ForceInstanceDNAReset = true;
-                        if (evaluateIterationValueToActualDna ==
-                            EEvaluateIterationValueToActualDNA.IterationResultsSuperior)
-                        {
-                            double averageCoefficient = 0;
-                            double actualTrainingRate = TrainingRate;
-                            for (int i = 0; i < previousIterationsCoefficients.Count; i++)
-                            {
-                                averageCoefficient += previousIterationsCoefficients[i];
-                            }
-                            averageCoefficient /= previousIterationsCoefficients.Count;
-                            double downgradeDelta = ((actualCoeff - averageCoefficient)/averageCoefficient)*TrainingRateChangePurcentage/100;
-                            actualTrainingRate += downgradeDelta;
-                            Debug.Log("Training Rate Increased from " + TrainingRate + " to "+ actualTrainingRate);
-                            TrainingRate = actualTrainingRate;
-                            TrainingRate = Mathf.Clamp((float)TrainingRate, 0.000001f, (float)MaxTrainingRate);
-                        }
-                        else
-                        {
-                            previousIterationsCoefficients.Clear();
-                            previousIterationsCoefficientAverage = 0;
-                            double actualTrainingRate = TrainingRate;
-                            double upgradeDelta = ((bestCoeff - actualCoeff) / bestCoeff) * TrainingRateChangePurcentage / 100;
-                            actualTrainingRate -= upgradeDelta;
-                            TrainingRate = actualTrainingRate;
-                            TrainingRate = Mathf.Clamp((float)TrainingRate, 0.000001f, (float)MaxTrainingRate);
-                        }
-                        
-                        epochsWithoutDNAEvolutionCount = 0;
-
-                    }
-                }
-
-                if (dnaHasUpgrade)
-                {
-                    if (evaluateIterationValueToActualDna ==
-                        EEvaluateIterationValueToActualDNA.IterationResultsSuperior)
-                    {
-                        previousIterationsCoefficients.Clear();
-                        previousIterationsCoefficientAverage = 0;
-                        double actualTrainingRate = TrainingRate;
-                        double upgradeDelta = ((bestCoeff - actualCoeff) / bestCoeff) * TrainingRateChangePurcentage / 100;
-                        actualTrainingRate -= upgradeDelta;
-                        Debug.Log("Training Rate Decreased from " + TrainingRate + " to "+ actualTrainingRate);
-                        TrainingRate = actualTrainingRate;
-                        TrainingRate = Mathf.Clamp((float)TrainingRate, 0.000001f, (float)MaxTrainingRate);
-                    }
-                    else
-                    {
                         double averageCoefficient = 0;
                         double actualTrainingRate = TrainingRate;
                         for (int i = 0; i < previousIterationsCoefficients.Count; i++)
@@ -532,27 +422,39 @@ namespace NeuralNetwork
                         averageCoefficient /= previousIterationsCoefficients.Count;
                         double downgradeDelta = ((actualCoeff - averageCoefficient)/averageCoefficient)*TrainingRateChangePurcentage/100;
                         actualTrainingRate += downgradeDelta;
+                        Debug.Log("Training Rate Increased from " + TrainingRate + " to "+ actualTrainingRate);
                         TrainingRate = actualTrainingRate;
                         TrainingRate = Mathf.Clamp((float)TrainingRate, 0.000001f, (float)MaxTrainingRate);
+                        epochsWithoutDNAEvolutionCount = 0;
                     }
                 }
+                if (dnaHasUpgrade)
+                {
+
+                    previousIterationsCoefficients.Clear();
+                    previousIterationsCoefficientAverage = 0;
+                    double actualTrainingRate = TrainingRate;
+                    double upgradeDelta = ((bestCoeff - actualCoeff) / bestCoeff) * TrainingRateChangePurcentage / 100;
+                    actualTrainingRate -= upgradeDelta;
+                    Debug.Log("Training Rate Decreased from " + TrainingRate + " to " + actualTrainingRate);
+                    TrainingRate = actualTrainingRate;
+                    TrainingRate = Mathf.Clamp((float) TrainingRate, 0.000001f, (float) MaxTrainingRate);
+                }
             }
-            
-            
+
         }
-        
         #endregion
         
         #region DataManaging
-        private void HandleAndDisplayResults(List<double> result)
+        private void HandleAndDisplayResults(List<NeuralNetworkPerformanceSolver> solvers)
         {
-            for (int i = 0; i < result.Count; i++)
+            for (int i = 0; i < solvers.Count; i++)
             {
-                TrainingBestResults[i] = result[i];
+                TrainingBestResults[i] = solvers[i].EvaluationParameter;
             }
         }
         
-        private void SaveNetData(List<double> instanceWeights, List<double> instanceBiases, List<double> results, double notationCoefficient)
+        private void SaveNetData(List<double> instanceWeights, List<double> instanceBiases, List<NeuralNetworkPerformanceSolver> solvers, double notationCoefficient)
         {
             if (NewTraining)
             {
@@ -563,8 +465,8 @@ namespace NeuralNetwork
             NetData.NeuralNetworkDna = new NeuralNet.DNA();
             NetData.NeuralNetworkDna.Weights = instanceWeights;
             NetData.NeuralNetworkDna.Biases = instanceBiases;
-            NetData.NetworkBestResults = results;
-            NetData.NotationCoefficient = notationCoefficient;
+            NetData.PerformanceSolvers = solvers;
+            NetData.PerformanceCoefficient = notationCoefficient;
             NetData.NeuralNetworkName = IANetworkName;
             NetData.NetworkTrainingRate = TrainingRate;
             NetData.DNAVersion++;

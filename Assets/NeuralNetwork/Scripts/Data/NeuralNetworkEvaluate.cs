@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NeuralNetwork.Scripts.Data;
 
 namespace NeuralNetwork
 {
@@ -8,7 +9,9 @@ namespace NeuralNetwork
     {
         public List<double> InstanceWeights;
         public List<double> InstanceBiases;
-        public double NotationCoefficient;
-        public List<double> Results;
+
+        public List<NeuralNetworkPerformanceSolver> PerformanceSolvers;
+        public double PerformanceCoefficient;
+        
     }
 }

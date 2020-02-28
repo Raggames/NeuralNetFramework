@@ -42,7 +42,7 @@ namespace NeuralNetwork.Scripts.Controllers
         {
             if (!isDead)
             {
-                EvaluationParameters[0] = Timer;
+                EvaluationParameters[0].EvaluationParameter = Timer;
                 //EvaluationParameters[1] = JumpForce;
                 this.NeuralNetworkComponent.InstanceEnd(EvaluationParameters, this);
                 isDead = true;
@@ -55,7 +55,6 @@ namespace NeuralNetwork.Scripts.Controllers
             isDead = false;
             Timer = 0;
             JumpForce = (float)NeuralNetworkComponent.NetOutput[1].OutputValue;
-            EvaluationParameters[0] = Timer;
             transform.position = startPos;
             Rigidbody.velocity = Vector3.zero;
         }

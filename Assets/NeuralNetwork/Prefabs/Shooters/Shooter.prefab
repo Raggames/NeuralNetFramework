@@ -87,8 +87,8 @@ MonoBehaviour:
       Weights: []
       Biases: []
     NetworkTrainingRate: 0
-    NetworkBestResults: []
-    NotationCoefficient: 0
+    PerformanceSolvers: []
+    PerformanceCoefficient: 0
     DNAVersion: 0
   InstanceDNA:
     Weights: []
@@ -112,17 +112,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NeuralNet: {fileID: 715012276351570982}
   NetInput:
-  - InputName: 
+  - InputName: EnymeX
     InputValue: 0
-  - InputName: 
+  - InputName: EnemyY
     InputValue: 0
-  - InputName: 
+  - InputName: ReloadTimer
     InputValue: 0
   NetOutput:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - OutputName: MoveLeftRight
+    OutputValue: 0
+  - OutputName: MoveForwardBackward
+    OutputValue: 0
+  - OutputName: Aim
+    OutputValue: 0
+  - OutputName: Shot
+    OutputValue: 0
   Controller: {fileID: 715012276351570986}
   inputStreamOn: 0
 --- !u!114 &715012276351570986
@@ -139,11 +143,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NeuralNetworkComponent: {fileID: 8445753462571084720}
   EvaluationParameters:
-  - 0
-  - 0
+  - ParameterName: Timer
+    EvaluationParameter: 0
+    EvaluationParameterWeight: 1
+    ParameterType: 0
+    ExpectedValue: 0
+  - ParameterName: Points
+    EvaluationParameter: 0
+    EvaluationParameterWeight: 2
+    ParameterType: 1
+    ExpectedValue: 0
   enemies: []
   FireTimer: 0
-  SpawnZone: {x: 0, y: 0}
+  SpawnZone: {x: 15, y: 15}
   FireRate: 1.5
   Rigidbody: {fileID: 0}
   Timer: 0
