@@ -10,18 +10,17 @@ public class BulletComponent : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Tank"))
         {
+            if (controller.combo) controller.Points++;
             controller.Points+=2;
-            controller.FireTimer -= 1f;
+            controller.combo = true;
+            controller.FireTimer += 0.7f;
             other.gameObject.GetComponent<ShooterController>().OnInstanceFail();
             Destroy(gameObject);
-        }
-        if(other.gameObject.CompareTag("Bullet"))
-        {
-            //
         }
         else
         {
             controller.Points--;
+            controller.combo = false;
             Destroy(gameObject);
         }
         

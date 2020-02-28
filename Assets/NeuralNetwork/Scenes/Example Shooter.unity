@@ -669,7 +669,7 @@ MonoBehaviour:
   TrainingBatchSize: 25
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 28.9
-  TrainingRateEvolution: 3
+  TrainingRateEvolution: 10
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   evaluateIterationValueToActualDna: 1
