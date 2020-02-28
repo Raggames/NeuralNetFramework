@@ -7,7 +7,7 @@ public abstract class NeuralNetworkController : MonoBehaviour
 {
     public NeuralNetworkComponent NeuralNetworkComponent;
     public List<double> EvaluationParameters = new List<double>();
- 
+
         public abstract void SetInputs();
         public abstract void OnOutput();
         public abstract void OnInstanceFail();

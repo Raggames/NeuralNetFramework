@@ -208,6 +208,7 @@ namespace NeuralNetwork
             {
                 GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
                 NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
+                
                 NeuralNetworkInstances.Add(_instance);
                 _instance.InitializeNeuralNetwork(eNetworkMode, epochs, _instanceID, this, NetData);
                _instanceID++;
