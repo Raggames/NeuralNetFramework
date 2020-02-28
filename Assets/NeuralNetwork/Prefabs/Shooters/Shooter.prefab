@@ -52,7 +52,7 @@ MonoBehaviour:
   NeuralNetworkManager: {fileID: 0}
   NeuralNetworkComponent: {fileID: 8445753462571084720}
   InputLayerConstruct:
-  - NeuronCount: 3
+  - NeuronCount: 5
     LayerBias: 0
     ActivationFunctionType: 0
   HiddenLayerConstruct:
@@ -76,7 +76,7 @@ MonoBehaviour:
     ActivationFunctionType: 2
   OutputLayerConstruct:
   - NeuronCount: 4
-    LayerBias: 10
+    LayerBias: 0
     ActivationFunctionType: 2
   _NetData:
     HasData: 0
@@ -112,11 +112,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NeuralNet: {fileID: 715012276351570982}
   NetInput:
-  - InputName: EnymeX
+  - InputName: Enemy
     InputValue: 0
   - InputName: EnemyY
     InputValue: 0
   - InputName: ReloadTimer
+    InputValue: 0
+  - InputName: X
+    InputValue: 0
+  - InputName: Y
     InputValue: 0
   NetOutput:
   - OutputName: MoveLeftRight

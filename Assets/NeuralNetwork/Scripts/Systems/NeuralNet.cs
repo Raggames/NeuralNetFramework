@@ -483,7 +483,6 @@ namespace NeuralNetwork
             bool instanceHasBestDna = false;
             if (performanceIndex > 0)
             {
-                Debug.Log("This instance has best DNA with a performance index of : " + performanceIndex);
                 instanceHasBestDna = true;
             }
             else

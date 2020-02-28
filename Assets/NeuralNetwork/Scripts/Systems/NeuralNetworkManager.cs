@@ -21,7 +21,8 @@ namespace NeuralNetwork
         
         [HideInInspector] public List<NeuralNet> NeuralNetworkInstances = new List<NeuralNet>();
         public NeuralNetworkEvaluate ActualBestDNA;
-        [HideInInspector] public List<NeuralNetworkEvaluate> EvaluateDNAForInstancesIteration = new List<NeuralNetworkEvaluate>();
+        [HideInInspector] public List<NeuralNetworkEvaluate> EvaluateUpgradedsDNAOfEpoch = new List<NeuralNetworkEvaluate>();
+        public List<NeuralNetworkEvaluate> KeepAllInstancesDNAOfEpoch = new List<NeuralNetworkEvaluate>();
         public int InstancesEndedCount;
         
         [Header("Networks Management")] 
@@ -72,7 +73,7 @@ namespace NeuralNetwork
             LoadFromJson,
         }
 
-        public ESaveMode SaveMode;
+        public ESaveMode SaveFile;
         public enum ESaveMode
         {
             Override,
@@ -89,7 +90,7 @@ namespace NeuralNetwork
         public bool AdjustTrainingRateAutomatically;
         [Range(0.01f, 50f)] public float TrainingRateChangePurcentage; //if NeuralNetwork can't upgrade for n = "TrainingRateEvolution", decrease Training Rate by this value
         public int TrainingRateEvolution;
-        private bool DNAHasUpgrade;
+        private bool DNAShouldUpgrade;
         private bool ForceInstanceDNAReset; //if iteration don't get any upgrade avec n = TrainingRateEvolution epochs, reset on DNA data
         private int epochsWithoutDNAEvolutionCount;
         private List<double> previousIterationsCoefficients = new List<double>();
@@ -149,12 +150,12 @@ namespace NeuralNetwork
         {
             if (TrainMode == ETrainMode.NewTraining)
             {
-                if (File.Exists(Application.dataPath + "/StreamingAssets/" + SaveNetDataFileName) && SaveMode == ESaveMode.Override)
+                if (File.Exists(Application.dataPath + "/StreamingAssets/" + SaveNetDataFileName) && SaveFile == ESaveMode.Override)
                 {
                     Debug.Log("An Existing save has been found, you should change the Save File Name if you don't wan't to override or set SaveMode to new file");
                     
                 }
-                if (File.Exists(Application.dataPath + "/StreamingAssets/" + SaveNetDataFileName) && SaveMode == ESaveMode.New)
+                if (File.Exists(Application.dataPath + "/StreamingAssets/" + SaveNetDataFileName) && SaveFile == ESaveMode.New)
                 {
                     Debug.Log("An Existing save has been found, setting File Name To New Name");
                     Scripts.Data.NetData netData = LoadNetData(SaveNetDataFileName);
@@ -261,10 +262,7 @@ namespace NeuralNetwork
         public void OnInstanceHasEnd(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
         {
             InstancesEndedCount++;
-            if (instancehasBestDna)
-            {
-                DNAHasUpgrade = true;
-                NeuralNetworkEvaluate _instanceNetworkEvaluate = new NeuralNetworkEvaluate();
+            NeuralNetworkEvaluate _instanceNetworkEvaluate = new NeuralNetworkEvaluate();
                 NeuralNet.DNA dna = new NeuralNet.DNA();
                 dna = GetInstanceDNA(instanceNetwork);
                 _instanceNetworkEvaluate.InstanceWeights = new List<double>();
@@ -274,31 +272,44 @@ namespace NeuralNetwork
                 _instanceNetworkEvaluate.PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
                 _instanceNetworkEvaluate.PerformanceSolvers = solvers;
                 _instanceNetworkEvaluate.PerformanceCoefficient = computedCoeff;
-                EvaluateDNAForInstancesIteration.Add(_instanceNetworkEvaluate);
-            }
-            if (InstancesEndedCount >= NeuralNetworkInstances.Count - 1)
+                Debug.Log("computed perf : " + computedCoeff);
+                if (instancehasBestDna)
+                {
+                    EvaluateUpgradedsDNAOfEpoch.Add(_instanceNetworkEvaluate);
+                    DNAShouldUpgrade = true;
+                }
+             
+                
+            if (InstancesEndedCount == NeuralNetworkInstances.Count-1)
             {
-                var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateDNAForInstancesIteration);
+                var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateUpgradedsDNAOfEpoch);
+                Debug.Log("BestPerf" + best.PerformanceCoefficient);
                 if (NetData.HasData == false)
                 {
                     ActualBestDNA = best;
                     HandleAndDisplayResults(best.PerformanceSolvers);
                     SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers, best.PerformanceCoefficient);
                     DNAVersion = NetData.DNAVersion;
-                    EvaluateDNAForInstancesIteration.Clear();
                     Debug.Log("Net Data was empty, actual iteration best DNA was saved.");
                     StartNextEpoch();
+                    
+                    //end of loop
                 }
-                else
+                if (DNAShouldUpgrade)
                 {
-                    ManageTrainingRateOnFeedback(DNAHasUpgrade, best.PerformanceCoefficient, ActualBestDNA.PerformanceCoefficient);
+                    Debug.Log("BestPerf" + best.PerformanceCoefficient + " DNA Upgrade");
+                    ManageTrainingRateOnFeedback(DNAShouldUpgrade, best.PerformanceCoefficient, ActualBestDNA.PerformanceCoefficient);
                     ActualBestDNA = best;
                     HandleAndDisplayResults(best.PerformanceSolvers);
                     SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers, best.PerformanceCoefficient);
                     DNAVersion = NetData.DNAVersion;
-                    EvaluateDNAForInstancesIteration.Clear();
                 }
-                ManageTrainingRateOnFeedback(DNAHasUpgrade, best.PerformanceCoefficient, best.PerformanceCoefficient);
+                if(!DNAShouldUpgrade)
+                {
+                    Debug.Log(EvaluateUpgradedsDNAOfEpoch.Count + " evaluate dna count");
+                    ManageTrainingRateOnFeedback(DNAShouldUpgrade, _instanceNetworkEvaluate.PerformanceCoefficient, ActualBestDNA.PerformanceCoefficient);
+
+                }
                 StartNextEpoch();
             }
             
@@ -309,7 +320,7 @@ namespace NeuralNetwork
                 {
                     return evaluate.PerformanceCoefficient.CompareTo(networkEvaluate.PerformanceCoefficient);
                 });
-            Debug.Log(evaluateDnaForInstancesIteration[evaluateDnaForInstancesIteration.Count-1].PerformanceCoefficient + " is the best coefficient");
+            
             return evaluateDnaForInstancesIteration[evaluateDnaForInstancesIteration.Count - 1];
         }
 
@@ -377,15 +388,17 @@ namespace NeuralNetwork
                     Debug.Log("ENDING TRAINING");
                 }
 
-                if (InstancesEndedCount >= NeuralNetworkInstances.Count - 1)
+                if (InstancesEndedCount == NeuralNetworkInstances.Count-1)
                 {
+                    Debug.Log("StartNextEpoch" + InstancesEndedCount);
                     RestartInstances(NeuralNetworkInstances);
+
                 }
             }
-
+    
             if (isNeuralNetExecuting)
             {
-                NeuralNetworkInstances[0].RestartInstance(NetworkMode, NetData, DNAHasUpgrade, ForceInstanceDNAReset);
+                NeuralNetworkInstances[0].RestartInstance(NetworkMode, NetData, DNAShouldUpgrade, ForceInstanceDNAReset);
             }
         }
       
@@ -393,12 +406,14 @@ namespace NeuralNetwork
         {
             foreach (var netInstance in neuralNets)
             {
-                netInstance.RestartInstance(NetworkMode, NetData, DNAHasUpgrade, ForceInstanceDNAReset);
+                netInstance.RestartInstance(NetworkMode, NetData, DNAShouldUpgrade, ForceInstanceDNAReset);
             }
-            EvaluateDNAForInstancesIteration.Clear();
             ForceInstanceDNAReset = false;
-            DNAHasUpgrade = false;
+            DNAShouldUpgrade = false;
             InstancesEndedCount = 0;
+            Debug.Log(InstancesEndedCount + "instanceEndedcount");
+            EvaluateUpgradedsDNAOfEpoch.Clear();
+
         }
         private void ManageTrainingRateOnFeedback(bool dnaHasUpgrade, double bestCoeff = 0, double actualCoeff = 0)
         {
@@ -430,11 +445,11 @@ namespace NeuralNetwork
                 }
                 if (dnaHasUpgrade)
                 {
-
                     previousIterationsCoefficients.Clear();
                     previousIterationsCoefficientAverage = 0;
                     double actualTrainingRate = TrainingRate;
-                    double upgradeDelta = ((bestCoeff - actualCoeff) / bestCoeff) * TrainingRateChangePurcentage / 100;
+                    double upgradeDelta = Mathf.Abs((float)bestCoeff - (float)actualCoeff) / actualCoeff * TrainingRateChangePurcentage / 100;
+                    Debug.Log("upgrade delta " + upgradeDelta);
                     actualTrainingRate -= upgradeDelta;
                     Debug.Log("Training Rate Decreased from " + TrainingRate + " to " + actualTrainingRate);
                     TrainingRate = actualTrainingRate;
@@ -460,12 +475,13 @@ namespace NeuralNetwork
             {
                 NetData.StartTrainingRate = TrainingRate;
                 NetData.NewTraining = false;
-                NewTraining = false;
             }
+            NewTraining = false;
             NetData.NeuralNetworkDna = new NeuralNet.DNA();
             NetData.NeuralNetworkDna.Weights = instanceWeights;
             NetData.NeuralNetworkDna.Biases = instanceBiases;
             NetData.PerformanceSolvers = solvers;
+            Debug.Log("changenetdata");
             NetData.PerformanceCoefficient = notationCoefficient;
             NetData.NeuralNetworkName = IANetworkName;
             NetData.NetworkTrainingRate = TrainingRate;

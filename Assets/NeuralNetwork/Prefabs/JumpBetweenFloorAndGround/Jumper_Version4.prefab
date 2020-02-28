@@ -11,12 +11,8 @@ GameObject:
   - component: {fileID: 3956378676603637950}
   - component: {fileID: 3956378676603637951}
   - component: {fileID: 5349856995082661673}
-  - component: {fileID: 6379266507164650778}
-  - component: {fileID: -2841496516435445981}
-  - component: {fileID: 4187177287536674541}
   - component: {fileID: 6489733188150635247}
   - component: {fileID: 5262881103439324409}
-  - component: {fileID: 5409818577457985001}
   m_Layer: 0
   m_Name: Jumper_Version4
   m_TagString: Untagged
@@ -72,7 +68,7 @@ MonoBehaviour:
     ActivationFunctionType: 6
   - NeuronCount: 12
     LayerBias: 1
-    ActivationFunctionType: 5
+    ActivationFunctionType: 6
   - NeuronCount: 12
     LayerBias: 1
     ActivationFunctionType: 6
@@ -89,8 +85,8 @@ MonoBehaviour:
       Weights: []
       Biases: []
     NetworkTrainingRate: 0
-    NetworkBestResults: []
-    NotationCoefficient: 0
+    PerformanceSolvers: []
+    PerformanceCoefficient: 0
     DNAVersion: 0
   InstanceDNA:
     Weights: []
@@ -114,55 +110,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NeuralNet: {fileID: 3956378676603637951}
   NetInput:
-  - {fileID: 6379266507164650778}
-  - {fileID: 5409818577457985001}
+  - InputName: DistUp
+    InputValue: 0
+  - InputName: DistDown
+    InputValue: 0
   NetOutput:
-  - {fileID: -2841496516435445981}
-  - {fileID: 4187177287536674541}
+  - OutputName: Jump
+    OutputValue: 0
+  - OutputName: JumpForce
+    OutputValue: 0
   Controller: {fileID: 5262881103439324409}
   inputStreamOn: 0
---- !u!114 &6379266507164650778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3956378676603637949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputName: Distance Sol
-  InputValue: 0
---- !u!114 &-2841496516435445981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3956378676603637949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OutputName: ActivateJump
-  OutputValue: 0
---- !u!114 &4187177287536674541
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3956378676603637949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OutputName: JumpForce
-  OutputValue: 0
 --- !u!54 &6489733188150635247
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -193,7 +151,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NeuralNetworkComponent: {fileID: 5349856995082661673}
   EvaluationParameters:
-  - 0
+  - ParameterName: Timer
+    EvaluationParameter: 0
+    EvaluationParameterWeight: 1
+    ParameterType: 1
+    ExpectedValue: 0
   DistanceToUp: 0
   DistanceToDown: 0
   DistanceToRight: 0
@@ -201,20 +163,6 @@ MonoBehaviour:
   Rigidbody: {fileID: 0}
   Timer: 0
   isDead: 0
---- !u!114 &5409818577457985001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3956378676603637949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputName: Distance Plafond
-  InputValue: 0
 --- !u!1 &5041585173259987680
 GameObject:
   m_ObjectHideFlags: 0

@@ -110,7 +110,8 @@ namespace NeuralNetwork.Scripts.Controllers
                 NeuralNetworkComponent.NetInput[1].InputValue = 0;
             }
             NeuralNetworkComponent.NetInput[2].InputValue = FireTimer;
-            
+            NeuralNetworkComponent.NetInput[3].InputValue = transform.position.x;
+            NeuralNetworkComponent.NetInput[4].InputValue = transform.position.z;
         }
 
         public override void OnOutput()

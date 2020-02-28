@@ -17,8 +17,16 @@ public class BulletComponent : MonoBehaviour
             other.gameObject.GetComponent<ShooterController>().OnInstanceFail();
             Destroy(gameObject);
         }
-        else
+        if(other.gameObject.CompareTag("Bullet")) 
         {
+            //Dunuthing
+            Physics.IgnoreCollision(this.GetComponent<Collider>(), other.collider, true);
+        }
+
+        if (other.gameObject.CompareTag("Wall"))
+        {
+          
+            Debug.Log("Destroy");
             controller.Points--;
             controller.combo = false;
             Destroy(gameObject);
