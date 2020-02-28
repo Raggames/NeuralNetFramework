@@ -261,7 +261,7 @@ namespace NeuralNetwork
         #region Evaluating
         public void OnInstanceHasEnd(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
         {
-            InstancesEndedCount++;
+           
             NeuralNetworkEvaluate _instanceNetworkEvaluate = new NeuralNetworkEvaluate();
                 NeuralNet.DNA dna = new NeuralNet.DNA();
                 dna = GetInstanceDNA(instanceNetwork);
@@ -280,7 +280,7 @@ namespace NeuralNetwork
                 }
              
                 
-            if (InstancesEndedCount == NeuralNetworkInstances.Count-1)
+            if (InstancesEndedCount >= NeuralNetworkInstances.Count-1)
             {
                 var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateUpgradedsDNAOfEpoch);
                 Debug.Log("BestPerf" + best.PerformanceCoefficient);
@@ -292,7 +292,6 @@ namespace NeuralNetwork
                     DNAVersion = NetData.DNAVersion;
                     Debug.Log("Net Data was empty, actual iteration best DNA was saved.");
                     StartNextEpoch();
-                    
                     //end of loop
                 }
                 if (DNAShouldUpgrade)
@@ -311,7 +310,9 @@ namespace NeuralNetwork
 
                 }
                 StartNextEpoch();
+               
             }
+            InstancesEndedCount++;
             
         }
         private NeuralNetworkEvaluate ReturnBestCoefficientNetworkForThisIteration(List<NeuralNetworkEvaluate> evaluateDnaForInstancesIteration)
@@ -388,7 +389,7 @@ namespace NeuralNetwork
                     Debug.Log("ENDING TRAINING");
                 }
 
-                if (InstancesEndedCount == NeuralNetworkInstances.Count-1)
+                if (InstancesEndedCount >= NeuralNetworkInstances.Count-1)
                 {
                     Debug.Log("StartNextEpoch" + InstancesEndedCount);
                     RestartInstances(NeuralNetworkInstances);
