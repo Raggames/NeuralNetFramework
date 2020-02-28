@@ -392,6 +392,79 @@ namespace NeuralNetwork
         #endregion
         
         #region Output
+        public void OnInstanceEnd(List<double> paramatersForEvaluation, NeuralNetworkController controller)
+        {
+            if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Train)
+            {
+                if (NeuralNetworkManager.NetworkFunction ==
+                    NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ControlEntity)
+                {
+                    EvaluateInstanceForIteration(paramatersForEvaluation, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
+                
+                }
+            }
+            if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Execute)
+            {
+                Debug.Log("Bypass Training Feedback Evaluation");
+                NeuralNetworkManager.BypassTrainingFeedBackEvaluationAndStartNextEpoch();
+            }
+            
+        }
+        private void EvaluateInstanceForIteration(List<double> externalParameters, NeuralNetworkManager.ENetworkFunction networkFunction, NeuralNetworkManager.EAbsoluteValues absoluteValues)
+        {
+            List<double> allCoeffs = new List<double>();
+            double computedCoeff = 0;
+            double divider = 0;
+            if (networkFunction == NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ComputeData)
+            {
+                if (absoluteValues == NeuralNetworkManager.EAbsoluteValues.Yes)
+                {
+                    for (int i = 0; i < externalParameters.Count; i++)
+                    {
+                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
+                        Debug.Log(divider);
+                        allCoeffs.Add(Mathf.Abs((float)NeuralNetworkManager.InternalParameters[i] - (float)externalParameters[i]));
+                        computedCoeff += allCoeffs[i];
+                    }
+                    computedCoeff /= divider;
+                }
+                else
+                {
+                    for (int i = 0; i < externalParameters.Count; i++)
+                    {
+                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
+                        allCoeffs.Add((float)NeuralNetworkManager.InternalParameters[i] - (float)externalParameters[i]);
+                        computedCoeff += allCoeffs[i];
+                    }
+                    computedCoeff /= divider;
+                }
+            }
+            if (networkFunction == NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ControlEntity)
+            {
+                if (absoluteValues == NeuralNetworkManager.EAbsoluteValues.Yes)
+                {
+                    for (int i = 0; i < externalParameters.Count; i++)
+                    {
+                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
+                        allCoeffs.Add(Mathf.Abs((float)externalParameters[i]));
+                        computedCoeff += allCoeffs[i];
+                    }
+                    computedCoeff /= divider;
+                }
+                else
+                {
+                    for (int i = 0; i < externalParameters.Count; i++)
+                    {
+                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
+                        allCoeffs.Add((float)externalParameters[i]);
+                        computedCoeff += allCoeffs[i];
+                    }
+                    computedCoeff /= divider;
+                } 
+            }
+            // for exemple, I want the result of the network to be as close as the wanted value as possible
+            NeuralNetworkManager.OnInstanceHasEnd(this, computedCoeff, externalParameters, allCoeffs);
+        }
         private void WaitForAllOutputResults(double result, int OutputIndex)
         {
             if (_countResultsEntry < _outputCount)
@@ -469,79 +542,7 @@ namespace NeuralNetwork
                 IsExecuting = true;
             }
         }
-        public void OnInstanceEnd(List<double> paramatersForEvaluation, NeuralNetworkController controller)
-        {
-            if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Train)
-            {
-                if (NeuralNetworkManager.NetworkFunction ==
-                    NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ControlEntity)
-                {
-                    EvaluateInstanceForIteration(paramatersForEvaluation, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
-                
-                }
-            }
-            if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Execute)
-            {
-                Debug.Log("Bypass Training Feedback Evaluation");
-                NeuralNetworkManager.BypassTrainingFeedBackEvaluationAndStartNextEpoch();
-            }
-            
-        }
-        private void EvaluateInstanceForIteration(List<double> externalParameters, NeuralNetworkManager.ENetworkFunction networkFunction, NeuralNetworkManager.EAbsoluteValues absoluteValues)
-        {
-            List<double> allCoeffs = new List<double>();
-            double computedCoeff = 0;
-            double divider = 0;
-            if (networkFunction == NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ComputeData)
-            {
-                if (absoluteValues == NeuralNetworkManager.EAbsoluteValues.Yes)
-                {
-                    for (int i = 0; i < externalParameters.Count; i++)
-                    {
-                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
-                        Debug.Log(divider);
-                        allCoeffs.Add(Mathf.Abs((float)NeuralNetworkManager.InternalParameters[i] - (float)externalParameters[i]));
-                        computedCoeff += allCoeffs[i];
-                    }
-                    computedCoeff /= divider;
-                }
-                else
-                {
-                    for (int i = 0; i < externalParameters.Count; i++)
-                    {
-                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
-                        allCoeffs.Add((float)NeuralNetworkManager.InternalParameters[i] - (float)externalParameters[i]);
-                        computedCoeff += allCoeffs[i];
-                    }
-                    computedCoeff /= divider;
-                }
-            }
-            if (networkFunction == NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ControlEntity)
-            {
-                if (absoluteValues == NeuralNetworkManager.EAbsoluteValues.Yes)
-                {
-                    for (int i = 0; i < externalParameters.Count; i++)
-                    {
-                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
-                        allCoeffs.Add(Mathf.Abs((float)externalParameters[i]));
-                        computedCoeff += allCoeffs[i];
-                    }
-                    computedCoeff /= divider;
-                }
-                else
-                {
-                    for (int i = 0; i < externalParameters.Count; i++)
-                    {
-                        divider++;// += NeuralNetworkManager.WantedResultPerOutput[i];
-                        allCoeffs.Add((float)externalParameters[i]);
-                        computedCoeff += allCoeffs[i];
-                    }
-                    computedCoeff /= divider;
-                } 
-            }
-            // for exemple, I want the result of the network to be as close as the wanted value as possible
-            NeuralNetworkManager.OnInstanceHasEnd(this, computedCoeff, externalParameters, allCoeffs);
-        }
+        
         #endregion
         [Serializable]
         public struct Layer

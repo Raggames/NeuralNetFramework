@@ -20,6 +20,7 @@
             <e p="Data" t="Include">
               <e p="NetData.cs" t="Include" />
               <e p="NeuralNetworkBluePrint.cs" t="Include" />
+              <e p="NeuralNetworkErrorParameter.cs" t="Include" />
               <e p="NeuralNetworkEvaluate.cs" t="Include" />
               <e p="NeuralNetworkSerializer.cs" t="Include" />
             </e>

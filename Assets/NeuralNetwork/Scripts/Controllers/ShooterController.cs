@@ -12,7 +12,7 @@ namespace NeuralNetwork.Scripts.Controllers
         public List<Transform> enemies = new List<Transform>();
        
         public float FireTimer;
-        
+        public Vector2 SpawnZone = new Vector2();        
         [Header("Management")]
         public float FireRate;
         
@@ -46,8 +46,8 @@ namespace NeuralNetwork.Scripts.Controllers
         void RandomPosition()
         {
             Vector3 RandomPos = new Vector3();
-            RandomPos.x = Random.Range(-9, 9);
-            RandomPos.z = Random.Range(-9, 9);
+            RandomPos.x = Random.Range(-SpawnZone.x, SpawnZone.x);
+            RandomPos.z = Random.Range(-SpawnZone.y, SpawnZone.y);
             RandomPos.y = 0.6f;
             transform.position = RandomPos;
         }
@@ -57,7 +57,7 @@ namespace NeuralNetwork.Scripts.Controllers
             if (NeuralNetworkComponent.inputStreamOn && !isDead)
             {
                 enemies.Clear();
-                Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
+                Collider[] hitColliders = Physics.OverlapSphere(transform.position, 40);
                 int i = 0;
                 while (i < hitColliders.Length)
                 {
@@ -115,20 +115,20 @@ namespace NeuralNetwork.Scripts.Controllers
         public override void OnOutput()
         {
             
-            if (NeuralNetworkComponent.NetOutput[0].OutputValue < 0.4f)
+            if (NeuralNetworkComponent.NetOutput[0].OutputValue < 0)
             {
                 MoveLeft();
             }
-            if (NeuralNetworkComponent.NetOutput[0].OutputValue > 0.6f)
+            if (NeuralNetworkComponent.NetOutput[0].OutputValue > 0)
             {
                 MoveRight();
             }
             
-            if (NeuralNetworkComponent.NetOutput[1].OutputValue > 0.6f)
+            if (NeuralNetworkComponent.NetOutput[1].OutputValue > 0)
             {
                 MoveForward();   
             }
-            if (NeuralNetworkComponent.NetOutput[1].OutputValue < 0.4f)
+            if (NeuralNetworkComponent.NetOutput[1].OutputValue < 0)
             {
                 MoveBackward();
             }
@@ -137,7 +137,7 @@ namespace NeuralNetwork.Scripts.Controllers
                 Aim();
             }
 
-            if (NeuralNetworkComponent.NetOutput[3].OutputValue >= .5)
+            if (NeuralNetworkComponent.NetOutput[3].OutputValue > 0)
             {
                 Shoot();
             }
@@ -145,27 +145,32 @@ namespace NeuralNetwork.Scripts.Controllers
 
         private void MoveLeft()
         {
-            Debug.Log("Left");
-
             Rigidbody.AddForce(Vector3.left*MoveForce);
         }
         private void MoveRight()
         {
-            Debug.Log("Right");
-
             Rigidbody.AddForce(Vector3.right*MoveForce);
         }
 
         private void MoveForward()
         {
-            Debug.Log("Forward");
             Rigidbody.AddForce(Vector3.forward*MoveForce);
         }
 
         private void MoveBackward()
         {
-            Debug.Log("Back");
             Rigidbody.AddForce(Vector3.back*MoveForce);
+        }
+
+        private void RotateTurretRight()
+        {
+            Turret.Rotate(Vector3.up, RotationSpeed*Time.deltaTime);
+        }
+
+        private void RotateTurretLeft()
+        {
+            Turret.Rotate(Vector3.up, -RotationSpeed*Time.deltaTime);
+
         }
         private void Aim()
         {

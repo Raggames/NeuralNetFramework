@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 namespace NeuralNetwork
 {
-    public class NetOutput : MonoBehaviour
+    [Serializable]
+    public class NetOutput 
     {
         public string OutputName;
         public double OutputValue;

@@ -12,13 +12,6 @@ GameObject:
   - component: {fileID: 715012276351570982}
   - component: {fileID: 8445753462571084720}
   - component: {fileID: 715012276351570986}
-  - component: {fileID: 7461461311159912835}
-  - component: {fileID: 6789726859383251006}
-  - component: {fileID: 8365528410103509360}
-  - component: {fileID: 7465599738646344634}
-  - component: {fileID: 6403587161910487212}
-  - component: {fileID: 715012276351570981}
-  - component: {fileID: 1090992050446331637}
   - component: {fileID: 7285684424917741174}
   - component: {fileID: 6999779491917972843}
   m_Layer: 0
@@ -119,14 +112,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NeuralNet: {fileID: 715012276351570982}
   NetInput:
-  - {fileID: 7461461311159912835}
-  - {fileID: 6789726859383251006}
-  - {fileID: 8365528410103509360}
+  - InputName: 
+    InputValue: 0
+  - InputName: 
+    InputValue: 0
+  - InputName: 
+    InputValue: 0
   NetOutput:
-  - {fileID: 7465599738646344634}
-  - {fileID: 715012276351570981}
-  - {fileID: 1090992050446331637}
-  - {fileID: 6403587161910487212}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   Controller: {fileID: 715012276351570986}
   inputStreamOn: 0
 --- !u!114 &715012276351570986
@@ -147,6 +143,7 @@ MonoBehaviour:
   - 0
   enemies: []
   FireTimer: 0
+  SpawnZone: {x: 0, y: 0}
   FireRate: 1.5
   Rigidbody: {fileID: 0}
   Timer: 0
@@ -158,104 +155,7 @@ MonoBehaviour:
   GunEnd: {fileID: 4542964966041532037}
   isDead: 0
   Points: 0
---- !u!114 &7461461311159912835
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715012276351570980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputName: EnemyPositionX
-  InputValue: 0
---- !u!114 &6789726859383251006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715012276351570980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputName: EnemyPositionY
-  InputValue: 0
---- !u!114 &8365528410103509360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715012276351570980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07e4dc7a76f1474fb31d94f953c4ba78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputName: Shoot Delay
-  InputValue: 0
---- !u!114 &7465599738646344634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715012276351570980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OutputName: Left Or Right
-  OutputValue: 0
---- !u!114 &6403587161910487212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715012276351570980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OutputName: BackWard Or ForWard
-  OutputValue: 0
---- !u!114 &715012276351570981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715012276351570980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OutputName: Fire
-  OutputValue: 0
---- !u!114 &1090992050446331637
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715012276351570980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6da5f84bdd834c5f8af202f218652c55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OutputName: Aim
-  OutputValue: 0
+  combo: 0
 --- !u!54 &7285684424917741174
 Rigidbody:
   m_ObjectHideFlags: 0

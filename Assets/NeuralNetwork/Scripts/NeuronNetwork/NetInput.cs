@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace NeuralNetwork
 {
-    public class NetInput : MonoBehaviour
+    [Serializable]
+    public class NetInput 
     {
         public string InputName;
         public double InputValue;

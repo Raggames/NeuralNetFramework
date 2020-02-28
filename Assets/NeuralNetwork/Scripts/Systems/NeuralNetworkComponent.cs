@@ -7,21 +7,36 @@ namespace NeuralNetwork
     public class NeuralNetworkComponent : MonoBehaviour
     {
         public NeuralNet NeuralNet;
-        public NetInput[] NetInput; //use a net input to connect a dynamic value to his NeuralNetInstance 
-        public NetOutput[] NetOutput;
+        public List<NetInput> NetInput; //use a net input to connect a dynamic value to his NeuralNetInstance 
+        public List<NetOutput> NetOutput;
 
         public NeuralNetworkController Controller;
         public bool inputStreamOn;
         private void Start()
         {
             NeuralNet = GetComponent<NeuralNet>();
-            if (NetOutput.Length == 0)
+           
+            if (NetOutput.Count == 0)
             {
-                NetOutput = new NetOutput[NeuralNet.OutputLayerConstruct[0].NeuronCount];
+                for (int i = 0; i <  NeuralNet.OutputLayerConstruct[0].NeuronCount; i++)
+                {
+                    NetOutput.Add(new NetOutput()
+                    {
+                        OutputName = "Output" + i,
+                        OutputValue = 0,
+                    });
+                }
             }
-            if (NetInput.Length == 0)
+            if (NetInput.Count == 0)
             {
-                NetOutput = new NetOutput[NeuralNet.InputLayerConstruct[0].NeuronCount];
+                for (int i = 0; i <  NeuralNet.InputLayerConstruct[0].NeuronCount; i++)
+                {
+                    NetInput.Add(new NetInput()
+                    {
+                        InputName = "Input" + i,
+                        InputValue = 0,
+                    });
+                }
             }
         }
 
