@@ -1,11 +1,16 @@
-using System;
-using System.Numerics;
+
+
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+using NeuralNetwork.Utils;
+using Matrix = MathNet.Numerics.LinearAlgebra.Complex.Matrix;
+using Vector = MathNet.Numerics.LinearAlgebra.Complex.Vector;
 
 namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 {
     public class SoftmaxActivator : Activator
     {
-        public double[] CalculateDeriviative(double[] input, double[] error)
+        public double[] CalculateDerivative(double[] input, double[] error)
         {
             var jacobian = Matrix.Build.Dense(input.Length, input.Length);
             var vector = Vector.Build.Dense(error);
@@ -26,17 +31,17 @@ namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
             double sum = 0;
             for (int i = 0; i < input.Length; i++)
             {
-                sum += Math.Exp(input[i]);
+                sum += NeuralMathCompute.Exp(input[i]);
             }
 
             for (int i = 0; i < input.Length; i++)
             {
-                output[i] = Math.Exp(input[i]) / sum;
+                output[i] = NeuralMathCompute.Exp(input[i]) / sum;
             }
 
             return output;
         }
-
+       
         public override ActivatorType GetActivatorType()
         {
             return ActivatorType.Softmax;

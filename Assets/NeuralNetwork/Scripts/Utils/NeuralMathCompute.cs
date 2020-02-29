@@ -34,7 +34,11 @@ namespace NeuralNetwork.Utils
             }
             return softMax;
         }
-      
+
+        public static double Exp(double entry)
+        {
+            return Math.Exp(entry);
+        }
 
         public static double AverageFromList(List<double> entry)
         {

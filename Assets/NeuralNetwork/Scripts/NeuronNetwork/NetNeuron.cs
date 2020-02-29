@@ -34,36 +34,26 @@ namespace NeuralNetwork
         {
             if (NetLayer.ThisLayerType == NetLayer.LayerType.Input)
             {
-                if (CheckInputs(Inputs, 1))
-                {
-                    double computedValue = CalculateWeight(Inputs, PreviousNeurons, NetLayer.LayerBias);
+               double computedValue = CalculateWeight(Inputs, PreviousNeurons, NetLayer.LayerBias);
                     foreach (var neuron in ConnectedNeuronsList)
                     {
                        // neuron.Inputs.Add(computedValue);
                         //neuron.ComputeAndTransmit();
                         neuron.ReceiveInput(computedValue);
                     }
-                   
-                }
             }
             if (NetLayer.ThisLayerType == NetLayer.LayerType.Hidden)
             {
-                if (CheckInputs(Inputs, PreviousNeurons))
-                {
                     double computedValue = CalculateWeight(Inputs, PreviousNeurons, NetLayer.LayerBias);
                     foreach (var neuron in ConnectedNeuronsList)
                     {
                        neuron.ReceiveInput(computedValue);
                     }
-                }
             }
             if (NetLayer.ThisLayerType == NetLayer.LayerType.Output)
             {
-                if (CheckInputs(Inputs, PreviousNeurons))
-                {
                     double computedValue = CalculateOutput(Inputs, PreviousNeurons, NetLayer.LayerBias);
                     NetLayer.NeuralNet.ComputeNeuralNetOutput(computedValue, OutputIndex);
-                }
             }
             Inputs.Clear();
         }
@@ -76,14 +66,15 @@ namespace NeuralNetwork
         double CalculateOutput(List<double> input_values, int previousNeurons, double bias)
         {
             double computedOutput = 0;
-
+            for (int i = 0; i < previousNeurons; i++)
+            {
+                computedOutput += input_values[i] * Weights[i];
+            }
+            computedOutput += bias;
+            
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Sigmoid)
             {
-                for (int i = 0; i < previousNeurons; i++)
-                {
-                    computedOutput += input_values[i] * Weights[i];
-                }
-                computedOutput += bias;
+                
                 computedOutput = NeuralMathCompute.Sigmoid(computedOutput);
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Softmax)

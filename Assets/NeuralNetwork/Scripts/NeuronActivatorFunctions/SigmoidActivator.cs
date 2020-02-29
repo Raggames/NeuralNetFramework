@@ -2,9 +2,9 @@ using System;
 
 namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 {
-    public class LogisticActivator : Activator
+    public class SigmoidActivator : Activator
     {
-        public override double CalculateDeriviative(double input)
+        public override double CalculateDerivative(double input)
         {
             return input * (1 - input);
         }

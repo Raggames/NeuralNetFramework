@@ -9,7 +9,7 @@ namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
         {
             switch(type)
             {
-                case ActivatorType.Sigmoid: return new LogisticActivator();
+                case ActivatorType.Sigmoid: return new SigmoidActivator();
                 case ActivatorType.Tanh: return new TanhActivator();
                 case ActivatorType.Relu: return new ReluActivator();
                 default: throw new ArgumentException("ActivatorTypeIsNotSupported");

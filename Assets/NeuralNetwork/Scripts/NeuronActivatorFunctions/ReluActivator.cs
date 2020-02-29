@@ -5,7 +5,7 @@ namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 {
     public class ReluActivator : Activator
     {
-        public override double CalculateDeriviative(double input)
+        public override double CalculateDerivative(double input)
         {
             return input == 0 ? 0 : 1;
         }
