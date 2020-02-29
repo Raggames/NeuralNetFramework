@@ -17,6 +17,7 @@ namespace NeuralNetwork.Scripts.Data
         public double PerformanceCoefficient;
         public int DNAVersion;
 
+        public int autoSaveIncrement;
 
     }
 }

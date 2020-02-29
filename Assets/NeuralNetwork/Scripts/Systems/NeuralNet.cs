@@ -402,7 +402,7 @@ namespace NeuralNetwork
                 {
                     ComputeErrorParametersForIteration(paramatersForEvaluation);
                    // EvaluateInstanceForIteration(paramatersForEvaluation, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
-                
+                    
                 }
             }
             if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Execute)
@@ -413,7 +413,7 @@ namespace NeuralNetwork
             
         }
 
-        private void ComputeErrorParametersForIteration(
+        public void ComputeErrorParametersForIteration(
             List<NeuralNetworkPerformanceSolver> errorParameters)
         {
             // Compare Values to Actual DNA evaluation parameters values
@@ -431,53 +431,33 @@ namespace NeuralNetwork
             for (int i = 0; i < errorParameters.Count; i++)
             {
                 double perfIndOfi = 0;
-                
+                double actualDnaParam = actualDnaSolvers[i].EvaluationParameter;
                 if (errorParameters[i].ParameterType == EParameterType.ShouldBeInferior
                 ) // this instance value should be inferior as best dna value to consider it as better
                 {
-                    if (errorParameters[i].EvaluationParameter < actualDnaSolvers[i].EvaluationParameter)
-                    {
-                        perfIndOfi = actualDnaSolvers[i].EvaluationParameter -
+                        perfIndOfi = actualDnaParam -
                                      errorParameters[i].EvaluationParameter; // value will be positive
                         perfIndOfi *= errorParameters[i].EvaluationParameterWeight; // applying weight coeeficient
                         performanceIndex += perfIndOfi;
-                    }
-                    if (errorParameters[i].EvaluationParameter >= actualDnaSolvers[i].EvaluationParameter)
-                    {
-                        performanceIndex -= perfIndOfi;
-                    }
+                    
+                   
                 }
-
-                if (errorParameters[i].ParameterType == EParameterType.ShouldBeSuperior
-                ) // this instance value should be superior as best dna value to consider it as better
+                if (errorParameters[i].ParameterType == EParameterType.ShouldBeSuperior) // this instance value should be superior as best dna value to consider it as better
                 {
-                    if (errorParameters[i].EvaluationParameter > actualDnaSolvers[i].EvaluationParameter)
-                    {
                         perfIndOfi = errorParameters[i].EvaluationParameter -
-                                     actualDnaSolvers[i].EvaluationParameter;
+                                     actualDnaParam;
                         perfIndOfi *= errorParameters[i].EvaluationParameterWeight;
                         performanceIndex += perfIndOfi;
-                    }
-                    if (errorParameters[i].EvaluationParameter <= actualDnaSolvers[i].EvaluationParameter)
-                    {
-                        performanceIndex -= perfIndOfi;
-                    }
                 }
-
                 if (errorParameters[i].ParameterType == EParameterType.ConvergeToExpectedValue)
                 {
                     perfIndOfi = Mathf.Abs((float)errorParameters[i].EvaluationParameter - (float)errorParameters[i].ExpectedValue);
-                    if (perfIndOfi < Mathf.Abs((float) actualDnaSolvers[i].EvaluationParameter -
+                    if (perfIndOfi < Mathf.Abs((float) actualDnaParam -
                                                (float) errorParameters[i].ExpectedValue))
                     {
                         performanceIndex += perfIndOfi;
                     }
-                    else
-                    {
-                        performanceIndex -= perfIndOfi;
-                    }
                 }
-               
             }
             bool instanceHasBestDna = false;
             if (performanceIndex > 0)
