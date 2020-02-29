@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -261,8 +262,10 @@ namespace NeuralNetwork
         #region Evaluating
         public void OnInstanceHasEnd(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
         {
-           
-            NeuralNetworkEvaluate _instanceNetworkEvaluate = new NeuralNetworkEvaluate();
+            InstancesEndedCount += 1;
+            Debug.Log("InstCount = " + InstancesEndedCount);
+            bool hasComputedinstanceNetwork = false;
+                NeuralNetworkEvaluate _instanceNetworkEvaluate = new NeuralNetworkEvaluate();
                 NeuralNet.DNA dna = new NeuralNet.DNA();
                 dna = GetInstanceDNA(instanceNetwork);
                 _instanceNetworkEvaluate.InstanceWeights = new List<double>();
@@ -272,49 +275,79 @@ namespace NeuralNetwork
                 _instanceNetworkEvaluate.PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
                 _instanceNetworkEvaluate.PerformanceSolvers = solvers;
                 _instanceNetworkEvaluate.PerformanceCoefficient = computedCoeff;
-                Debug.Log("computed perf : " + computedCoeff);
                 if (instancehasBestDna)
                 {
+                    Debug.Log("computed perf : " + computedCoeff);
+
                     EvaluateUpgradedsDNAOfEpoch.Add(_instanceNetworkEvaluate);
                     DNAShouldUpgrade = true;
                 }
-             
-                
-            if (InstancesEndedCount >= NeuralNetworkInstances.Count-1)
-            {
-                var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateUpgradedsDNAOfEpoch);
-                Debug.Log("BestPerf" + best.PerformanceCoefficient);
-                if (NetData.HasData == false)
-                {
-                    ActualBestDNA = best;
-                    HandleAndDisplayResults(best.PerformanceSolvers);
-                    SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers, best.PerformanceCoefficient);
-                    DNAVersion = NetData.DNAVersion;
-                    Debug.Log("Net Data was empty, actual iteration best DNA was saved.");
-                    StartNextEpoch();
-                    //end of loop
-                }
-                if (DNAShouldUpgrade)
-                {
-                    Debug.Log("BestPerf" + best.PerformanceCoefficient + " DNA Upgrade");
-                    ManageTrainingRateOnFeedback(DNAShouldUpgrade, best.PerformanceCoefficient, ActualBestDNA.PerformanceCoefficient);
-                    ActualBestDNA = best;
-                    HandleAndDisplayResults(best.PerformanceSolvers);
-                    SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers, best.PerformanceCoefficient);
-                    DNAVersion = NetData.DNAVersion;
-                }
-                if(!DNAShouldUpgrade)
-                {
-                    Debug.Log(EvaluateUpgradedsDNAOfEpoch.Count + " evaluate dna count");
-                    ManageTrainingRateOnFeedback(DNAShouldUpgrade, _instanceNetworkEvaluate.PerformanceCoefficient, ActualBestDNA.PerformanceCoefficient);
 
+                if (InstancesEndedCount >= NeuralNetworkInstances.Count)
+                {
+                    if (NetData.HasData == false)
+                    {
+                        var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateUpgradedsDNAOfEpoch);
+                        Debug.Log("BestPerf" + best.PerformanceCoefficient);
+                        ActualBestDNA = best;
+                        HandleAndDisplayResults(best.PerformanceSolvers);
+                        SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers,
+                            best.PerformanceCoefficient);
+                        DNAVersion = NetData.DNAVersion;
+                        Debug.Log("Net Data was empty, actual iteration best DNA was saved.");
+                        hasComputedinstanceNetwork = true;
+                    }
+
+                    if (DNAShouldUpgrade)
+                    {
+                        var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateUpgradedsDNAOfEpoch);
+                        Debug.Log("BestPerf" + best.PerformanceCoefficient + " DNA Upgrade");
+                        ManageTrainingRateOnFeedback(DNAShouldUpgrade, best.PerformanceCoefficient,
+                            ActualBestDNA.PerformanceCoefficient);
+                        ActualBestDNA = best;
+                        HandleAndDisplayResults(best.PerformanceSolvers);
+                        SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers,
+                            best.PerformanceCoefficient);
+                        DNAVersion = NetData.DNAVersion;
+                        hasComputedinstanceNetwork = true;
+                    }
+
+                    if (!DNAShouldUpgrade)
+                    {
+                        var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateUpgradedsDNAOfEpoch);
+                        Debug.Log(EvaluateUpgradedsDNAOfEpoch.Count + " EvaluateDnaCount. DNA is no better. InstanceEnd = " + InstancesEndedCount);
+                        ManageTrainingRateOnFeedback(DNAShouldUpgrade, _instanceNetworkEvaluate.PerformanceCoefficient,
+                            ActualBestDNA.PerformanceCoefficient);
+                        hasComputedinstanceNetwork = true;
+                    }
+
+                    //InstancesEndedCount++;
+                    if (InstancesEndedCount >= NeuralNetworkInstances.Count && hasComputedinstanceNetwork)
+                    {
+                        Debug.Log("Starting Next Epoch : InstancesEndedCount = " + InstancesEndedCount);
+                        RestartEpochDelay();
+                    }
                 }
-                StartNextEpoch();
-               
-            }
-            InstancesEndedCount++;
-            
+
         }
+
+        private void RestartEpochDelay()
+        {
+            StartCoroutine(WaitInstancesEvaluationBeforeRestart(0.005f * NeuralNetworkInstances.Count));
+        }
+        
+        IEnumerator WaitInstancesEvaluationBeforeRestart(float time)
+        {
+            float timer = 0;
+            while (timer < time)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+                StartNextEpoch();
+            }
+        
+        }
+        
         private NeuralNetworkEvaluate ReturnBestCoefficientNetworkForThisIteration(List<NeuralNetworkEvaluate> evaluateDnaForInstancesIteration)
         {
             evaluateDnaForInstancesIteration.Sort(delegate(NeuralNetworkEvaluate evaluate, NeuralNetworkEvaluate networkEvaluate)
@@ -389,7 +422,7 @@ namespace NeuralNetwork
                     Debug.Log("ENDING TRAINING");
                 }
 
-                if (InstancesEndedCount >= NeuralNetworkInstances.Count-1)
+                if (InstancesEndedCount >= NeuralNetworkInstances.Count)
                 {
                     Debug.Log("StartNextEpoch" + InstancesEndedCount);
                     RestartInstances(NeuralNetworkInstances);
@@ -411,8 +444,8 @@ namespace NeuralNetwork
             }
             ForceInstanceDNAReset = false;
             DNAShouldUpgrade = false;
+            Debug.Log(InstancesEndedCount + "instanceEndedcount after RestartInstance();");
             InstancesEndedCount = 0;
-            Debug.Log(InstancesEndedCount + "instanceEndedcount");
             EvaluateUpgradedsDNAOfEpoch.Clear();
 
         }
@@ -436,7 +469,16 @@ namespace NeuralNetwork
                             averageCoefficient += previousIterationsCoefficients[i];
                         }
                         averageCoefficient /= previousIterationsCoefficients.Count;
-                        double downgradeDelta = ((actualCoeff - averageCoefficient)/averageCoefficient)*TrainingRateChangePurcentage/100;
+                        double downgradeDelta = 0;
+                        if (averageCoefficient > 0)
+                        {
+                            downgradeDelta = ((actualCoeff - averageCoefficient)/averageCoefficient)*TrainingRateChangePurcentage/100;
+
+                        }
+                        else
+                        {
+                            downgradeDelta = actualCoeff*TrainingRateChangePurcentage/100;
+                        }
                         actualTrainingRate += downgradeDelta;
                         Debug.Log("Training Rate Increased from " + TrainingRate + " to "+ actualTrainingRate);
                         TrainingRate = actualTrainingRate;

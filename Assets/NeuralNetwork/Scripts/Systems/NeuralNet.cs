@@ -42,7 +42,7 @@ namespace NeuralNetwork
         [SerializeField] private List<double> _cycleResults = new List<double>();
         private int _countResultsEntry;
         private int _outputCount;
-        
+       
         
         #region Initialisation
         private void CreateNetwork( List<Layer> input, List<Layer> hiddens,  List<Layer> output)
@@ -442,7 +442,7 @@ namespace NeuralNetwork
                         perfIndOfi *= errorParameters[i].EvaluationParameterWeight; // applying weight coeeficient
                         performanceIndex += perfIndOfi;
                     }
-                    else
+                    if (errorParameters[i].EvaluationParameter >= actualDnaSolvers[i].EvaluationParameter)
                     {
                         performanceIndex -= perfIndOfi;
                     }
@@ -458,7 +458,7 @@ namespace NeuralNetwork
                         perfIndOfi *= errorParameters[i].EvaluationParameterWeight;
                         performanceIndex += perfIndOfi;
                     }
-                    else
+                    if (errorParameters[i].EvaluationParameter <= actualDnaSolvers[i].EvaluationParameter)
                     {
                         performanceIndex -= perfIndOfi;
                     }
@@ -479,7 +479,6 @@ namespace NeuralNetwork
                 }
                
             }
-
             bool instanceHasBestDna = false;
             if (performanceIndex > 0)
             {
@@ -489,6 +488,7 @@ namespace NeuralNetwork
             {
                 Debug.Log("Performance index is inferior than 0.");
             }
+            Debug.Log("NeuralNet. Instance Ending");
             NeuralNetworkManager.OnInstanceHasEnd(this, performanceIndex, errorParameters, instanceHasBestDna);
 
         }

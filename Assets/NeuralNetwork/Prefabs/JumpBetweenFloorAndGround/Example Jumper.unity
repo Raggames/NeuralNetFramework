@@ -579,7 +579,7 @@ MonoBehaviour:
   TrainingRate: 5
   MaxTrainingRate: 5
   Epochs: 200
-  TrainingBatchSize: 20
+  TrainingBatchSize: 21
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 6.1
   TrainingRateEvolution: 3
