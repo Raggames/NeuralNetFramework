@@ -28,7 +28,6 @@ namespace NeuralNetwork
         
         [Header("Networks Management")] 
         public ENetworkFunction NetworkFunction;
-
         
         public ENetworkMode NetworkMode;
         public enum ENetworkMode
@@ -36,24 +35,17 @@ namespace NeuralNetwork
             Train,
             Execute,
         }
-
-        public EForceRandomization ForceGeneticsRandomization;
-        public enum EForceRandomization
+        public ELearningLogic LearningLogic;
+        public enum ELearningLogic
         {
-            Yes,
-            No,
+            Genetic,
+            BackPropagate,
         }
-
-        public EAbsoluteValues AbsoluteValues;
-        public enum EAbsoluteValues
-        {
-            Yes,
-            No,
-        }
+       
         public enum ENetworkFunction
         {
-            ComputeData,
-            ControlEntity,
+            LoopOnOutputGetAllValues,
+            LoopOnControllerInstanceEnd,
         }
 
        
@@ -79,14 +71,13 @@ namespace NeuralNetwork
             Override,
             New,
         }
-         
-        [Header("Training Options")]
+        public int Epochs;//Iterations of training
+        public int TrainingBatchSize;//number of instances trained at the same time
+        
+        [Header("Training : Genetic")]
         
         public double TrainingRate;//gradient d'update des weights
         public double MaxTrainingRate;
-        public int Epochs;//Iterations of training
-        public int TrainingBatchSize;//number of instances trained at the same time
-
         public bool AdjustTrainingRateAutomatically;
         [Range(0.01f, 50f)] public float TrainingRateChangePurcentage; //if NeuralNetwork can't upgrade for n = "TrainingRateEvolution", decrease Training Rate by this value
         public int TrainingRateEvolution;
@@ -218,13 +209,13 @@ namespace NeuralNetwork
             }
             if (NewTraining)
             {
-                if (NetworkFunction == ENetworkFunction.ComputeData)
+                if (NetworkFunction == ENetworkFunction.LoopOnOutputGetAllValues)
                 {
                     TrainingBestResults = new double[NeuralNetworkInstances[0].OutputLayer.NeuronsInLayer.Count];
                     //InternalParameters = new double[NeuralNetworkInstances[0].OutputLayer.NeuronsInLayer.Count];
                 }
 
-                if (NetworkFunction == ENetworkFunction.ControlEntity)
+                if (NetworkFunction == ENetworkFunction.LoopOnControllerInstanceEnd)
                 {
                     TrainingBestResults = new double[NeuralNetworkInstances[0].NeuralNetworkComponent.Controller.EvaluationParameters.Count];
                 }

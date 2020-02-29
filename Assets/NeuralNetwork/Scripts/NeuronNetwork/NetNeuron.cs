@@ -53,10 +53,7 @@ namespace NeuralNetwork
                     double computedValue = CalculateWeight(Inputs, PreviousNeurons, NetLayer.LayerBias);
                     foreach (var neuron in ConnectedNeuronsList)
                     {
-                        //neuron.Inputs.Add(computedValue);
-                       // neuron.ComputeAndTransmit();
                        neuron.ReceiveInput(computedValue);
-
                     }
                 }
             }
@@ -79,38 +76,69 @@ namespace NeuralNetwork
         double CalculateOutput(List<double> input_values, int previousNeurons, double bias)
         {
             double computedOutput = 0;
-            for (int i = 0; i < previousNeurons; i++)
-            {
-                computedOutput += input_values[i] * Weights[i];
-            }
-            computedOutput += bias;
+
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Sigmoid)
             {
+                for (int i = 0; i < previousNeurons; i++)
+                {
+                    computedOutput += input_values[i] * Weights[i];
+                }
+                computedOutput += bias;
                 computedOutput = NeuralMathCompute.Sigmoid(computedOutput);
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Softmax)
             {
-                computedOutput = NeuralMathCompute.Softmax(computedOutput);
+                for (int i = 0; i < previousNeurons; i++)
+                {
+                    computedOutput += input_values[i] * Weights[i];
+                }
+                computedOutput += bias;
+                
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Linear)
             {
+                for (int i = 0; i < previousNeurons; i++)
+                {
+                    computedOutput += input_values[i] * Weights[i];
+                }
+                computedOutput += bias;
                 computedOutput = NeuralMathCompute.Linear(computedOutput);
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Boolean)
             {
+                for (int i = 0; i < previousNeurons; i++)
+                {
+                    computedOutput += input_values[i] * Weights[i];
+                }
+                computedOutput += bias;
                 computedOutput = NeuralMathCompute.Boolean(computedOutput);
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Average)
             {
+                for (int i = 0; i < previousNeurons; i++)
+                {
+                    computedOutput += input_values[i] * Weights[i];
+                }
+                computedOutput += bias;
                 computedOutput /= (previousNeurons);
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.AverageForcePositive)
             {
+                for (int i = 0; i < previousNeurons; i++)
+                {
+                    computedOutput += input_values[i] * Weights[i];
+                }
+                computedOutput += bias;
                 computedOutput /= previousNeurons;
                 if (computedOutput < 0) computedOutput = -computedOutput;
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Tanh)
             {
+                for (int i = 0; i < previousNeurons; i++)
+                {
+                    computedOutput += input_values[i] * Weights[i];
+                }
+                computedOutput += bias;
                 computedOutput = Math.Tanh(computedOutput);
             }
             return computedOutput;
@@ -123,14 +151,13 @@ namespace NeuralNetwork
                 computedValue += input_values[i] * Weights[i];
             }
             computedValue += bias;
-            //
+            if (NetLayer.ActivationFunction == NetLayer.EActivationFunctionType.Identity)
+            {
+                
+            }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Sigmoid)
             {
                 computedValue = NeuralMathCompute.Sigmoid(computedValue);
-            }
-            if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Softmax)
-            {
-                computedValue = NeuralMathCompute.Softmax(computedValue);
             }
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Linear)
             {
@@ -149,7 +176,6 @@ namespace NeuralNetwork
                 computedValue /= previousNeurons;
                 if (computedValue < 0) computedValue = -computedValue;
             }
-
             if (NetLayer.ActivationFunction == NeuralNetwork.NetLayer.EActivationFunctionType.Tanh)
             {
                 computedValue = Math.Tanh(computedValue);

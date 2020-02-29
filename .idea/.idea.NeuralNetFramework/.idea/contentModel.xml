@@ -35,6 +35,14 @@
               <e p="NeuralNetworkPerformanceSolver.cs" t="Include" />
               <e p="NeuralNetworkSerializer.cs" t="Include" />
             </e>
+            <e p="NeuronActivatorFunctions" t="Include">
+              <e p="Activator.cs" t="Include" />
+              <e p="ActivatorFactory.cs" t="Include" />
+              <e p="LogisticActivator.cs" t="Include" />
+              <e p="ReluActivator.cs" t="Include" />
+              <e p="SoftmaxActivator.cs" t="Include" />
+              <e p="TanhActivator.cs" t="Include" />
+            </e>
             <e p="NeuronNetwork" t="Include">
               <e p="NetInput.cs" t="Include" />
               <e p="NetLayer.cs" t="Include" />

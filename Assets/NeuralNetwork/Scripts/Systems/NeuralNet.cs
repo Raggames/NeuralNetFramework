@@ -188,12 +188,12 @@ namespace NeuralNetwork
             if (NeuralNetworkManager.NetworkMode == NeuralNetwork.NeuralNetworkManager.ENetworkMode.Train)
             {
                 if(NeuralNetworkManager.NewTraining) SetDNARandom(NeuralNetConnections);
-                if(!NeuralNetworkManager.NewTraining) SetDNAFromData(_NetData, NeuralNetworkManager.ForceGeneticsRandomization, NeuralNetworkManager.TrainingRate);
+                if(!NeuralNetworkManager.NewTraining) SetDNAFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
             }
 
             if (NeuralNetworkManager.NetworkMode == NeuralNetwork.NeuralNetworkManager.ENetworkMode.Execute)
             {
-                SetDNAFromData(_NetData, NeuralNetworkManager.EForceRandomization.No, NeuralNetworkManager.TrainingRate);
+                SetDNAFromData(_NetData, NeuralNetworkManager.ELearningLogic.BackPropagate, NeuralNetworkManager.TrainingRate);
             }
             StartInstance(eNetworkMode);
            
@@ -275,12 +275,12 @@ namespace NeuralNetwork
 
             InstanceDNA = randomDna;
         }
-        private void SetDNAFromData(NetData netData, NeuralNetworkManager.EForceRandomization forceRandomization, double trainingRate)
+        private void SetDNAFromData(NetData netData, NeuralNetworkManager.ELearningLogic learningLogic, double trainingRate)
         {
             if (netData.HasData)
             {
               
-            if (forceRandomization == NeuralNetworkManager.EForceRandomization.No)
+            if (learningLogic == NeuralNetworkManager.ELearningLogic.BackPropagate)
             {
                 List<double> dataWeights = new List<double>();
                 List<double> dataBiases = new List<double>();
@@ -325,7 +325,7 @@ namespace NeuralNetwork
                 OutputLayer.LayerBias = dataBiases[biaseIndex];
             }
 
-            if (forceRandomization == NeuralNetworkManager.EForceRandomization.Yes)
+            if (learningLogic == NeuralNetworkManager.ELearningLogic.Genetic)
             {
                 List<double> dataWeights = new List<double>();
                 List<double> dataBiases = new List<double>();
@@ -398,7 +398,7 @@ namespace NeuralNetwork
             if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Train)
             {
                 if (NeuralNetworkManager.NetworkFunction ==
-                    NeuralNetwork.NeuralNetworkManager.ENetworkFunction.ControlEntity)
+                    NeuralNetwork.NeuralNetworkManager.ENetworkFunction.LoopOnControllerInstanceEnd)
                 {
                     ComputeErrorParametersForIteration(paramatersForEvaluation);
                    // EvaluateInstanceForIteration(paramatersForEvaluation, NeuralNetworkManager.NetworkFunction, NeuralNetworkManager.AbsoluteValues);
@@ -482,10 +482,16 @@ namespace NeuralNetwork
             }
             else
             {
+                if (OutputLayer.ActivationFunction == NetLayer.EActivationFunctionType.Softmax)
+                {
+                    var resultToArray = _cycleResults.ToArray();
+                    var v = NeuralMathCompute.Softmax(resultToArray);
+                    _cycleResults = v.ToList();
+                }
                 ValuesToNetOutput(_cycleResults);
                 if (NeuralNetworkManager.NetworkMode == NeuralNetworkManager.ENetworkMode.Train)
                 {
-                    if (this.NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.ComputeData)
+                    if (this.NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.LoopOnOutputGetAllValues)
                     {
                         List<NeuralNetworkPerformanceSolver> solvers = new List<NeuralNetworkPerformanceSolver>();
                         for (int i = 0; i < _cycleResults.Count; i++)
@@ -518,25 +524,25 @@ namespace NeuralNetwork
         #region InstanceManaging
         public void RestartInstance(NeuralNetworkManager.ENetworkMode eNetworkMode, NetData netData, bool DNAHasUpgrade, bool forceInstanceDNAReset)
         {
-            if (NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.ComputeData)
+            if (NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.LoopOnOutputGetAllValues)
             {
                 if (eNetworkMode == NeuralNetworkManager.ENetworkMode.Train)
                 {
                     if (DNAHasUpgrade || forceInstanceDNAReset)
                     {
-                        SetDNAFromData(netData, NeuralNetworkManager.ForceGeneticsRandomization, NeuralNetworkManager.TrainingRate);
+                        SetDNAFromData(netData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
                         Debug.Log("Set DNA from Data");
                     }
                 }
             }
 
-            if (NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.ControlEntity)
+            if (NeuralNetworkManager.NetworkFunction == NeuralNetworkManager.ENetworkFunction.LoopOnControllerInstanceEnd)
             {
                 if (eNetworkMode == NeuralNetworkManager.ENetworkMode.Train)
                 {
                     if (DNAHasUpgrade || forceInstanceDNAReset)
                     {
-                        SetDNAFromData(netData, NeuralNetworkManager.ForceGeneticsRandomization, NeuralNetworkManager.TrainingRate);
+                        SetDNAFromData(netData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
                         Debug.Log("Set DNA from Data");
                     }
                 }
