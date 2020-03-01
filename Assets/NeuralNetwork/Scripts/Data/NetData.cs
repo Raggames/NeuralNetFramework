@@ -11,9 +11,8 @@ namespace NeuralNetwork.Scripts.Data
         public bool NewTraining;
         public string NeuralNetworkName;
         public double StartTrainingRate;
-       
-        public List<double> InstanceWeights = new List<double>();
-        public List<double> InstanceBiases = new List<double>();
+
+        public double[] InstanceWeights;
 
         public List<NeuralNetworkPerformanceSolver> PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
         public double PerformanceCoefficient;

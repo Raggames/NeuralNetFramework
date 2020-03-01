@@ -34,22 +34,21 @@ namespace NeuralNetwork
         private double[] inputs;
         
         private double[][] i_hWeights; // First Hidden Layer : input to Hidden1
-        private List<double[][]> h_hWeights = new List<double[][]>(); //Middle Hidden Layer    // Last Hidden Layer : hidden to output
+        private List<double[][]> L_h_hWeights = new List<double[][]>(); //Middle Hidden Layer    // Last Hidden Layer : hidden to output
         private List<double[]> h_Biases = new List<double[]>(); 
         private List<double[]> h_Outputs = new List<double[]>();
-      
         private double[] o_Biases;
 
         private double[] outputs;
 
         // Gradients de Back-Propagation 
         private double[] oGrads; // output gradients for back-propagation
-        private double[] hGrads; // hidden gradients for back-propagation
+        private List<double[]> hGrads; // hidden gradients for back-propagation
 
         // Momentums de Back-Propagation
-        private double[][] ihPrevWeightsDelta;  
+        private List<double[][]> hPrevWeightsDelta = new List<double[][]>();  
         private List<double[]> hPrevBiasesDelta = new List<double[]>();
-        private double[][] hoPrevWeightsDelta;
+        private double[][] oPrevWeightsDelta;
         private double[] oPrevBiasesDelta;
         
         [HideInInspector] public NetData _NetData;
@@ -66,7 +65,7 @@ namespace NeuralNetwork
         public List<double> OutputToExternal = new List<double>();
         
         #region Initialisation
-        public void InitializeNeuralNetwork(NeuralNetworkManager.ERunningMode eRunningMode, int epochs = 0, int instanceID = 0, NeuralNetworkManager neuralNetworkManager = null, NetData netData = null)
+        public void InitializeTraining(NeuralNetworkManager.ERunningMode eRunningMode, NeuralNetworkManager neuralNetworkManager,  int epochs = 0, int instanceID = 0, NetData netData = null)
         {
             Debug.Log("Starting Initialisation");
             _NetData = netData;
@@ -87,16 +86,19 @@ namespace NeuralNetwork
                    OutputToExternal.Add(0);
                 }
             }
-            if (NeuralNetworkManager.runningMode == NeuralNetwork.NeuralNetworkManager.ERunningMode.Train && NeuralNetworkManager.NewTraining)
+            // Setting Up Network For Training
+            if (NeuralNetworkManager.runningMode == NeuralNetwork.NeuralNetworkManager.ERunningMode.Train)
             {
                if(NeuralNetworkManager.NewTraining) InitializeNetwork();
                if(!NeuralNetworkManager.NewTraining) SetWeightsAndBiasesFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
 
             }
+            // Setting Up Network For Execution
             if (NeuralNetworkManager.runningMode == NeuralNetwork.NeuralNetworkManager.ERunningMode.Execute)
             {
                 SetWeightsAndBiasesFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
             }
+            // Setting Up This Running Mode
             SetInstanceRunningMode(eRunningMode);
            
         }
@@ -105,33 +107,81 @@ namespace NeuralNetwork
         #region Network_Management
         private void InitializeNetwork()
         {
+            // Retrieving Network Construction Values And Adding 'X' Hidden Layers =====================================
             numInput = inputLayerConstructor.Neurons;
             for (int i = 0; i < hiddenLayersConstructor.Count; i++)
             {
                 numHidden.Add(hiddenLayersConstructor[i].Neurons);
             }
             numOutput = outputLayerConstructor.Neurons;
-            
+            // Initialize Arrays And Matrix ============================================================================
             inputs = new double[inputLayerConstructor.Neurons];
             i_hWeights = MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[0].Neurons);
             for (int i = 0; i < hiddenLayersConstructor.Count; i++)
             {
-                if (hiddenLayersConstructor.Count == 1 || hiddenLayersConstructor.Count > 1 && i == hiddenLayersConstructor.Count - 1)
+                // If Network contains only one layer
+                if (hiddenLayersConstructor.Count == 1)
                 {
-                    h_hWeights.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons, outputLayerConstructor.Neurons));
+                    L_h_hWeights.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons, outputLayerConstructor.Neurons));
+                    h_Biases.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                    h_Outputs.Add(new double[outputLayerConstructor.Neurons]);
                     o_Biases = new double[outputLayerConstructor.Neurons];
                     outputs = new double[outputLayerConstructor.Neurons];
+                    // Gradients
+                    hGrads.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                    oGrads = new double[outputLayerConstructor.Neurons];
+                    // Weights Delta
+                    hPrevWeightsDelta.Add(MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[i].Neurons));
+                    hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                    oPrevWeightsDelta = MakeMatrix(hiddenLayersConstructor[i].Neurons, outputLayerConstructor.Neurons);
+                    oPrevBiasesDelta = new double[outputLayerConstructor.Neurons];
                 }
-                if (hiddenLayersConstructor.Count > 1 && i == hiddenLayersConstructor.Count - 2)
+                // If Network Contains more than one layer 
+                if (hiddenLayersConstructor.Count > 1)
                 {
-                    h_hWeights.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons, hiddenLayersConstructor[i + 1].Neurons));
-                    h_Biases.Add(new double[hiddenLayersConstructor[i+1].Neurons]);
-                    h_Outputs.Add(new double[hiddenLayersConstructor[i+1].Neurons]);
+                    if (i == 0)
+                    {
+                        L_h_hWeights.Add(MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[i].Neurons));
+                        h_Biases.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                        h_Outputs.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                        // Gradients
+                        hGrads.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                        // Weights Delta
+                        hPrevWeightsDelta.Add(MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[i].Neurons));
+                        hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                    }
+                    // => Setting up hidden layer i neurons and hidden layer i+1 neurons and biases
+                    if (i >= 0 && i < hiddenLayersConstructor.Count-1)
+                    {
+                        L_h_hWeights.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons, hiddenLayersConstructor[i + 1].Neurons));
+                        h_Biases.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                        h_Outputs.Add(new double[hiddenLayersConstructor[i+1].Neurons]);
+                        // Gradients
+                        hGrads.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                        // Weights Delta
+                        hPrevWeightsDelta.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons, hiddenLayersConstructor[i+1].Neurons));
+                        hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                    }
+                    // => Setting up last hidden layer neurons and output layer neurons and biases
+                    if (i == hiddenLayersConstructor.Count - 1)
+                    {
+                        L_h_hWeights.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons, outputLayerConstructor.Neurons));
+                        o_Biases = new double[outputLayerConstructor.Neurons];
+                        h_Outputs.Add(new double[outputLayerConstructor.Neurons]);
+                        outputs = new double[outputLayerConstructor.Neurons];
+                        // Gradients
+                        hGrads.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                        oGrads = new double[outputLayerConstructor.Neurons];
+                        // Weights Delta
+                        hPrevWeightsDelta.Add(MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[i].Neurons));
+                        hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[i].Neurons]);
+                        oPrevWeightsDelta = MakeMatrix(hiddenLayersConstructor[i].Neurons, outputLayerConstructor.Neurons);
+                        oPrevBiasesDelta = new double[outputLayerConstructor.Neurons];
+                    }   
                 }
             }
-            o_Biases = new double[outputLayerConstructor.Neurons];
-            outputs = new double[outputLayerConstructor.Neurons];
-            InitializeWeights(WeightsCount());
+            // Initialize Weights ======================================================================================
+            //  InitializeWeights(WeightsCount());
         }
         private static double[][] MakeMatrix(int rows, int cols) // helper for ctor
         {
@@ -153,11 +203,11 @@ namespace NeuralNetwork
             }
             if (hiddensCount > 1)
             {
-                for (int i = 0; i < hiddensCount-2; i++)
+                for (int i = 0; i < hiddensCount; i++)
                 {
-                    nbr += hiddenLayersConstructor[i].Neurons * hiddenLayersConstructor[i + 1].Neurons;
+                    if(i <= hiddensCount-2) nbr += hiddenLayersConstructor[i].Neurons * hiddenLayersConstructor[i + 1].Neurons;
+                    if(i == hiddensCount -1) nbr += hiddenLayersConstructor[i].Neurons * outputLayerConstructor.Neurons;
                 }
-                nbr += hiddenLayersConstructor[hiddensCount - 2].Neurons * outputLayerConstructor.Neurons;
             }
             nbr += hiddenLayersConstructor[hiddensCount - 1].Neurons + outputLayerConstructor.Neurons;
             return nbr;
@@ -172,12 +222,12 @@ namespace NeuralNetwork
                 initialWeights[i] = (hi - lo) * random.NextDouble() + lo;
             SetWeightsAndBiases(initialWeights);
         }
-        private void SetWeightsAndBiases(double[] weights, double[] biases = null)
+        private void SetWeightsAndBiases(double[] weights)
         {
             int k = 0;
             for (int i = 0; i < numInput; i++)
             {
-                for (int j = 0; j < numHidden[0]; j++)
+                for (int j = 0; j < numHidden[0]; j++) // layer I_h
                 {
                     i_hWeights[i][j] = weights[k++];
                 }
@@ -186,29 +236,89 @@ namespace NeuralNetwork
             {
                 h_Biases[0][i] = weights[k++];
             }
+            // MULTIPLE HIDDENS ========================================================================================
+            if (numHidden.Count > 1) 
+            {
+                for (int i = 0; i < numHidden.Count; i++) //Layers H_h
+                {
+                    for (int j = 0; j < numHidden[i]; j++) // ITERATE IN HIDDEN LAYERS LIST
+                    {
+                        if (j < numHidden[i - 1]) //
+                        {
+                            for (int l = 0; l < numHidden[i+1]; l++)
+                            {
+                                L_h_hWeights[i][j][l] = weights[k++];
+                            }
+                            
+                            h_Biases[i+1][j] = weights[k++]; //h_biase[0] has been set
+
+                        }
+                        if (j == numHidden[i-1]) // last hidden layer
+                        {
+                            for (int l = 0; l < numOutput; l++)
+                            {
+                                L_h_hWeights[i][j][l] = weights[k++];
+                            }
+                            o_Biases[j] = weights[k++];
+                        }
+                    }
+                }
+                for (int i = 0; i < numHidden[numHidden.Count-1]; i++) // last hidden layer neuron count 
+                {
+                    for (int j = 0; j < numOutput; j++) //output neuron count
+                    {
+                        L_h_hWeights[numHidden[numHidden.Count-1]][i][j] = weights[k++]; //last item of HiddenLayer
+                    }
+                }
+            }
+            // ONE HIDDEN ==============================================================================================
+            if (numHidden.Count == 1)
+            {
+                for (int i = 0; i < numHidden[0]; i++)
+                {
+                    for (int j = 0; j < numOutput; j++)
+                    {
+                        L_h_hWeights[0][i][j] = weights[k++];
+                    }
+                }
+                for (int i = 0; i < numOutput; i++)
+                {
+                    o_Biases[i] = weights[k++];
+                }
+            }
+           
         }
-        
-        private double[] GetWeightsAndBiases(NeuralNet instanceNetwork, out List<double> _weights, out List<double> _biases)
+        public double[] GetWeightsAndBiases()
         {
-            double[] result = new double[numWeights];
+            double[] result = new double[WeightsNumber];
             int k = 0;
-            for (int i = 0; i < ihWeights.Length; ++i)
-            for (int j = 0; j < ihWeights[0].Length; ++j)
-                result[k++] = ihWeights[i][j];
-            for (int i = 0; i < hBiases.Length; ++i)
-                result[k++] = hBiases[i];
-            for (int i = 0; i < hoWeights.Length; ++i)
-            for (int j = 0; j < hoWeights[0].Length; ++j)
-                result[k++] = hoWeights[i][j];
-            for (int i = 0; i < oBiases.Length; ++i)
-                result[k++] = oBiases[i];
+            for (int i = 0; i < i_hWeights.Length; ++i)
+            {
+                for (int j = 0; j < i_hWeights[0].Length; ++j)
+                    result[k++] = i_hWeights[i][j];
+            }
+            for (int i = 0; i < h_Biases[0].Length; ++i)
+                result[k++] =  h_Biases[0][i];
+            //--------------------------------------------
+            for (int i = 0; i < L_h_hWeights.Count; ++i)
+            {
+                for (int j = 0; j < L_h_hWeights[i].Length; j++)
+                {
+                    for (int l = 0; l < L_h_hWeights[i][j].Length; l++)
+                    {
+                        result[k++] = L_h_hWeights[i][j][l];
+                    }
+                    result[k++] = h_Biases[i][j];
+                }
+            }
             return result;
-            return weights;
         }
         
 
-        private double[] ExecuteSequence(double[] inputs)
+        private double[] ExecuteSequence(double[] xValues)
         {
+            if (xValues.Length != numInput)
+                throw new Exception("Bad xValues array length");
             double[] outputs = new double[OutputToExternal.Count];
             double computedOutput = 0;
             for (int i = 0; i < inputs.Length; i++)
@@ -225,7 +335,16 @@ namespace NeuralNetwork
 
         
         
-        
+        private double[] RandomizeWeightsAndBiasesFromData(List<double> dataWeights, double TrainingRate)
+        {
+            random = new Random(0);
+            double[] randomizedWeights = new  double[dataWeights.Count];
+            double lo = TrainingRate;
+            double hi = TrainingRate;
+            for (int i = 0; i < randomizedWeights.Length; ++i)
+                randomizedWeights[i] = (hi - lo) * random.NextDouble() + lo;
+            return randomizedWeights;
+        }
         
         
         
@@ -239,51 +358,14 @@ namespace NeuralNetwork
         {
             if (netData.HasData)
             {
-                SetWeightsAndBiases(netData.InstanceWeights, netData.InstanceBiases);
+                SetWeightsAndBiases(netData.InstanceWeights.ToArray());
             }
             else
             {
-                InitializeWeights();
+                InitializeWeights(WeightsNumber);
             }
 
         }
-        
-        public void Genetic_GetInstanceWeightsAndBiases(NeuralNet instanceNetwork, out List<double> _weights, out List<double> _biases)
-        {
-            List<double> biases = new List<double>();
-            List<double> weights = new List<double>();
-            for (int i = 0; i < instanceNetwork.inputLayerConstructor.NeuronsInLayer.Count; i++)
-            {
-                weights.Add(instanceNetwork.inputLayerConstructor.NeuronsInLayer[i].Weights[0]);
-            }
-            biases.Add(instanceNetwork.inputLayerConstructor.LayerBias);
-            for (int i = 0; i < instanceNetwork.hiddenLayersConstructor.Count; i++)
-            {
-                for (int j = 0; j < instanceNetwork.hiddenLayersConstructor[i].NeuronsInLayer.Count; j++)
-                {
-                    for (int k = 0; k < instanceNetwork.hiddenLayersConstructor[i].NeuronsInLayer[j].PreviousNeurons; k++)
-                    {
-                        weights.Add(instanceNetwork.hiddenLayersConstructor[i].NeuronsInLayer[j].Weights[k]);
-                    }
-                }
-                biases.Add(instanceNetwork.hiddenLayersConstructor[i].LayerBias);
-            }
-            
-            for (int j = 0; j < instanceNetwork.outputLayerConstructor.NeuronsInLayer.Count; j++)
-            {
-                for (int k = 0; k < instanceNetwork.outputLayerConstructor.NeuronsInLayer[j].PreviousNeurons; k++)
-                {
-                    weights.Add(instanceNetwork.outputLayerConstructor.NeuronsInLayer[j].Weights[k]);
-                }
-            }
-            biases.Add(instanceNetwork.outputLayerConstructor.LayerBias);
-            
-            _weights = weights;
-            _biases = biases;
-        } 
-        
-       
-       
         public void Genetic_OnInstanceEnd(List<NeuralNetworkPerformanceSolver> paramatersForEvaluation) // Triggers Only With Genetic Learning
         {
             if (NeuralNetworkManager.runningMode == NeuralNetworkManager.ERunningMode.Train)
@@ -296,7 +378,6 @@ namespace NeuralNetwork
             }
             
         }
-
         public void Genetic_ComputePerformanceIndex(
             List<NeuralNetworkPerformanceSolver> errorParameters)
         {
@@ -372,17 +453,7 @@ namespace NeuralNetwork
                 Controller.InstanceReset();
             }
         }
-        private List<double> RandomizeWeightsAndBiasesFromData(List<double> dataWeights, double TrainingRate)
-        {
-            List<double> randomized = new List<double>();
-            for (int i = 0; i < dataWeights.Count; i++)
-            {
-                var result = Random.Range((float) dataWeights[i] - (float) TrainingRate, (float) dataWeights[i] + (float) TrainingRate);
-                randomized.Add(result);
-            }
-            
-            return randomized;
-        }
+        
         #endregion
         
         #region BackPropagation

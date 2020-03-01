@@ -146,7 +146,6 @@ namespace NeuralNetwork
                 NewTraining = NetData.NewTraining;
                 ActualBestDNA.PerformanceSolvers = NetData.PerformanceSolvers;
                 ActualBestDNA.InstanceWeights = NetData.InstanceWeights;
-                ActualBestDNA.InstanceBiases = NetData.InstanceWeights;
                 ActualBestDNA.PerformanceCoefficient = NetData.PerformanceCoefficient;
                 TrainingRate = NetData.NetworkTrainingRate;
                 TrainingBestResults = new double[ActualBestDNA.PerformanceSolvers.Count];
@@ -161,8 +160,6 @@ namespace NeuralNetwork
             netData.HasData = false;
             netData.NeuralNetworkName = "";
             netData.DNAVersion = 0;
-            netData.InstanceWeights.Clear();
-            netData.InstanceBiases.Clear();
             netData.PerformanceCoefficient = 0;
             netData.PerformanceSolvers.Clear();
         }
@@ -172,7 +169,6 @@ namespace NeuralNetwork
             Debug.Log("Loaded from Json");
             ActualBestDNA.PerformanceSolvers = NetData.PerformanceSolvers;
             ActualBestDNA.InstanceWeights = NetData.InstanceWeights;
-            ActualBestDNA.InstanceBiases = NetData.InstanceBiases;
             ActualBestDNA.PerformanceCoefficient = NetData.PerformanceCoefficient;
             TrainingRate = NetData.NetworkTrainingRate;
             TrainingBestResults = new double[ActualBestDNA.PerformanceSolvers.Count];
@@ -192,7 +188,7 @@ namespace NeuralNetwork
                 GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
                 NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
                 NeuralNetworkInstances.Add(_instance);
-                _instance.InitializeNeuralNetwork(eRunningMode, epochs, _instanceID, this, NetData);
+                _instance.InitializeTraining(eRunningMode,this,  epochs, _instanceID, NetData);
                _instanceID++;
             }
             if (NewTraining)
@@ -211,7 +207,7 @@ namespace NeuralNetwork
                 GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
                 NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
                 NeuralNetworkInstances.Add(_instance);
-                _instance.InitializeNeuralNetwork(eRunningMode, 1, _instanceID, this, NetData);
+                _instance.InitializeTraining(eRunningMode, this, 1, _instanceID, NetData);
                 _instanceID++;
             }
             
@@ -230,9 +226,8 @@ namespace NeuralNetwork
         {
             bool hasComputedinstanceNetwork = false;
                 NetData instDna = new NetData();
-                instDna.InstanceWeights = new List<double>();
-                instDna.InstanceBiases = new List<double>();
-                instance.Genetic_GetInstanceWeightsAndBiases(instance, out instDna.InstanceWeights, out instDna.InstanceBiases);
+                instDna.InstanceWeights = new double[instance.WeightsNumber];
+                instDna.InstanceWeights = instance.GetWeightsAndBiases();
                 instDna.PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
                 for (int i = 0; i < solvers.Count; i++)
                 {
@@ -263,7 +258,7 @@ namespace NeuralNetwork
                         Debug.Log("BestPerf" + best.PerformanceCoefficient);
                         ActualBestDNA = best;
                         HandleAndDisplayResults(best.PerformanceSolvers);
-                        SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers,
+                        SaveNetData(best.InstanceWeights, instance, best.PerformanceSolvers,
                             best.PerformanceCoefficient);
                         DNAVersion = NetData.DNAVersion;
                         Debug.Log("Net Data was empty, actual iteration best DNA was saved.");
@@ -277,7 +272,7 @@ namespace NeuralNetwork
                             ActualBestDNA.PerformanceCoefficient);
                         ActualBestDNA = best;
                         HandleAndDisplayResults(best.PerformanceSolvers);
-                        SaveNetData(best.InstanceWeights, best.InstanceBiases, best.PerformanceSolvers,
+                        SaveNetData(best.InstanceWeights, instance, best.PerformanceSolvers,
                             best.PerformanceCoefficient);
                         DNAVersion = NetData.DNAVersion;
                         hasComputedinstanceNetwork = true;
@@ -438,7 +433,7 @@ namespace NeuralNetwork
             }
         }
         
-        private void SaveNetData(List<double> instanceWeights, List<double> instanceBiases, List<NeuralNetworkPerformanceSolver> solvers, double notationCoefficient)
+        private void SaveNetData(double[] instanceWeights, NeuralNet instance, List<NeuralNetworkPerformanceSolver> solvers, double notationCoefficient)
         {
             if (NewTraining)
             {
@@ -446,8 +441,8 @@ namespace NeuralNetwork
                 NetData.NewTraining = false;
             }
             NewTraining = false;
+            NetData.InstanceWeights = new double[instance.WeightsNumber];
             NetData.InstanceWeights = instanceWeights;
-            NetData.InstanceBiases = instanceBiases;
             NetData.PerformanceSolvers = solvers;
             Debug.Log("changenetdata");
             NetData.PerformanceCoefficient = notationCoefficient;
