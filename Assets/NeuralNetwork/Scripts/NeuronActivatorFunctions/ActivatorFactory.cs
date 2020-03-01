@@ -12,6 +12,7 @@ namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
                 case ActivatorType.Sigmoid: return new SigmoidActivator();
                 case ActivatorType.Tanh: return new TanhActivator();
                 case ActivatorType.Relu: return new ReluActivator();
+                case ActivatorType.Softmax : return new SoftmaxActivator();
                 default: throw new ArgumentException("ActivatorTypeIsNotSupported");
             }
         }

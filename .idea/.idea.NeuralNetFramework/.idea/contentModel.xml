@@ -18,11 +18,13 @@
           <e p="README.txt" t="Include" />
         </e>
         <e p="NeuralNetwork" t="Include">
+          <e p="BuildNeuralNetworkDemo.cs" t="Include" />
           <e p="Prefabs" t="Include">
             <e p="Shooters" t="Include">
               <e p="BulletComponent.cs" t="Include" />
             </e>
           </e>
+          <e p="ResearchNeuralNetworkDemo.cs" t="Include" />
           <e p="Scripts" t="Include">
             <e p="Controllers" t="Include">
               <e p="JumperController.cs" t="Include" />
@@ -30,8 +32,6 @@
             </e>
             <e p="Data" t="Include">
               <e p="NetData.cs" t="Include" />
-              <e p="NeuralNetworkBluePrint.cs" t="Include" />
-              <e p="NeuralNetworkEvaluate.cs" t="Include" />
               <e p="NeuralNetworkPerformanceSolver.cs" t="Include" />
               <e p="NeuralNetworkSerializer.cs" t="Include" />
             </e>
@@ -44,15 +44,12 @@
               <e p="TanhActivator.cs" t="Include" />
             </e>
             <e p="NeuronNetwork" t="Include">
-              <e p="NetInput.cs" t="Include" />
-              <e p="NetLayer.cs" t="Include" />
-              <e p="NetNeuron.cs" t="Include" />
-              <e p="NetOutput.cs" t="Include" />
+              <e p="NetLayerConstructor.cs" t="Include" />
             </e>
             <e p="Systems" t="Include">
+              <e p="NetworkInstance.cs" t="Include" />
               <e p="NeuralNet.cs" t="Include" />
-              <e p="NeuralNetworkComponent.cs" t="Include" />
-              <e p="NeuralNetworkController.cs" t="Include" />
+              <e p="NeuralNetController.cs" t="Include" />
               <e p="NeuralNetworkManager.cs" t="Include" />
             </e>
             <e p="Utils" t="Include">

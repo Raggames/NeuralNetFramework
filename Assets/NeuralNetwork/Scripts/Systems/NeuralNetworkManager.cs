@@ -21,32 +21,29 @@ namespace NeuralNetwork
         public string SaveNetDataFileName;
         
         [HideInInspector] public List<NeuralNet> NeuralNetworkInstances = new List<NeuralNet>();
-        public NeuralNetworkEvaluate ActualBestDNA;
-        [HideInInspector] public List<NeuralNetworkEvaluate> EvaluateUpgradedsDNAOfEpoch = new List<NeuralNetworkEvaluate>();
-        public List<NeuralNetworkEvaluate> KeepAllInstancesDNAOfEpoch = new List<NeuralNetworkEvaluate>();
-        public int InstancesEndedCount;
+        public NetData ActualBestDNA;
+        private List<NetData> evaluateUpgradedsDNAOfEpoch = new List<NetData>();
+        private List<NetData> keepAllInstancesDNAOfEpoch = new List<NetData>();
+        public int Genetic_InstanceEndedCount;
         
         [Header("Networks Management")] 
-        public ENetworkFunction NetworkFunction;
         
-        public ENetworkMode NetworkMode;
-        public enum ENetworkMode
+        public ERunningMode runningMode;
+        public enum ERunningMode
         {
             Train,
             Execute,
         }
+        
+        
         public ELearningLogic LearningLogic;
         public enum ELearningLogic
         {
             Genetic,
             BackPropagate,
         }
-       
-        public enum ENetworkFunction
-        {
-            LoopOnOutputGetAllValues,
-            LoopOnControllerInstanceEnd,
-        }
+        
+        
 
        
         [SerializeField] public bool isNeuralNetTraining;
@@ -109,31 +106,19 @@ namespace NeuralNetwork
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A) && !isNeuralNetTraining && !isNeuralNetExecuting)
+            if (Input.GetKeyDown(KeyCode.A))
             {
-                if(NetworkMode == ENetworkMode.Train) InitializeTraining(NetWorkPrefab, NetworkMode, TrainingBatchSize, Epochs);
-                if(NetworkMode == ENetworkMode.Execute) InitializeExecuting(NetWorkPrefab, NetworkMode, TrainingBatchSize);
+                if(runningMode == ERunningMode.Train) Train();
+                if(runningMode == ERunningMode.Execute) Execute();
             }
         }
-        
-        private void ResetNetData(NetData netData)
-        {
-            netData.HasData = false;
-            netData.NeuralNetworkName = "";
-            netData.DNAVersion = 0;
-            netData.NeuralNetworkDna.Biases.Clear();
-            netData.NeuralNetworkDna.Weights.Clear();
-            netData.PerformanceCoefficient = 0;
-            netData.PerformanceSolvers.Clear();
-        }
-        
         public void Train()
         {
-            if(!isNeuralNetTraining) InitializeTraining(NetWorkPrefab, NetworkMode, TrainingBatchSize, Epochs);
+            if(!isNeuralNetTraining) InitializeTraining(NetWorkPrefab, runningMode, TrainingBatchSize, Epochs);
         }
         public void Execute()
         {
-            if(!isNeuralNetExecuting) InitializeExecuting(NetWorkPrefab, NetworkMode, TrainingBatchSize);
+            if(!isNeuralNetExecuting) InitializeExecuting(NetWorkPrefab, runningMode, TrainingBatchSize);
         }
 
         #region Initializing
@@ -166,8 +151,8 @@ namespace NeuralNetwork
                 Debug.Log("Loaded from Json");
                 NewTraining = NetData.NewTraining;
                 ActualBestDNA.PerformanceSolvers = NetData.PerformanceSolvers;
-                ActualBestDNA.InstanceWeights = NetData.NeuralNetworkDna.Weights;
-                ActualBestDNA.InstanceBiases = NetData.NeuralNetworkDna.Biases;
+                ActualBestDNA.InstanceWeights = NetData.InstanceWeights;
+                ActualBestDNA.InstanceBiases = NetData.InstanceWeights;
                 ActualBestDNA.PerformanceCoefficient = NetData.PerformanceCoefficient;
                 TrainingRate = NetData.NetworkTrainingRate;
                 TrainingBestResults = new double[ActualBestDNA.PerformanceSolvers.Count];
@@ -177,13 +162,23 @@ namespace NeuralNetwork
                 }
             }
         }
+        private void ResetNetData(NetData netData)
+        {
+            netData.HasData = false;
+            netData.NeuralNetworkName = "";
+            netData.DNAVersion = 0;
+            netData.InstanceWeights.Clear();
+            netData.InstanceBiases.Clear();
+            netData.PerformanceCoefficient = 0;
+            netData.PerformanceSolvers.Clear();
+        }
         private void ForceSetManagerData()
         {
             NetData = LoadNetData(SaveNetDataFileName);
             Debug.Log("Loaded from Json");
             ActualBestDNA.PerformanceSolvers = NetData.PerformanceSolvers;
-            ActualBestDNA.InstanceWeights = NetData.NeuralNetworkDna.Weights;
-            ActualBestDNA.InstanceBiases = NetData.NeuralNetworkDna.Biases;
+            ActualBestDNA.InstanceWeights = NetData.InstanceWeights;
+            ActualBestDNA.InstanceBiases = NetData.InstanceBiases;
             ActualBestDNA.PerformanceCoefficient = NetData.PerformanceCoefficient;
             TrainingRate = NetData.NetworkTrainingRate;
             TrainingBestResults = new double[ActualBestDNA.PerformanceSolvers.Count];
@@ -192,7 +187,7 @@ namespace NeuralNetwork
                 TrainingBestResults[j] = ActualBestDNA.PerformanceSolvers[j].EvaluationParameter;
             }
         }
-        private void InitializeTraining(GameObject networkPrefab, ENetworkMode eNetworkMode, int batchSize, int epochs)
+        private void InitializeTraining(GameObject networkPrefab, ERunningMode eRunningMode, int batchSize, int epochs)
         {
             isNeuralNetTraining = true;
             isNeuralNetExecuting = false;
@@ -202,28 +197,18 @@ namespace NeuralNetwork
             {
                 GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
                 NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
-                
                 NeuralNetworkInstances.Add(_instance);
-                _instance.InitializeNeuralNetwork(eNetworkMode, epochs, _instanceID, this, NetData);
+                _instance.InitializeNeuralNetwork(eRunningMode, epochs, _instanceID, this, NetData);
                _instanceID++;
             }
             if (NewTraining)
             {
-                if (NetworkFunction == ENetworkFunction.LoopOnOutputGetAllValues)
-                {
-                    TrainingBestResults = new double[NeuralNetworkInstances[0].OutputLayer.NeuronsInLayer.Count];
-                    //InternalParameters = new double[NeuralNetworkInstances[0].OutputLayer.NeuronsInLayer.Count];
-                }
-
-                if (NetworkFunction == ENetworkFunction.LoopOnControllerInstanceEnd)
-                {
-                    TrainingBestResults = new double[NeuralNetworkInstances[0].NeuralNetworkComponent.Controller.EvaluationParameters.Count];
-                }
+                TrainingBestResults = new double[NeuralNetworkInstances[0].OutputToExternal.Count];
             }
            
         }
 
-        private void InitializeExecuting(GameObject networkPrefab, ENetworkMode eNetworkMode, int batchSize)
+        private void InitializeExecuting(GameObject networkPrefab, ERunningMode eRunningMode, int batchSize)
         {
             isNeuralNetTraining = false;
             isNeuralNetExecuting = true;
@@ -234,7 +219,7 @@ namespace NeuralNetwork
                 GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
                 NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
                 NeuralNetworkInstances.Add(_instance);
-                _instance.InitializeNeuralNetwork(eNetworkMode, 1, _instanceID, this, NetData);
+                _instance.InitializeNeuralNetwork(eRunningMode, 1, _instanceID, this, NetData);
                 _instanceID++;
             }
             
@@ -243,25 +228,27 @@ namespace NeuralNetwork
         #endregion
         #region Evaluating
 
+        private List<NetData> saveEpochNetEvaluate = new List<NetData>();
+        private int SequenceCount;
 
-        public void GetInstanceEndSolver(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
+        public void Genetic_OnInstanceCompare(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
         {
+            Genetic_InstanceEndedCount += 1;
+            Genetic_SolverComparator(instanceNetwork, computedCoeff, solvers, instancehasBestDna);
             
+
         }
-        
-        private List<NeuralNetworkEvaluate> saveEpochNetEvaluate = new List<NeuralNetworkEvaluate>();
-        public void OnInstanceHasEnd(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
+
+        private void Genetic_SolverComparator(NeuralNet instance, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
         {
-            InstancesEndedCount += 1;
             bool hasComputedinstanceNetwork = false;
-                NeuralNetworkEvaluate _instanceNetworkEvaluate = new NeuralNetworkEvaluate();
-                NeuralNet.DNA dna = new NeuralNet.DNA();
-                dna = GetInstanceDNA(instanceNetwork);
-                _instanceNetworkEvaluate.InstanceWeights = new List<double>();
-                _instanceNetworkEvaluate.InstanceBiases = new List<double>();
-                _instanceNetworkEvaluate.InstanceWeights = dna.Weights;
-                _instanceNetworkEvaluate.InstanceBiases = dna.Biases;
-                _instanceNetworkEvaluate.PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
+                NetData instDna = new NetData();
+                instDna.InstanceWeights = new List<double>();
+                instDna.InstanceBiases = new List<double>();
+                instDna.InstanceWeights = instance.Ge(NetData, ELearningLogic.Genetic, TrainingRate)
+                instDna.InstanceBiases = dna.Biases;
+                
+                instDna.PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
                 for (int i = 0; i < solvers.Count; i++)
                 {
                     NeuralNetworkPerformanceSolver solver = new NeuralNetworkPerformanceSolver();
@@ -270,24 +257,24 @@ namespace NeuralNetwork
                     solver.ParameterType = solvers[i].ParameterType;
                     solver.EvaluationParameter = solvers[i].EvaluationParameter;
                     solver.EvaluationParameterWeight = solvers[i].EvaluationParameterWeight;
-                    _instanceNetworkEvaluate.PerformanceSolvers.Add(solver);
+                    instDna.PerformanceSolvers.Add(solver);
                 }
                 // _instanceNetworkEvaluate.PerformanceSolvers = solvers;
-                _instanceNetworkEvaluate.PerformanceCoefficient = computedCoeff;
-                saveEpochNetEvaluate.Add(_instanceNetworkEvaluate); // list is filled with all item each epoch. 
+                instDna.PerformanceCoefficient = computedCoeff;
+                saveEpochNetEvaluate.Add(instDna); // list is filled with all item each epoch. 
                 if (instancehasBestDna)
                 {
                     Debug.Log("computed perf : " + computedCoeff);
 
-                    EvaluateUpgradedsDNAOfEpoch.Add(_instanceNetworkEvaluate);
+                    evaluateUpgradedsDNAOfEpoch.Add(instDna);
                     DNAShouldUpgrade = true;
                 }
 
-                if (InstancesEndedCount >= NeuralNetworkInstances.Count)
+                if (Genetic_InstanceEndedCount >= NeuralNetworkInstances.Count)
                 {
                     if (NetData.HasData == false)
                     {
-                        var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateUpgradedsDNAOfEpoch);
+                        var best = ReturnBestCoefficientNetworkForThisIteration(evaluateUpgradedsDNAOfEpoch);
                         Debug.Log("BestPerf" + best.PerformanceCoefficient);
                         ActualBestDNA = best;
                         HandleAndDisplayResults(best.PerformanceSolvers);
@@ -297,12 +284,11 @@ namespace NeuralNetwork
                         Debug.Log("Net Data was empty, actual iteration best DNA was saved.");
                         hasComputedinstanceNetwork = true;
                     }
-
                     if (DNAShouldUpgrade)
                     {
-                        var best = ReturnBestCoefficientNetworkForThisIteration(EvaluateUpgradedsDNAOfEpoch);
+                        var best = ReturnBestCoefficientNetworkForThisIteration(evaluateUpgradedsDNAOfEpoch);
                         Debug.Log("BestPerf" + best.PerformanceCoefficient + " DNA Upgrade");
-                        ManageTrainingRateOnFeedback(DNAShouldUpgrade, best.PerformanceCoefficient,
+                        Genetic_ManageTrainingRateOnFeedback(DNAShouldUpgrade, best.PerformanceCoefficient,
                             ActualBestDNA.PerformanceCoefficient);
                         ActualBestDNA = best;
                         HandleAndDisplayResults(best.PerformanceSolvers);
@@ -311,23 +297,22 @@ namespace NeuralNetwork
                         DNAVersion = NetData.DNAVersion;
                         hasComputedinstanceNetwork = true;
                     }
-
                     if (!DNAShouldUpgrade)
                     {
-                       ManageTrainingRateOnFeedback(DNAShouldUpgrade, 0f,
+                       Genetic_ManageTrainingRateOnFeedback(DNAShouldUpgrade, 0f,
                             ActualBestDNA.PerformanceCoefficient);
                         hasComputedinstanceNetwork = true;
                     }
 
                     //InstancesEndedCount++;
-                    if (InstancesEndedCount >= NeuralNetworkInstances.Count && hasComputedinstanceNetwork)
+                    if (Genetic_InstanceEndedCount >= NeuralNetworkInstances.Count && hasComputedinstanceNetwork)
                     {
-                        Debug.Log("Starting Next Epoch : InstancesEndedCount = " + InstancesEndedCount);
+                        Debug.Log("Starting Next Epoch : InstancesEndedCount = " + Genetic_InstanceEndedCount);
                         RestartEpochDelay();
                     }
                 }
-
         }
+        
 
         private void RestartEpochDelay()
         {
@@ -346,9 +331,9 @@ namespace NeuralNetwork
       
         }
         
-        private NeuralNetworkEvaluate ReturnBestCoefficientNetworkForThisIteration(List<NeuralNetworkEvaluate> evaluateDnaForInstancesIteration)
+        private NetData ReturnBestCoefficientNetworkForThisIteration(List<NetData> evaluateDnaForInstancesIteration)
         {
-            evaluateDnaForInstancesIteration.Sort(delegate(NeuralNetworkEvaluate evaluate, NeuralNetworkEvaluate networkEvaluate)
+            evaluateDnaForInstancesIteration.Sort(delegate(NetData evaluate, NetData networkEvaluate)
                 {
                     return evaluate.PerformanceCoefficient.CompareTo(networkEvaluate.PerformanceCoefficient);
                 });
@@ -356,49 +341,12 @@ namespace NeuralNetwork
             return evaluateDnaForInstancesIteration[evaluateDnaForInstancesIteration.Count - 1];
         }
 
-        public void BypassTrainingFeedBackEvaluationAndStartNextEpoch()
+        public void ForceStartNextEpoch()
         {
             StartNextEpoch();
         }
         
 
-        private NeuralNet.DNA GetInstanceDNA(NeuralNet instanceNetwork)
-        {
-            NeuralNet.DNA newDNA = new NeuralNet.DNA();
-            newDNA.Weights = new List<double>();
-            newDNA.Biases = new List<double>();
-
-            List<double> biases = new List<double>();
-            List<double> weights = new List<double>();
-            for (int i = 0; i < instanceNetwork.InputLayer.NeuronsInLayer.Count; i++)
-            {
-                weights.Add(instanceNetwork.InputLayer.NeuronsInLayer[i].Weights[0]);
-            }
-            biases.Add(instanceNetwork.InputLayer.LayerBias);
-            for (int i = 0; i < instanceNetwork.HiddenLayers.Count; i++)
-            {
-                for (int j = 0; j < instanceNetwork.HiddenLayers[i].NeuronsInLayer.Count; j++)
-                {
-                    for (int k = 0; k < instanceNetwork.HiddenLayers[i].NeuronsInLayer[j].PreviousNeurons; k++)
-                    {
-                        weights.Add(instanceNetwork.HiddenLayers[i].NeuronsInLayer[j].Weights[k]);
-                    }
-                }
-                biases.Add(instanceNetwork.HiddenLayers[i].LayerBias);
-            }
-            
-            for (int j = 0; j < instanceNetwork.OutputLayer.NeuronsInLayer.Count; j++)
-            {
-                 for (int k = 0; k < instanceNetwork.OutputLayer.NeuronsInLayer[j].PreviousNeurons; k++)
-                 {
-                     weights.Add(instanceNetwork.OutputLayer.NeuronsInLayer[j].Weights[k]);
-                 }
-            }
-            biases.Add(instanceNetwork.OutputLayer.LayerBias);
-            newDNA.Biases = biases;
-            newDNA.Weights = weights;
-            return newDNA;
-        }
 
         #endregion
         
@@ -408,6 +356,13 @@ namespace NeuralNetwork
             if (isNeuralNetTraining)
             {
                 EpochsCount++;
+                if(BackPropagation_SequenceIndex > SequenceCount)
+                /////Case Genetic-------------------------------------------------------------------------------------
+                if (Genetic_InstanceEndedCount >= NeuralNetworkInstances.Count)
+                {
+                    Genetic_RestartInstances(NeuralNetworkInstances);
+                }
+                // Epochs Are Done------------------------------------------------------------------------------------
                 if (EpochsCount >= Epochs)
                 {
                     isNeuralNetTraining = false;
@@ -417,36 +372,30 @@ namespace NeuralNetwork
                         instanceNet.IsExecuting = false;
                         EpochsCount = 0;
                     }
-                    Debug.Log("ENDING TRAINING");
+                    Debug.Log("ENDING TRAINING EPOCHS");
                 }
-
-                if (InstancesEndedCount >= NeuralNetworkInstances.Count)
-                {
-                    Debug.Log("StartNextEpoch" + InstancesEndedCount);
-                    RestartInstances(NeuralNetworkInstances);
-
-                }
+                
             }
             if (isNeuralNetExecuting)
             {
-                NeuralNetworkInstances[0].RestartInstance(NetworkMode, NetData, DNAShouldUpgrade, ForceInstanceDNAReset);
+                NeuralNetworkInstances[0].Genetic_NeuralNetRestart(runningMode, NetData, DNAShouldUpgrade, ForceInstanceDNAReset);
             }
         }
       
-        private void RestartInstances(List<NeuralNet> neuralNets)
+        private void Genetic_RestartInstances(List<NeuralNet> neuralNets)
         {
             foreach (var netInstance in neuralNets)
             {
-                netInstance.RestartInstance(NetworkMode, NetData, DNAShouldUpgrade, ForceInstanceDNAReset);
+                netInstance.Genetic_NeuralNetRestart(runningMode, NetData, DNAShouldUpgrade, ForceInstanceDNAReset);
             }
             ForceInstanceDNAReset = false;
             DNAShouldUpgrade = false;
-            Debug.Log(InstancesEndedCount + "instanceEndedcount after RestartInstance();");
-            InstancesEndedCount = 0;
-            EvaluateUpgradedsDNAOfEpoch.Clear();
+            Debug.Log(Genetic_InstanceEndedCount + "instanceEndedcount after RestartInstance();");
+            Genetic_InstanceEndedCount = 0;
+            evaluateUpgradedsDNAOfEpoch.Clear();
             saveEpochNetEvaluate.Clear();
         }
-        private void ManageTrainingRateOnFeedback(bool dnaHasUpgrade, double bestCoeff = 0, double actualCoeff = 0)
+        private void Genetic_ManageTrainingRateOnFeedback(bool dnaHasUpgrade, double bestCoeff = 0, double actualCoeff = 0)
         {
             if (AdjustTrainingRateAutomatically)
             {
@@ -516,9 +465,8 @@ namespace NeuralNetwork
                 NetData.NewTraining = false;
             }
             NewTraining = false;
-            NetData.NeuralNetworkDna = new NeuralNet.DNA();
-            NetData.NeuralNetworkDna.Weights = instanceWeights;
-            NetData.NeuralNetworkDna.Biases = instanceBiases;
+            NetData.InstanceWeights = instanceWeights;
+            NetData.InstanceBiases = instanceBiases;
             NetData.PerformanceSolvers = solvers;
             Debug.Log("changenetdata");
             NetData.PerformanceCoefficient = notationCoefficient;
@@ -538,47 +486,6 @@ namespace NeuralNetwork
         }
 
 
-        public NeuralNetworkBluePrint CreateBlueprint(NeuralNet neuralNet, string blueprintFileName)
-        {
-            NeuralNetworkBluePrint newBluePrint = new NeuralNetworkBluePrint();
-            newBluePrint.InputLayerConstruct = neuralNet.InputLayerConstruct;
-            newBluePrint.HiddenLayerConstruct = neuralNet.HiddenLayerConstruct;
-            newBluePrint.OutputLayerConstruct = neuralNet.OutputLayerConstruct;
-            newBluePrint.NetData = neuralNet._NetData;
-            return newBluePrint;
-        }
-        
-        
-        private void SaveBlueprint(NeuralNet neuralNet, string blueprintFileName, NeuralNetworkBluePrint saveBluePrint)
-        {
-            NeuralNetworkBluePrint saveBlueprint = new NeuralNetworkBluePrint();
-            saveBlueprint = LoadBlueprint(blueprintFileName);
-            saveBlueprint.InputLayerConstruct = neuralNet.InputLayerConstruct;
-            saveBlueprint.HiddenLayerConstruct = neuralNet.HiddenLayerConstruct;
-            saveBlueprint.OutputLayerConstruct = neuralNet.OutputLayerConstruct;
-            saveBlueprint.NetData = neuralNet._NetData;
-            NeuralNetworkSerializer.GenericSave(saveBlueprint, blueprintFileName);
-
-        }
-
-        private NeuralNetworkBluePrint LoadBlueprint(string blueprintFileName)
-        {
-            NeuralNetworkBluePrint loadedBlueprint = new NeuralNetworkBluePrint();
-            loadedBlueprint = NeuralNetworkSerializer.GenericLoad(loadedBlueprint, blueprintFileName);
-            return loadedBlueprint;
-        }
-
-        public NeuralNet CreateNeuralNetworkFromBlueprint(string BlueprintFileName)
-        {
-            GameObject newNetwork = Instantiate(new GameObject(), transform);
-            NeuralNet neuralNet =  newNetwork.AddComponent<NeuralNet>();
-            NeuralNetworkBluePrint networkBluePrint = LoadBlueprint(BlueprintFileName);
-            neuralNet.InputLayerConstruct = networkBluePrint.InputLayerConstruct;
-            neuralNet.HiddenLayerConstruct = networkBluePrint.HiddenLayerConstruct;
-            neuralNet.OutputLayerConstruct = networkBluePrint.OutputLayerConstruct;
-            neuralNet._NetData = networkBluePrint.NetData;
-            return neuralNet;
-        }
         #endregion
     }
 }

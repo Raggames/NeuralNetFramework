@@ -11,13 +11,20 @@ namespace NeuralNetwork.Scripts.Data
         public bool NewTraining;
         public string NeuralNetworkName;
         public double StartTrainingRate;
-        public NeuralNet.DNA NeuralNetworkDna = new NeuralNet.DNA();
-        public double NetworkTrainingRate;
+       
+        public List<double> InstanceWeights = new List<double>();
+        public List<double> InstanceBiases = new List<double>();
+
         public List<NeuralNetworkPerformanceSolver> PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
         public double PerformanceCoefficient;
-        public int DNAVersion;
+        public double NetworkTrainingRate;
 
+        public int DNAVersion;
         public int autoSaveIncrement;
+
+        public int InputLayerNeurons;
+        public List<int[]> HiddensAndNeurons;
+        public int OutputLayerNeurons;
 
     }
 }

@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace NeuralNetwork.Scripts.Controllers
 {
-    public class JumperController : NeuralNetworkController
+   
+    public class JumperController : NeuralNetController
     {
         public float DistanceToUp;
         public float DistanceToDown;
@@ -24,18 +25,19 @@ namespace NeuralNetwork.Scripts.Controllers
 
         public override void SetInputs()
         {
-            NeuralNetworkComponent.NetInput[0].InputValue = DistanceToUp;
-            NeuralNetworkComponent.NetInput[1].InputValue = DistanceToDown;
-            
+            if (NeuralNet.IsTraining || NeuralNet.IsExecuting)
+            {
+                NeuralNet.ExternalInputs[0] = DistanceToUp;
+                NeuralNet.ExternalInputs[1] = DistanceToDown;
+            }
         }
         public override void OnOutput()
         {
-            if (NeuralNetworkComponent.NetOutput[0].OutputValue > 0.1)
+            if (NeuralNet.OutputToExternal[0] > 0.1)
             {
                 Rigidbody.AddForce(Vector3.up*JumpForce);
             }
-           
-            JumpForce = (float)NeuralNetworkComponent.NetOutput[1].OutputValue;
+            JumpForce = (float)NeuralNet.OutputToExternal[1];
         }
 
         public override void OnInstanceFail()
@@ -44,7 +46,7 @@ namespace NeuralNetwork.Scripts.Controllers
             {
                 EvaluationParameters[0].EvaluationParameter = Timer;
                 //EvaluationParameters[1] = JumpForce;
-                this.NeuralNetworkComponent.InstanceEnd(EvaluationParameters, this);
+                this.NeuralNet.Genetic_OnInstanceEnd(EvaluationParameters);
                 isDead = true;
                 gameObject.SetActive(false);
             }
@@ -54,7 +56,7 @@ namespace NeuralNetwork.Scripts.Controllers
         {
             isDead = false;
             Timer = 0;
-            JumpForce = (float)NeuralNetworkComponent.NetOutput[1].OutputValue;
+            JumpForce = 0;
             transform.position = startPos;
             Rigidbody.velocity = Vector3.zero;
         }
@@ -62,7 +64,7 @@ namespace NeuralNetwork.Scripts.Controllers
 
         private void Update()
         {
-            if (NeuralNetworkComponent.inputStreamOn && !isDead)
+            if (NeuralNet.inputStreamOn && !isDead)
             {
                 if (transform.position.y > 9.4)
                 {

@@ -50,6 +50,7 @@ namespace NeuralNetwork.Utils
 
             return result / entry.Count;
         }
+        
 
 
     }

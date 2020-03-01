@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using NeuralNetwork;
 using NeuralNetwork.Scripts.Data;
 using UnityEngine;
-
-public abstract class NeuralNetworkController : MonoBehaviour
+[RequireComponent(typeof(NeuralNet))]
+public abstract class NeuralNetController : MonoBehaviour
 {
-    public NeuralNetworkComponent NeuralNetworkComponent;
-
+    public NeuralNet NeuralNet;
     public List<NeuralNetworkPerformanceSolver> EvaluationParameters = new List<NeuralNetworkPerformanceSolver>();
     
         public abstract void SetInputs();

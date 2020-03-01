@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace NeuralNetwork.Scripts.Controllers
 {
-    public class ShooterController : NeuralNetworkController
+    public class ShooterController : NeuralNetController
     {
         
         [Header("Inputs")]
@@ -54,7 +54,7 @@ namespace NeuralNetwork.Scripts.Controllers
         // Update is called once per frame
         void Update()
         {
-            if (NeuralNetworkComponent.inputStreamOn && !isDead)
+            if (NeuralNet.inputStreamOn && !isDead)
             {
                 enemies.Clear();
                 Collider[] hitColliders = Physics.OverlapSphere(transform.position, 40);
@@ -101,45 +101,45 @@ namespace NeuralNetwork.Scripts.Controllers
         {
             if (enemies.Count > 0)
             {
-                NeuralNetworkComponent.NetInput[0].InputValue = enemies[0].position.x;
-                NeuralNetworkComponent.NetInput[1].InputValue = enemies[0].position.z;
+                NeuralNet.ExternalInputs[0] = enemies[0].position.x;
+                NeuralNet.ExternalInputs[1] = enemies[0].position.z;
             }
             else
             {
-                NeuralNetworkComponent.NetInput[0].InputValue = 0;
-                NeuralNetworkComponent.NetInput[1].InputValue = 0;
+                NeuralNet.ExternalInputs[0] = 0;
+                NeuralNet.ExternalInputs[1] = 0;
             }
-            NeuralNetworkComponent.NetInput[2].InputValue = FireTimer;
-            NeuralNetworkComponent.NetInput[3].InputValue = transform.position.x;
-            NeuralNetworkComponent.NetInput[4].InputValue = transform.position.z;
+            NeuralNet.ExternalInputs[2] = FireTimer;
+            NeuralNet.ExternalInputs[3] = transform.position.x;
+            NeuralNet.ExternalInputs[4] = transform.position.z;
         }
 
         public override void OnOutput()
         {
             
-            if (NeuralNetworkComponent.NetOutput[0].OutputValue < 0)
+            if (NeuralNet.OutputToExternal[0] < 0)
             {
                 MoveLeft();
             }
-            if (NeuralNetworkComponent.NetOutput[0].OutputValue > 0)
+            if (NeuralNet.OutputToExternal[0] > 0)
             {
                 MoveRight();
             }
             
-            if (NeuralNetworkComponent.NetOutput[1].OutputValue > 0)
+            if (NeuralNet.OutputToExternal[1] > 0)
             {
                 MoveForward();   
             }
-            if (NeuralNetworkComponent.NetOutput[1].OutputValue < 0)
+            if (NeuralNet.OutputToExternal[1] < 0)
             {
                 MoveBackward();
             }
-            if (NeuralNetworkComponent.NetOutput[2].OutputValue >= .5)
+            if (NeuralNet.OutputToExternal[2] >= .5)
             {
                 Aim();
             }
 
-            if (NeuralNetworkComponent.NetOutput[3].OutputValue > 0)
+            if (NeuralNet.OutputToExternal[3] > 0)
             {
                 Shoot();
             }
@@ -209,12 +209,11 @@ namespace NeuralNetwork.Scripts.Controllers
             {
                 EvaluationParameters[0].EvaluationParameter = Timer;
                 EvaluationParameters[1].EvaluationParameter = Points;
-                this.NeuralNetworkComponent.InstanceEnd(EvaluationParameters, this);
+                this.NeuralNet.Genetic_OnInstanceEnd(EvaluationParameters);
                 isDead = true;
                 gameObject.SetActive(false);
             }
         }
-
         public override void InstanceReset()
         {
             isDead = false;

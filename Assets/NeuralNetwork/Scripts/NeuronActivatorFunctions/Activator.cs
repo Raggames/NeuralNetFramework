@@ -1,10 +1,29 @@
+using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+
 namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 {
+    [Serializable]
     public abstract class Activator
     {
-        public abstract double CalculateValue(double input);
-        public abstract double CalculateDerivative(double input);
+        public virtual double CalculateValue(double input)
+        {
+           return new double();
+        }
 
+        public virtual double CalculateDerivative(double input)
+        {
+            return new double();
+        }
+
+        public virtual double[] CalculateValues(double[] input)
+        {
+            return new double[0];
+        }
+        public virtual double[] CalculateDerivatives(double[] input)
+        {
+            return new double[0];
+        }
         public abstract ActivatorType GetActivatorType();
     }
 
@@ -15,7 +34,5 @@ namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
         Relu,
         Sigmoid,
         Softmax,
-        
-        
     }
 }
