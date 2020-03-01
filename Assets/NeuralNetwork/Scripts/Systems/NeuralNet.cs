@@ -26,6 +26,10 @@ namespace NeuralNetwork
         public int WeightsNumber;
 
         public static Random random;
+
+        private int numInput = 0;
+        private List<int> numHidden = new List<int>();
+        private int numOutput = 0;
         
         private double[] inputs;
         
@@ -101,6 +105,13 @@ namespace NeuralNetwork
         #region Network_Management
         private void InitializeNetwork()
         {
+            numInput = inputLayerConstructor.Neurons;
+            for (int i = 0; i < hiddenLayersConstructor.Count; i++)
+            {
+                numHidden.Add(hiddenLayersConstructor[i].Neurons);
+            }
+            numOutput = outputLayerConstructor.Neurons;
+            
             inputs = new double[inputLayerConstructor.Neurons];
             i_hWeights = MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[0].Neurons);
             for (int i = 0; i < hiddenLayersConstructor.Count; i++)
@@ -163,7 +174,18 @@ namespace NeuralNetwork
         }
         private void SetWeightsAndBiases(double[] weights, double[] biases = null)
         {
-            
+            int k = 0;
+            for (int i = 0; i < numInput; i++)
+            {
+                for (int j = 0; j < numHidden[0]; j++)
+                {
+                    i_hWeights[i][j] = weights[k++];
+                }
+            }
+            for (int i = 0; i < numHidden[0]; i++)
+            {
+                h_Biases[0][i] = weights[k++];
+            }
         }
         
         private double[] GetWeightsAndBiases(NeuralNet instanceNetwork, out List<double> _weights, out List<double> _biases)
