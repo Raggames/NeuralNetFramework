@@ -47,7 +47,6 @@
               <e p="NetLayerConstructor.cs" t="Include" />
             </e>
             <e p="Systems" t="Include">
-              <e p="NetworkInstance.cs" t="Include" />
               <e p="NeuralNet.cs" t="Include" />
               <e p="NeuralNetController.cs" t="Include" />
               <e p="NeuralNetworkManager.cs" t="Include" />
