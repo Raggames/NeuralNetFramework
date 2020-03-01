@@ -22,7 +22,7 @@ namespace NeuralNetwork.Scripts.Data
         public int autoSaveIncrement;
 
         public int InputLayerNeurons;
-        public List<int[]> HiddensAndNeurons;
+        public List<int[]> HiddensAndNeurons = new List<int[]>();
         public int OutputLayerNeurons;
 
     }

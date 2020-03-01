@@ -8,6 +8,7 @@ using NeuralNetwork.Utils;
 
 namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 {
+    [Serializable]
     public class SoftmaxActivator : Activator
     {
         public double[] CalculateDerivative(double[] input, double[] error)

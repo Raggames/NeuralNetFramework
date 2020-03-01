@@ -3,6 +3,7 @@ using System;
 
 namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 {
+    [Serializable]
     public class TanhActivator : Activator
     {
         public override double CalculateDerivative(double input)

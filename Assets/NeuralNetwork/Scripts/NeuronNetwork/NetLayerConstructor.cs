@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using NeuralNetwork.Scripts.NeuronActivatorFunctions;
 using UnityEngine;
 using Activator = NeuralNetwork.Scripts.NeuronActivatorFunctions.Activator;
 
 namespace NeuralNetwork
 {
+    [Serializable]
     public class NetLayerConstructor
     {
         public enum LayerType
@@ -15,7 +17,8 @@ namespace NeuralNetwork
         }
         public LayerType ThisLayerType;
         public int Neurons;
-        public Activator ActivatorFunction;
+        public ActivatorType ActivatorFunction;
+        public Activator Activator;
     }
 
 }

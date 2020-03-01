@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using NeuralNetwork.Scripts.Data;
+using NeuralNetwork.Scripts.NeuronActivatorFunctions;
 using NeuralNetwork.Utils;
 using UnityEngine;
 using Random = System.Random;
@@ -43,7 +44,7 @@ namespace NeuralNetwork
 
         // Gradients de Back-Propagation 
         private double[] oGrads; // output gradients for back-propagation
-        private List<double[]> hGrads; // hidden gradients for back-propagation
+        private List<double[]> hGrads = new List<double[]>(); // hidden gradients for back-propagation
 
         // Momentums de Back-Propagation
         private List<double[][]> hPrevWeightsDelta = new List<double[][]>();  
@@ -109,11 +110,14 @@ namespace NeuralNetwork
         {
             // Retrieving Network Construction Values And Adding 'X' Hidden Layers =====================================
             numInput = inputLayerConstructor.Neurons;
+            inputLayerConstructor.Activator = ActivatorFactory.Produce(inputLayerConstructor.ActivatorFunction);
             for (int i = 0; i < hiddenLayersConstructor.Count; i++)
             {
                 numHidden.Add(hiddenLayersConstructor[i].Neurons);
+                hiddenLayersConstructor[i].Activator = ActivatorFactory.Produce(hiddenLayersConstructor[i].ActivatorFunction);
             }
             numOutput = outputLayerConstructor.Neurons;
+            outputLayerConstructor.Activator = ActivatorFactory.Produce(outputLayerConstructor.ActivatorFunction);
             // Initialize Arrays And Matrix ============================================================================
             inputs = new double[inputLayerConstructor.Neurons];
             i_hWeights = MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[0].Neurons);
@@ -181,7 +185,7 @@ namespace NeuralNetwork
                 }
             }
             // Initialize Weights ======================================================================================
-            //  InitializeWeights(WeightsCount());
+            InitializeWeights(WeightsCount());
         }
         private static double[][] MakeMatrix(int rows, int cols) // helper for ctor
         {
@@ -196,20 +200,32 @@ namespace NeuralNetwork
             int nbr = 0;
             int hiddensCount = hiddenLayersConstructor.Count;
             nbr = (inputLayerConstructor.Neurons * hiddenLayersConstructor[0].Neurons); //Input to first
+            nbr += hiddenLayersConstructor[0].Neurons;
             if (hiddensCount == 1)
             {
-                nbr += hiddenLayersConstructor[0].Neurons * hiddenLayersConstructor[1].Neurons;
-                nbr += hiddenLayersConstructor[1].Neurons * outputLayerConstructor.Neurons;
+                nbr += hiddenLayersConstructor[0].Neurons * outputLayerConstructor.Neurons;
+                nbr += outputLayerConstructor.Neurons;
+                Debug.Log("hid * out => " + nbr);
             }
             if (hiddensCount > 1)
             {
                 for (int i = 0; i < hiddensCount; i++)
                 {
-                    if(i <= hiddensCount-2) nbr += hiddenLayersConstructor[i].Neurons * hiddenLayersConstructor[i + 1].Neurons;
-                    if(i == hiddensCount -1) nbr += hiddenLayersConstructor[i].Neurons * outputLayerConstructor.Neurons;
+                    if (i < hiddensCount - 1)
+                    {
+                        nbr += hiddenLayersConstructor[i].Neurons * hiddenLayersConstructor[i + 1].Neurons;
+                        nbr += hiddenLayersConstructor[i+1].Neurons; 
+                        Debug.Log("hid * hid+1 => " + nbr);
+                    }
+                    if (i == hiddensCount - 1)
+                    {
+                        Debug.Log("hid to out");
+                        nbr += hiddenLayersConstructor[i].Neurons * outputLayerConstructor.Neurons;
+                        nbr += outputLayerConstructor.Neurons;
+                    }
                 }
             }
-            nbr += hiddenLayersConstructor[hiddensCount - 1].Neurons + outputLayerConstructor.Neurons;
+            WeightsNumber = nbr;
             return nbr;
         }
         private void InitializeWeights(int nbr)
@@ -220,7 +236,7 @@ namespace NeuralNetwork
             double hi = 0.01;
             for (int i = 0; i < initialWeights.Length; ++i)
                 initialWeights[i] = (hi - lo) * random.NextDouble() + lo;
-            SetWeightsAndBiases(initialWeights);
+           SetWeightsAndBiases(initialWeights);
         }
         private void SetWeightsAndBiases(double[] weights)
         {
@@ -230,44 +246,49 @@ namespace NeuralNetwork
                 for (int j = 0; j < numHidden[0]; j++) // layer I_h
                 {
                     i_hWeights[i][j] = weights[k++];
+                    Debug.Log("ihWeight" + i);
                 }
             }
             for (int i = 0; i < numHidden[0]; i++)
             {
                 h_Biases[0][i] = weights[k++];
+                Debug.Log("biase hidden 0" + i);
+
             }
             // MULTIPLE HIDDENS ========================================================================================
             if (numHidden.Count > 1) 
             {
                 for (int i = 0; i < numHidden.Count; i++) //Layers H_h
                 {
-                    for (int j = 0; j < numHidden[i]; j++) // ITERATE IN HIDDEN LAYERS LIST
+                    if (i < numHidden[numHidden.Count - 1])
                     {
-                        if (j < numHidden[i - 1]) //
+                        for (int j = 0; j < numHidden[i]; j++) // ITERATE IN HIDDEN LAYERS LIST
                         {
-                            for (int l = 0; l < numHidden[i+1]; l++)
+                            for (int l = 0; l < numHidden[i + 1]; l++)
                             {
                                 L_h_hWeights[i][j][l] = weights[k++];
-                            }
-                            
-                            h_Biases[i+1][j] = weights[k++]; //h_biase[0] has been set
+                                Debug.Log("wheight hidden" + i + j + l);
 
+                            }
+                            h_Biases[i + 1][j] = weights[k++]; //h_biase[0] has been set
+                            Debug.Log("h_biase of hidden " + i + " > " + j);
                         }
-                        if (j == numHidden[i-1]) // last hidden layer
+                    }
+
+                    if (i == numHidden[numHidden.Count - 1])
+                    {
+                        for (int j = 0; j < numHidden[i]; j++) // ITERATE IN HIDDEN LAYERS LIST
                         {
                             for (int l = 0; l < numOutput; l++)
                             {
                                 L_h_hWeights[i][j][l] = weights[k++];
+                                Debug.Log("wheight last hidden" + i + j + l);
+
                             }
                             o_Biases[j] = weights[k++];
+                            Debug.Log("h_biase of hidden " + i + " > " + j);
+
                         }
-                    }
-                }
-                for (int i = 0; i < numHidden[numHidden.Count-1]; i++) // last hidden layer neuron count 
-                {
-                    for (int j = 0; j < numOutput; j++) //output neuron count
-                    {
-                        L_h_hWeights[numHidden[numHidden.Count-1]][i][j] = weights[k++]; //last item of HiddenLayer
                     }
                 }
             }

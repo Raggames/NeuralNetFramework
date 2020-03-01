@@ -3,6 +3,7 @@ using System;
 
 namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 {
+    [Serializable]
     public class ReluActivator : Activator
     {
         public override double CalculateDerivative(double input)

@@ -2,6 +2,7 @@ using System;
 
 namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 {
+    [Serializable]
     public class SigmoidActivator : Activator
     {
         public override double CalculateDerivative(double input)

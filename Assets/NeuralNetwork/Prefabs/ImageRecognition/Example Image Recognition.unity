@@ -508,7 +508,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &879517444
 Transform:
   m_ObjectHideFlags: 0
@@ -535,27 +535,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b238d9112b0451bb984daaaa658c64c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetWorkPrefab: {fileID: 3956378676603637949, guid: 6ef4c5a1b65ffaf4ba99906bc60c3a74,
+  NetWorkPrefab: {fileID: 5481102409517396106, guid: f70ee8cb52216054cbae8de003ac5af8,
     type: 3}
   IANetworkName: ImaRecog
+  SaveNetDataFileName: ImaRecog_save_0
   NetData:
     HasData: 0
     NewTraining: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
+    InstanceWeights: []
     PerformanceSolvers: []
     PerformanceCoefficient: 0
+    NetworkTrainingRate: 0
     DNAVersion: 0
     autoSaveIncrement: 0
-  SaveNetDataFileName: ImaRecog_save_0
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
+    HasData: 0
+    NewTraining: 0
+    NeuralNetworkName: 
+    StartTrainingRate: 0
     InstanceWeights: []
-    InstanceBiases: []
     PerformanceSolvers:
     - ParameterName: 
       EvaluationParameter: 0
@@ -563,12 +566,14 @@ MonoBehaviour:
       ParameterType: 0
       ExpectedValue: 0
     PerformanceCoefficient: 0
-  EvaluateUpgradedsDNAOfEpoch: []
-  KeepAllInstancesDNAOfEpoch: []
-  InstancesEndedCount: 0
-  NetworkFunction: 1
-  NetworkMode: 0
-  LearningLogic: 0
+    NetworkTrainingRate: 0
+    DNAVersion: 0
+    autoSaveIncrement: 0
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
+  Genetic_InstanceEndedCount: 0
+  runningMode: 0
+  LearningLogic: 1
   isNeuralNetTraining: 0
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
@@ -576,7 +581,7 @@ MonoBehaviour:
   StartMode: 0
   SaveFile: 1
   Epochs: 200
-  TrainingBatchSize: 21
+  TrainingBatchSize: 1
   TrainingRate: 5
   MaxTrainingRate: 5
   AdjustTrainingRateAutomatically: 1
@@ -585,7 +590,6 @@ MonoBehaviour:
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   DelayBeforeRestart: 1
-  DNAVersion: 0
   TrainingBestResults: []
 --- !u!1 &913758364
 GameObject:
@@ -988,166 +992,3 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1755278601}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &863120543213445226
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7425770637802576440}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
---- !u!114 &1793488209695583868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7425770637802576440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77a122706d0763442bc6d8aa80ee2935, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NeuralNetworkComponent: {fileID: 2005439851403814316}
-  EvaluationParameters:
-  - ParameterName: Timer
-    EvaluationParameter: 0
-    EvaluationParameterWeight: 1
-    ParameterType: 1
-    ExpectedValue: 0
-  DistanceToUp: 0
-  DistanceToDown: 0
-  DistanceToRight: 0
-  JumpForce: 0
-  Rigidbody: {fileID: 0}
-  Timer: 0
-  isDead: 0
---- !u!114 &2005439851403814316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7425770637802576440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3201fc1377e47cdb0e0f5b68202806a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NeuralNet: {fileID: 7425770637802576442}
-  NetInput:
-  - InputName: DistUp
-    InputValue: 0
-  - InputName: DistDown
-    InputValue: 0
-  NetOutput:
-  - OutputName: Jump
-    OutputValue: 0
-  - OutputName: JumpForce
-    OutputValue: 0
-  Controller: {fileID: 1793488209695583868}
-  inputStreamOn: 0
---- !u!1 &7425770637802576440
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7425770637802576443}
-  - component: {fileID: 7425770637802576442}
-  - component: {fileID: 2005439851403814316}
-  - component: {fileID: 863120543213445226}
-  - component: {fileID: 1793488209695583868}
-  m_Layer: 0
-  m_Name: Jumper_Version5
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &7425770637802576442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7425770637802576440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37a7fcece38a4fa387abfce30f34efab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NeuralNetworkManager: {fileID: 0}
-  NeuralNetworkComponent: {fileID: 2005439851403814316}
-  InputLayerConstruct:
-  - NeuronCount: 2
-    LayerBias: 0
-    ActivationFunctionType: 0
-  HiddenLayerConstruct:
-  - NeuronCount: 9
-    LayerBias: 1
-    ActivationFunctionType: 3
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 3
-  - NeuronCount: 15
-    LayerBias: 1
-    ActivationFunctionType: 3
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 3
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 3
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 3
-  OutputLayerConstruct:
-  - NeuronCount: 2
-    LayerBias: 0.5
-    ActivationFunctionType: 3
-  _NetData:
-    HasData: 0
-    NewTraining: 0
-    NeuralNetworkName: 
-    StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
-    PerformanceSolvers: []
-    PerformanceCoefficient: 0
-    DNAVersion: 0
-    autoSaveIncrement: 0
-  InstanceDNA:
-    Weights: []
-    Biases: []
-  InstanceID: 0
-  IsExecuting: 0
-  IsTraining: 0
-  NeuralNetConnections: 0
-  _cycleResults: []
---- !u!4 &7425770637802576443
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7425770637802576440}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

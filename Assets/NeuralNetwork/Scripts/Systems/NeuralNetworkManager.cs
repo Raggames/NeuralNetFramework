@@ -18,7 +18,7 @@ namespace NeuralNetwork
        
         [Header("Instances")]
         public string SaveNetDataFileName;
-        private NetData NetData;
+        [SerializeField] private NetData NetData;
 
         [HideInInspector] public List<NeuralNet> NeuralNetworkInstances = new List<NeuralNet>();
         public NetData ActualBestDNA;
