@@ -652,6 +652,7 @@ namespace NeuralNetwork
                     case ActivatorType.Tanh :
                         entry = TanhActivator.CalculateValue(entry);
                         break;
+                    
                 }
             }
 
@@ -671,6 +672,7 @@ namespace NeuralNetwork
                     case ActivatorType.Tanh :
                         entry = TanhActivator.CalculateDerivative(entry);
                         break;
+                   
                 }
             }
             
