@@ -37,6 +37,7 @@
             <e p="NetToolbox" t="Include">
               <e p="NetActivators.cs" t="Include" />
               <e p="NetLossParameter.cs" t="Include" />
+              <e p="NetworkTrainingStatistics.cs" t="Include" />
             </e>
             <e p="NeuronNetwork" t="Include">
               <e p="NetLayerConstructor.cs" t="Include" />

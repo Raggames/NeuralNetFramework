@@ -353,14 +353,7 @@ namespace NeuralNetwork
             // END =====================================================================================================
             int weightcount = WeightsCount();
             sequenceIndexor = CreateIndexor(weightcount);
-            //**********************************************
-            //double[] inputTest = new double[inputs.Length];
-            //inputTest[0] = 0;
-            //inputTest[1] = 1;
-            //inputTest[2] = 2;
-            //outputs = ComputeOutputs(inputTest, numHidden.Count);
-            //DisplayOutputStrings(outputs);
-            //**********************************************
+           
         }
         public double[] GetWeightsAndBiases()
         {
@@ -604,11 +597,46 @@ namespace NeuralNetwork
             return outputs;
         }
 
-        private void BackPropagateGradient(double[] tValues, double trainingRate, double momentum, double weightDecay = 1)
+        private void BackPropagateGradient(double[] tValues, double trainingRate, double momentum, double weightDecay = 0.001)
         {
+            // Algorithme de Descente de gradient stochastique => voir Théorie Math pour comprendre.
             // Les tValues sont les valeurs voulues. La base de donnée de learning doit être labelisée => Label = tValue pur chaque sample de données
-            // le trainingRate est le coefficient 
+            // le trainingRate est le coefficient de modification des weights dans la fonction d'erreur
+            // le weight decay (ou dégradation des pondérations) permet de limiter le sur-apprentissage en ajoutant une pénalié au résultat sur les weights de la fonction d'erreur
+            if (tValues.Length != numOutput)
+            {
+                throw new Exception("Label target values doesn't fit output values length");
+            }
             
+            // Gradients de neurones de sortie ===========================================================================
+            for (int i = 0; i < oGrads.Length; i++)
+            {
+                double derivative =
+                    ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputs[i], true, numHidden[numHidden.Count-1]);
+                oGrads[i] = derivative * (tValues[i] - outputs[i]);
+            }
+            
+            // Gradients des neurones de couches hidden ==================================================================
+            // Les gradients remontent dans le réseau, de la sortie vers l'entrée, donc on part de la dernière couche hidden
+            int hiddenIndex = numHidden.Count-1;
+            for (int i = hiddenIndex; i >= 0; i--)
+            {
+                if (i==hiddenIndex)
+                {
+                    for (int j = 0; j < hGrads[i].Length; j++)
+                    {
+                        double derivative = ActivatorFunctionDouble(hiddenLayersConstructor[i].ActivatorFunction,
+                            h_Outputs[i][j], true, numHidden[numHidden.Count - 1]);
+                        double sum = 0.0;
+                        for (int k = 0; k < numOutput; k++)
+                        {
+                            double x = oGrads[k] * L_h_hWeights[i][j][k];
+                        }
+                        hGrads[i][j] = derivative * sum;
+                    }
+                }
+                
+            }
             
         }
         
@@ -654,6 +682,7 @@ namespace NeuralNetwork
                     case ActivatorType.Average:
                         entry = AverageActivator.CalculateValue(entry, prevNeurons);
                         break; 
+                   
                 }
             }
 
@@ -676,6 +705,11 @@ namespace NeuralNetwork
                     case ActivatorType.Average:
                         entry = AverageActivator.CalculateValue(entry, prevNeurons);
                         break; 
+                    case ActivatorType.Softmax : //Assuming Softmax derivative for Two Dimension events is the same as sigmoid.
+                                                 //Softmax is a generalisation of Sigmoid on n Dimensions outputs
+                                                 // See later for using the stronger Jacobian model  
+                        entry = SigmoidActivator.CalculateDerivative(entry); 
+                        break;
                 }
             }
             
@@ -900,8 +934,11 @@ namespace NeuralNetwork
                 
             }
         }
-
         public void UseInstance(double[] entryValues)
+        {
+            if(NetworkFunction == ENetworkImplementation.GameEntityControl) UseGameEntity(entryValues);
+        }
+        private void UseGameEntity(double[] entryValues)
         {
             ComputeOutputs(entryValues);
             OutputToExternal = outputs;

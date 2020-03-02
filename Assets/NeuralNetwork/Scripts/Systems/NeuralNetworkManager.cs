@@ -45,7 +45,7 @@ namespace NeuralNetwork
         [SerializeField] public bool isNeuralNetExecuting;
         [HideInInspector] public bool LoadFromBlueprint;
         [HideInInspector] public bool NewTraining = true;//check if instances is new or has already iterated
-        [Header("Training Setup")] 
+        [Header("Training General Settings")] 
         public EStartMode StartMode;//should manager looks for an existing load and get it or no ?
         public enum EStartMode
         {
@@ -60,6 +60,8 @@ namespace NeuralNetwork
         }
         public int Epochs;//Iterations of training
         public int TrainingBatchSize;//number of instances trained at the same time
+        
+        public NetworkTrainingStatistics NetworkTrainingStatistics = new NetworkTrainingStatistics();
         
         [Header("Training : Genetic")]
         
@@ -80,6 +82,7 @@ namespace NeuralNetwork
         public float DelayBeforeRestart = 1;
         
         [Header("Neural Network Evaluation")] 
+        
         public double[] TrainingBestResults;
 
         private int DNAVersion;
@@ -88,6 +91,7 @@ namespace NeuralNetwork
         #region Execution
         private void Start()
         {
+            NetworkTrainingStatistics.Name = IANetworkName + "_TrainingStatistics";
             if (StartMode == EStartMode.NewTraining)
             {
                 NewTraining = true;
@@ -371,6 +375,9 @@ namespace NeuralNetwork
                     epochsWithoutDNAEvolutionCount++;
                     var best = Genetic_ComputeBestPerformanceIndex(epochNetDatas);
                     previousIterationsCoefficients.Add(best.PerformanceCoefficient);
+                    // Statistic========================================================================================
+                    NetworkTrainingStatistics.SetStatEntry(EpochsCount, best.PerformanceCoefficient, TrainingRate);
+                    //==================================================================================================
                     if (epochsWithoutDNAEvolutionCount > TrainingRateEvolution)
                     {
                         ForceInstanceDNAReset = true;
@@ -401,6 +408,9 @@ namespace NeuralNetwork
                 }
                 if (dnaHasUpgrade)
                 {
+                    // Statistic========================================================================================
+                    NetworkTrainingStatistics.SetStatEntry(EpochsCount, bestCoeff, TrainingRate);
+                    //==================================================================================================
                     previousIterationsCoefficients.Clear();
                     previousIterationsCoefficientAverage = 0;
                     double actualTrainingRate = TrainingRate;
@@ -415,6 +425,8 @@ namespace NeuralNetwork
         }
     
         #endregion
+        
+        
         #region DataManaging
         private void HandleAndDisplayResults(List<NetLossParameter> solvers)
         {
