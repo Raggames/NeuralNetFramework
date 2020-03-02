@@ -59,11 +59,11 @@ MonoBehaviour:
     Neurons: 3
     ActivatorFunction: 1
   - ThisLayerType: 1
-    Neurons: 2
+    Neurons: 3
     ActivatorFunction: 1
   outputLayerConstructor:
     ThisLayerType: 2
-    Neurons: 1
+    Neurons: 3
     ActivatorFunction: 4
   ResultArrayTest: []
   WeightsNumber: 0

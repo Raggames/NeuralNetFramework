@@ -127,16 +127,12 @@ namespace NeuralNetwork
             Debug.Log("Initializing Network");
             // Retrieving Network Construction Values And Adding 'X' Hidden Layers =====================================
             numInput = inputLayerConstructor.Neurons;
-            inputLayerConstructor.Activator = ActivatorFactory.Produce(inputLayerConstructor.ActivatorFunction);
             for (int i = 0; i < hiddenLayersConstructor.Count; i++)
             {
                 numHidden.Add(hiddenLayersConstructor[i].Neurons);
-                hiddenLayersConstructor[i].Activator =
-                    ActivatorFactory.Produce(hiddenLayersConstructor[i].ActivatorFunction);
             }
 
             numOutput = outputLayerConstructor.Neurons;
-            outputLayerConstructor.Activator = ActivatorFactory.Produce(outputLayerConstructor.ActivatorFunction);
             
             // Initialize Arrays And Matrix ============================================================================
             inputs = new double[inputLayerConstructor.Neurons];
@@ -170,7 +166,7 @@ namespace NeuralNetwork
                             L_h_hWeights.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons,
                                 hiddenLayersConstructor[i + 1].Neurons));
                             h_Biases.Add(new double[hiddenLayersConstructor[i].Neurons]);
-                            h_Outputs.Add(new double[hiddenLayersConstructor[i + 1].Neurons]);
+                            h_Outputs.Add(new double[hiddenLayersConstructor[i].Neurons]);
                             // Gradients
                             hGrads.Add(new double[hiddenLayersConstructor[i].Neurons]);
                             // Weights Delta
@@ -187,7 +183,7 @@ namespace NeuralNetwork
                             L_h_hWeights.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons,
                                 hiddenLayersConstructor[i + 1].Neurons));
                             h_Biases.Add(new double[hiddenLayersConstructor[i].Neurons]);
-                            h_Outputs.Add(new double[hiddenLayersConstructor[i + 1].Neurons]);
+                            h_Outputs.Add(new double[hiddenLayersConstructor[i].Neurons]);
                             // Gradients
                             hGrads.Add(new double[hiddenLayersConstructor[i].Neurons]);
                             // Weights Delta
@@ -203,7 +199,7 @@ namespace NeuralNetwork
                                 outputLayerConstructor.Neurons));
                             h_Biases.Add(new double[hiddenLayersConstructor[i].Neurons]);
                             o_Biases = new double[outputLayerConstructor.Neurons];
-                            //h_Outputs.Add(new double[outputLayerConstructor.Neurons]);
+                            h_Outputs.Add(new double[hiddenLayersConstructor[i].Neurons]);  // <= ADDED ON DEBUG 
                             outputs = new double[outputLayerConstructor.Neurons];
                             // Gradients
                             oGrads = new double[outputLayerConstructor.Neurons];
@@ -364,7 +360,8 @@ namespace NeuralNetwork
             inputTest[0] = 0;
             inputTest[1] = 1;
             inputTest[2] = 2;
-            ComputeOutputs(inputTest, numHidden.Count);
+            outputs = ComputeOutputs(inputTest, numHidden.Count);
+            DisplayOutputStrings(outputs);
         }
         public double[] GetWeightsAndBiases()
         {
@@ -439,8 +436,6 @@ namespace NeuralNetwork
             Debug.Log("Get => " + result);
             return result;
         }
-        
-
         private double[] ComputeOutputs(double[] xValues, int hiddenLayersCount)
         {
             if (xValues.Length != numInput)
@@ -473,7 +468,8 @@ namespace NeuralNetwork
 
                 for (int i = 0; i < hid; i++)
                 {
-                    h_Outputs[0][i] = hiddenLayersConstructor[0].Activator.CalculateValue(hiddenSums[i]);
+                    h_Outputs[0][i] =
+                        ActivatorFunctionDouble(hiddenLayersConstructor[0].ActivatorFunction, hiddenSums[i], false);
                 }
 
                 for (int i = 0; i < numOutput; i++)
@@ -491,29 +487,28 @@ namespace NeuralNetwork
                 // Case SoftMax => We want all the outputs to be computed as an unique sample
                 if (outputLayerConstructor.ActivatorFunction == ActivatorType.Softmax)
                 {
-                    double[] softMaxOutput = outputLayerConstructor.Activator.CalculateValues(outputSums);
-                    outputs = softMaxOutput;
+                    double[] softMaxOutput = SoftmaxActivator(outputSums, false);
+                    Array.Copy(softMaxOutput, outputs, softMaxOutput.Length);
                     Debug.Log("Output Softmax Activator");
                 }
                 else
                 {
                     for (int i = 0; i < numOutput; i++)
                     {
-                        outputSums[i] = outputLayerConstructor.Activator.CalculateValue(outputSums[i]);
+                        outputSums[i] = ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputSums[i], false);
                     }
                     outputs = outputSums;
                     Debug.Log("Output Generic Analog Activator");
 
                 }
-                
-                
+
+                return outputs;
             }
             // MULTIPLE HIDDEN LAYERS NETWORK ================================================================================
             if (hiddenLayersCount > 1)
             {
                 for (int H = 0; H < hiddenLayersCount; H++)
                 {
-                    
                     double[] hiddensSums = new double[numHidden[H]];
                     // Input To Hidden 0
                     if (H == 0)
@@ -534,7 +529,8 @@ namespace NeuralNetwork
 
                         for (int i = 0; i < numHidden[H]; i++)
                         {
-                            h_Outputs[H][i] = hiddenLayersConstructor[H].Activator.CalculateValue(hiddensSums[i]);
+                            h_Outputs[H][i] = ActivatorFunctionDouble(hiddenLayersConstructor[H].ActivatorFunction,
+                                hiddensSums[i], false);
                         }
                     }
 
@@ -557,8 +553,8 @@ namespace NeuralNetwork
 
                         for (int i = 0; i < numHidden[H + 1]; i++)
                         {
-                            h_Outputs[H + 1][i] = hiddenLayersConstructor[H + 1].Activator
-                                .CalculateValue(hiddensSums[i]);
+                            h_Outputs[H + 1][i] = ActivatorFunctionDouble(hiddenLayersConstructor[H+1].ActivatorFunction,
+                                hiddensSums[i], false);
                         }
                     }
 
@@ -583,30 +579,100 @@ namespace NeuralNetwork
                 // Case SoftMax => We want all the outputs to be computed as an unique sample
                 if (outputLayerConstructor.ActivatorFunction == ActivatorType.Softmax)
                 {
-                    double[] softMaxOutput = outputLayerConstructor.Activator.CalculateValues(outputSums);
-                    outputs = softMaxOutput;
-                    Debug.Log("Output Softmax Activator");
+                    double[] softMaxOutput = SoftmaxActivator(outputSums, false);
+                    //outputs = new double[softMaxOutput.Length];
+                    Array.Copy(softMaxOutput, outputs, softMaxOutput.Length);
+                    Debug.Log("Output Softmax Activator" + outputs);
 
                 }
                 else
                 {
                     for (int i = 0; i < numOutput; i++)
                     {
-                        outputSums[i] = outputLayerConstructor.Activator.CalculateValue(outputSums[i]);
+                        outputSums[i] = ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputSums[i], false);
                     }
 
                     outputs = outputSums;
                     Debug.Log("Output Generic Analog Activator");
 
                 }
+
+                return outputs;
             }
 
             Debug.Log("Sample Loop Executed"); 
             return outputs;
         }
-        
-        
-        
+
+        private static void DisplayOutputStrings(double[] outputs)
+        {
+            string outputValues = "";
+            for (int i = 0; i < outputs.Length; i++)
+            {
+                outputValues += outputs[i].ToString();
+            }
+        }
+
+        private static double ActivatorFunctionDouble(ActivatorType activatorType, double entry, bool isDerivative)
+        {
+            if (!isDerivative)
+            {
+                switch (activatorType)
+                {
+                    case ActivatorType.Identity :
+                        entry = IdentityActivator.CalculateValue(entry);
+                        break;
+                    case ActivatorType.Sigmoid :
+                        entry = SigmoidActivator.CalculateValue(entry);
+                        break;
+                    case ActivatorType.Relu :
+                        entry = ReluActivator.CalculateValue(entry);
+                        break;
+                    case ActivatorType.Tanh :
+                        entry = TanhActivator.CalculateValue(entry);
+                        break;
+                }
+            }
+
+            if (isDerivative)
+            {
+                switch (activatorType)
+                {
+                    case ActivatorType.Identity :
+                        entry = IdentityActivator.CalculateDerivative(entry);
+                        break;
+                    case ActivatorType.Sigmoid :
+                        entry = SigmoidActivator.CalculateDerivative(entry);
+                        break;
+                    case ActivatorType.Relu :
+                        entry = ReluActivator.CalculateDerivative(entry);
+                        break;
+                    case ActivatorType.Tanh :
+                        entry = TanhActivator.CalculateDerivative(entry);
+                        break;
+                }
+            }
+            
+
+            return entry;
+        }
+
+        private static double[] SoftmaxActivator(double[] entry, bool isDerivative, double[]error = null)
+        {
+            double[] result = new double[entry.Length];
+            if (isDerivative)
+            {
+                result = Scripts.NeuronActivatorFunctions.SoftmaxActivator.CalculateDerivative(entry, error);
+            }
+
+            if (!isDerivative)
+            {
+                result = Scripts.NeuronActivatorFunctions.SoftmaxActivator.CalculateValue(entry);
+
+            }
+
+            return result;
+        }
         
         #endregion
         

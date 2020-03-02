@@ -18,7 +18,6 @@ namespace NeuralNetwork
         public LayerType ThisLayerType;
         public int Neurons;
         public ActivatorType ActivatorFunction;
-        public Activator Activator;
     }
 
 }
