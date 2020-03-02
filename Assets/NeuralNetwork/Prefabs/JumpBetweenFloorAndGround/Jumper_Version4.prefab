@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3956378676603637950}
   - component: {fileID: 3956378676603637951}
-  - component: {fileID: 5349856995082661673}
   - component: {fileID: 6489733188150635247}
   - component: {fileID: 5262881103439324409}
   m_Layer: 0
@@ -48,79 +47,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NeuralNetworkManager: {fileID: 0}
-  NeuralNetworkComponent: {fileID: 5349856995082661673}
-  InputLayerConstruct:
-  - NeuronCount: 2
-    LayerBias: 0
-    ActivationFunctionType: 0
-  HiddenLayerConstruct:
-  - NeuronCount: 9
-    LayerBias: 1
-    ActivationFunctionType: 6
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 6
-  - NeuronCount: 15
-    LayerBias: 1
-    ActivationFunctionType: 6
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 6
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 6
-  - NeuronCount: 12
-    LayerBias: 1
-    ActivationFunctionType: 6
-  OutputLayerConstruct:
-  - NeuronCount: 2
-    LayerBias: 0.5
-    ActivationFunctionType: 7
+  inputLayerConstructor:
+    ThisLayerType: 0
+    Neurons: 2
+    ActivatorFunction: 0
+  hiddenLayersConstructor:
+  - ThisLayerType: 1
+    Neurons: 20
+    ActivatorFunction: 0
+  - ThisLayerType: 0
+    Neurons: 18
+    ActivatorFunction: 0
+  - ThisLayerType: 0
+    Neurons: 14
+    ActivatorFunction: 0
+  - ThisLayerType: 0
+    Neurons: 7
+    ActivatorFunction: 0
+  outputLayerConstructor:
+    ThisLayerType: 2
+    Neurons: 2
+    ActivatorFunction: 0
+  sequenceIndexor: []
+  WeightsNumber: 0
+  o_Biases: []
+  outputs: []
+  oGrads: []
+  momentum: 0.01
+  oPrevBiasesDelta: []
   _NetData:
     HasData: 0
     NewTraining: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
+    InstanceWeights: []
     PerformanceSolvers: []
     PerformanceCoefficient: 0
+    NetworkTrainingRate: 0
     DNAVersion: 0
-  InstanceDNA:
-    Weights: []
-    Biases: []
+    autoSaveIncrement: 0
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
   InstanceID: 0
   IsExecuting: 0
   IsTraining: 0
-  NeuralNetConnections: 0
-  _cycleResults: []
---- !u!114 &5349856995082661673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3956378676603637949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3201fc1377e47cdb0e0f5b68202806a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NeuralNet: {fileID: 3956378676603637951}
-  NetInput:
-  - InputName: DistUp
-    InputValue: 0
-  - InputName: DistDown
-    InputValue: 0
-  NetOutput:
-  - OutputName: Jump
-    OutputValue: 0
-  - OutputName: JumpForce
-    OutputValue: 0
+  NetworkFunction: 1
   Controller: {fileID: 5262881103439324409}
   inputStreamOn: 0
+  ExternalInputs: []
+  OutputToExternal: []
 --- !u!54 &6489733188150635247
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -149,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77a122706d0763442bc6d8aa80ee2935, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NeuralNetworkComponent: {fileID: 5349856995082661673}
+  NeuralNet: {fileID: 3956378676603637951}
   EvaluationParameters:
   - ParameterName: Timer
     EvaluationParameter: 0
@@ -160,7 +135,7 @@ MonoBehaviour:
   DistanceToDown: 0
   DistanceToRight: 0
   JumpForce: 0
-  Rigidbody: {fileID: 0}
+  Rigidbody: {fileID: 6489733188150635247}
   Timer: 0
   isDead: 0
 --- !u!1 &5041585173259987680

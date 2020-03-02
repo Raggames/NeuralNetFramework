@@ -95,6 +95,25 @@ namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
         }
       
     }
+
+    public static class AverageActivator
+    {
+        public static double CalculateDerivative(double[] input)
+        {
+            throw new Exception("Derivative is not avalaible for Average Activator");
+        }
+
+        public static double CalculateValue(double[] input)
+        {
+            double average = 0;
+            for (int i = 0; i < input.Length; i++)
+            {
+                average += input[i];
+            }
+            average /= input.Length;
+            return average;
+        }
+    }
     public enum ActivatorType
     {
         Identity,

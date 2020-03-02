@@ -537,25 +537,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NetWorkPrefab: {fileID: 3956378676603637949, guid: 6ef4c5a1b65ffaf4ba99906bc60c3a74,
     type: 3}
-  IANetworkName: Jumper V9
+  IANetworkName: JumpV1
+  SaveNetDataFileName: JumpV1_dna_1
   NetData:
     HasData: 0
     NewTraining: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
+    InstanceWeights: []
     PerformanceSolvers: []
     PerformanceCoefficient: 0
+    NetworkTrainingRate: 0
     DNAVersion: 0
     autoSaveIncrement: 0
-  SaveNetDataFileName: DNAjumperV11
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
+    HasData: 0
+    NewTraining: 0
+    NeuralNetworkName: 
+    StartTrainingRate: 0
     InstanceWeights: []
-    InstanceBiases: []
     PerformanceSolvers:
     - ParameterName: 
       EvaluationParameter: 0
@@ -563,30 +566,31 @@ MonoBehaviour:
       ParameterType: 0
       ExpectedValue: 0
     PerformanceCoefficient: 0
-  EvaluateUpgradedsDNAOfEpoch: []
-  KeepAllInstancesDNAOfEpoch: []
-  InstancesEndedCount: 0
-  NetworkFunction: 1
-  NetworkMode: 0
-  ForceGeneticsRandomization: 0
-  AbsoluteValues: 1
+    NetworkTrainingRate: 0
+    DNAVersion: 0
+    autoSaveIncrement: 0
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
+  Genetic_InstanceEndedCount: 0
+  runningMode: 0
+  LearningLogic: 0
   isNeuralNetTraining: 0
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
   NewTraining: 1
   StartMode: 0
   SaveFile: 1
-  TrainingRate: 5
-  MaxTrainingRate: 5
   Epochs: 200
   TrainingBatchSize: 21
+  TrainingRate: 5
+  MaxTrainingRate: 5
+  InitialWeightsDelta: 0.1
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 6.1
   TrainingRateEvolution: 3
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   DelayBeforeRestart: 1
-  DNAVersion: 0
   TrainingBestResults: []
 --- !u!1 &913758364
 GameObject:
@@ -784,50 +788,54 @@ MonoBehaviour:
   NetWorkPrefab: {fileID: 3956378676603637949, guid: 902cf4a7912a4fa4ea1941348c44dc2d,
     type: 3}
   IANetworkName: Find Vector 3
+  SaveNetDataFileName: FindVector3
   NetData:
     HasData: 0
     NewTraining: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
+    InstanceWeights: []
     PerformanceSolvers: []
     PerformanceCoefficient: 0
+    NetworkTrainingRate: 0
     DNAVersion: 0
     autoSaveIncrement: 0
-  SaveNetDataFileName: FindVector3
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
+    HasData: 0
+    NewTraining: 0
+    NeuralNetworkName: 
+    StartTrainingRate: 0
     InstanceWeights: []
-    InstanceBiases: []
     PerformanceSolvers: []
     PerformanceCoefficient: 0
-  EvaluateUpgradedsDNAOfEpoch: []
-  KeepAllInstancesDNAOfEpoch: []
-  InstancesEndedCount: 0
-  NetworkFunction: 0
-  NetworkMode: 0
-  ForceGeneticsRandomization: 0
-  AbsoluteValues: 0
+    NetworkTrainingRate: 0
+    DNAVersion: 0
+    autoSaveIncrement: 0
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
+  Genetic_InstanceEndedCount: 0
+  runningMode: 0
+  LearningLogic: 0
   isNeuralNetTraining: 0
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
   NewTraining: 1
   StartMode: 0
   SaveFile: 0
-  TrainingRate: 0.5
-  MaxTrainingRate: 0.5
   Epochs: 10000
   TrainingBatchSize: 1
+  TrainingRate: 0.5
+  MaxTrainingRate: 0.5
+  InitialWeightsDelta: 0
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 4
   TrainingRateEvolution: 50
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   DelayBeforeRestart: 0
-  DNAVersion: 0
   TrainingBestResults:
   - 0
   - 0

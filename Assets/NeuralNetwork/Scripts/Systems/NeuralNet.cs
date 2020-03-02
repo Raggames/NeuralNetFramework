@@ -29,7 +29,7 @@ namespace NeuralNetwork
         /// <summary>
         /// Network ====================================================================================================
         /// </summary>
-        public double[] ResultArrayTest;
+        [SerializeField] private double[] sequenceIndexor;
         
         //==============================================================================================================
         public int WeightsNumber;
@@ -71,12 +71,18 @@ namespace NeuralNetwork
         public int InstanceID;
         public bool IsExecuting;
         public bool IsTraining;
-     
+
         [Header("Input From World and Output To World")]
+        public ENetworkImplementation NetworkFunction;
+        public enum ENetworkImplementation
+        {
+            DataBasePrediction,
+            GameEntityControl,
+        }
         public NeuralNetController Controller;
         public bool inputStreamOn;
-        public List<double> ExternalInputs = new List<double>();
-        public List<double> OutputToExternal = new List<double>();
+        public double[] ExternalInputs;
+        public double[] OutputToExternal;
         
         #endregion
         
@@ -87,25 +93,21 @@ namespace NeuralNetwork
             _NetData = netData;
             NeuralNetworkManager = neuralNetworkManager;
             InstanceID = instanceID;
+            
             // Setting Up InputsList and OutputsList for Controllers
-            if (ExternalInputs.Count == 0)
+            if (ExternalInputs.Length == 0)
             {
-                for (int i = 0; i <  inputLayerConstructor.Neurons; i++)
-                {
-                    ExternalInputs.Add(0);
-                }
+                ExternalInputs = new double[inputLayerConstructor.Neurons];
             }
-            if (OutputToExternal.Count == 0)
+            if (OutputToExternal.Length == 0)
             {
-                for (int i = 0; i <  outputLayerConstructor.Neurons; i++)
-                {
-                   OutputToExternal.Add(0);
-                }
+                OutputToExternal = new double[outputLayerConstructor.Neurons];
+               
             }
             // Setting Up Network For Training
             if (NeuralNetworkManager.runningMode == NeuralNetwork.NeuralNetworkManager.ERunningMode.Train)
             {
-               if(NeuralNetworkManager.NewTraining) InitializeNetwork();
+               if(NeuralNetworkManager.NewTraining) InitializeNetwork(NeuralNetworkManager.InitialWeightsDelta);
                if(!NeuralNetworkManager.NewTraining) SetWeightsAndBiasesFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
 
             }
@@ -122,7 +124,7 @@ namespace NeuralNetwork
       
         #region Network_Management
 
-        private void InitializeNetwork()
+        private void InitializeNetwork(double initWeightsDelta)
         {
             Debug.Log("Initializing Network");
             // Retrieving Network Construction Values And Adding 'X' Hidden Layers =====================================
@@ -212,14 +214,10 @@ namespace NeuralNetwork
                 }
                 // Initialize Weights ======================================================================================
                 
-                InitializeWeights(WeightsCount());
-                //int weightcount = WeightsCount();
-                //ResultArrayTest = new double[weightcount];
-                //for (int i = 0; i < WeightsCount(); i++)
-                //{
-                //    ResultArrayTest[i] = i;
-                //}
-                //SetWeightsAndBiases(ResultArrayTest);
+                InitializeWeights(WeightsCount(), initWeightsDelta);
+                
+                
+                
             }
         }
         private static double[][] MakeMatrix(int rows, int cols) // helper for ctor
@@ -259,14 +257,16 @@ namespace NeuralNetwork
             WeightsNumber = nbr;
             return nbr;
         }
-        private void InitializeWeights(int nbr)
+
+        private void InitializeWeights(int nbr, double initWeightsDelta)
         {
             random = new Random(0);
             double[] initialWeights = new  double[nbr];
-            double lo = -0.01;
-            double hi = 0.01;
+            double lo = -initWeightsDelta; // -0.01
+            double hi = initWeightsDelta;
             for (int i = 0; i < initialWeights.Length; ++i)
                 initialWeights[i] = (hi - lo) * random.NextDouble() + lo;
+            _NetData.InstanceWeights = initialWeights;
            SetWeightsAndBiases(initialWeights);
         }
         private void SetWeightsAndBiases(double[] weights)
@@ -352,16 +352,16 @@ namespace NeuralNetwork
                 }
             }
             // END =====================================================================================================
-            //Debug.Log(TestConnection);
-            //Debug.Log("Set" + ResultArrayTest.Length);
-            //ResultArrayTest = GetWeightsAndBiases();
-            
-            double[] inputTest = new double[inputs.Length];
-            inputTest[0] = 0;
-            inputTest[1] = 1;
-            inputTest[2] = 2;
-            outputs = ComputeOutputs(inputTest, numHidden.Count);
-            DisplayOutputStrings(outputs);
+            int weightcount = WeightsCount();
+            sequenceIndexor = CreateIndexor(weightcount);
+            //**********************************************
+            //double[] inputTest = new double[inputs.Length];
+            //inputTest[0] = 0;
+            //inputTest[1] = 1;
+            //inputTest[2] = 2;
+            //outputs = ComputeOutputs(inputTest, numHidden.Count);
+            //DisplayOutputStrings(outputs);
+            //**********************************************
         }
         public double[] GetWeightsAndBiases()
         {
@@ -436,11 +436,12 @@ namespace NeuralNetwork
             Debug.Log("Get => " + result);
             return result;
         }
-        private double[] ComputeOutputs(double[] xValues, int hiddenLayersCount)
+        private double[] ComputeOutputs(double[] xValues)
         {
             if (xValues.Length != numInput)
                 throw new Exception("Bad xValues array length");
-            
+
+            int hiddenLayersCount = numHidden.Count;
             double[] outputSums = new double[outputLayerConstructor.Neurons];
             
             for (int i = 0; i < inputs.Length; i++)
@@ -582,7 +583,7 @@ namespace NeuralNetwork
                     double[] softMaxOutput = SoftmaxActivator(outputSums, false);
                     //outputs = new double[softMaxOutput.Length];
                     Array.Copy(softMaxOutput, outputs, softMaxOutput.Length);
-                    Debug.Log("Output Softmax Activator" + outputs);
+                    Debug.Log("Output Softmax Activator");
 
                 }
                 else
@@ -604,6 +605,27 @@ namespace NeuralNetwork
             return outputs;
         }
 
+        private void BackPropagateGradient(double[] tValues, double trainingRate, double momentum, double weightDecay = 1)
+        {
+            // Les tValues sont les valeurs voulues. La base de donnée de learning doit être labelisée => Label = tValue pur chaque sample de données
+            // le trainingRate est le coefficient 
+            
+            
+        }
+        
+        
+        #endregion
+        
+        #region Utils
+        private static double[] CreateIndexor(int lenght)
+        {
+            double[] indexor = new double[lenght];
+            for (int i = 0; i < lenght; i++)
+            {
+                indexor[i] = i;
+            }
+            return indexor;
+        }
         private static void DisplayOutputStrings(double[] outputs)
         {
             string outputValues = "";
@@ -612,7 +634,6 @@ namespace NeuralNetwork
                 outputValues += outputs[i].ToString();
             }
         }
-
         private static double ActivatorFunctionDouble(ActivatorType activatorType, double entry, bool isDerivative)
         {
             if (!isDerivative)
@@ -656,7 +677,6 @@ namespace NeuralNetwork
 
             return entry;
         }
-
         private static double[] SoftmaxActivator(double[] entry, bool isDerivative, double[]error = null)
         {
             double[] result = new double[entry.Length];
@@ -690,14 +710,56 @@ namespace NeuralNetwork
             }
         }
         
+        private double MeanCrossEntropyError(double[][] trainData)
+        {
+            double sumError = 0.0;
+            double[] xValues = new double[numInput];
+            double[] tValues = new double[numOutput];
+
+            for (int i = 0; i < trainData.Length; ++i)
+            {
+                Array.Copy(trainData[i], xValues, numInput); // get inputs 
+                Array.Copy(trainData[i], numInput, tValues, 0, numOutput); // get targets
+                double[] yValues = this.ComputeOutputs(xValues); // compute outputs
+                for (int j = 0; j < numOutput; ++j)
+                {
+                    sumError += Math.Log(yValues[j]) * tValues[j]; // CE error
+                }
+            }
+            return -1.0 * sumError / trainData.Length;
+        }
+        private double MeanSquaredError(double[][] trainData) // used as a training stopping condition
+        {
+            // average squared error per training tuple
+            double sumSquaredError = 0.0;
+            double[] xValues = new double[numInput]; // first numInput values in trainData
+            double[] tValues = new double[numOutput]; // last numOutput values
+
+            for (int i = 0; i < trainData.Length; ++i) 
+            {
+                // walk thru each training case. looks like (6.9 3.2 5.7 2.3) (0 0 1)
+                //  where the parens are not really there
+                Array.Copy(trainData[i], xValues, numInput); // get xValues.
+                Array.Copy(trainData[i], numInput, tValues, 0, numOutput); // get target values
+                double[] yValues = this.ComputeOutputs(xValues); // compute output using current weights
+                for (int j = 0; j < numOutput; ++j)
+                {
+                    double err = tValues[j] - yValues[j];
+                    sumSquaredError += err * err;
+                }
+            }
+
+            return sumSquaredError / trainData.Length;
+        }
         #endregion
         
         #region Genetic
         public void Genetic_OnInstanceEnd(List<NeuralNetworkPerformanceSolver> paramatersForEvaluation) // Triggers Only With Genetic Learning
         {
+            Debug.Log("InstanceEnd");
             if (NeuralNetworkManager.runningMode == NeuralNetworkManager.ERunningMode.Train)
             {
-                Genetic_ComputePerformanceIndex(paramatersForEvaluation);
+                Genetic_ComputeLossFunction(paramatersForEvaluation);
             }
             if (NeuralNetworkManager.runningMode == NeuralNetworkManager.ERunningMode.Execute)
             {
@@ -705,7 +767,7 @@ namespace NeuralNetwork
             }
             
         }
-        public void Genetic_ComputePerformanceIndex(
+        public void Genetic_ComputeLossFunction(
             List<NeuralNetworkPerformanceSolver> errorParameters)
         {
             // Compare Values to Actual DNA evaluation parameters values
@@ -766,28 +828,33 @@ namespace NeuralNetwork
         }
         public void Genetic_NeuralNetRestart(NeuralNetworkManager.ERunningMode eRunningMode, NetData netData, bool DNAHasUpgrade, bool forceInstanceDNAReset)
         {
-            if (NeuralNetworkManager.LearningLogic == NeuralNetworkManager.ELearningLogic.Genetic)
+            if (eRunningMode == NeuralNetworkManager.ERunningMode.Train)
             {
-                if (eRunningMode == NeuralNetworkManager.ERunningMode.Train && DNAHasUpgrade ||
-                    eRunningMode == NeuralNetwork.NeuralNetworkManager.ERunningMode.Train && forceInstanceDNAReset)
+                if (DNAHasUpgrade || forceInstanceDNAReset) // Getting NetData Best DNA, Randomizing by trainingRate and Reinject in Instance
                 {
-
-                    SetWeightsAndBiasesFromData(netData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
+                    SetWeightsAndBiases(Genetic_RandomizeWeightsAndBiasesFromData(netData.InstanceWeights, NeuralNetworkManager.TrainingRate));
                     Debug.Log("Set DNA from Data");
                 }
-                if(!gameObject.activeSelf) gameObject.SetActive(true);
-                // if no DNA upgrade
-                Controller.InstanceReset();
+                else // Getting DNA, Randomizing and Reinject
+                {
+                    SetWeightsAndBiases(Genetic_RandomizeWeightsAndBiasesFromData(_NetData.InstanceWeights, NeuralNetworkManager.TrainingRate));
+                }
             }
+            if(!gameObject.activeSelf) gameObject.SetActive(true);
+                // if no DNA upgrade
+            Controller.InstanceReset();
+            
         }
-        private double[] Genetic_RandomizeWeightsAndBiasesFromData(List<double> dataWeights, double TrainingRate)
+        private double[] Genetic_RandomizeWeightsAndBiasesFromData(double[] dataWeights, double TrainingRate)
         {
             random = new Random(0);
-            double[] randomizedWeights = new  double[dataWeights.Count];
+            double[] randomizedWeights = new  double[dataWeights.Length];
+            randomizedWeights = dataWeights.ToArray();
             double lo = TrainingRate;
             double hi = TrainingRate;
             for (int i = 0; i < randomizedWeights.Length; ++i)
-                randomizedWeights[i] = (hi - lo) * random.NextDouble() + lo;
+                randomizedWeights[i] += (hi - lo) * random.NextDouble() + lo;
+            _NetData.InstanceWeights = randomizedWeights;
             return randomizedWeights;
         }
         
@@ -798,11 +865,11 @@ namespace NeuralNetwork
         {
             if (netData.HasData)
             {
-                SetWeightsAndBiases(netData.InstanceWeights.ToArray());
+                    SetWeightsAndBiases(netData.InstanceWeights.ToArray());
             }
             else
             {
-                InitializeWeights(WeightsNumber);
+                InitializeWeights(WeightsNumber, NeuralNetworkManager.InitialWeightsDelta);
             }
 
         }
@@ -817,14 +884,23 @@ namespace NeuralNetwork
             {
                 IsTraining = true;
                 IsExecuting = false;
+                inputStreamOn = true;
+               
             }
             if (eRunningMode == NeuralNetworkManager.ERunningMode.Execute)
             {
                 IsTraining = false;
                 IsExecuting = true;
+                inputStreamOn = true;
+                
             }
         }
-        
+
+        public void UseInstance(double[] entryValues)
+        {
+            ComputeOutputs(entryValues);
+            OutputToExternal = outputs;
+        }
         #endregion
       
 

@@ -19,6 +19,7 @@ namespace NeuralNetwork.Scripts.Controllers
         [SerializeField] private bool isDead;
         private void Start()
         {
+            Debug.Log("Controller Start");
             Rigidbody = GetComponent<Rigidbody>();
             startPos = transform.position;
         }
@@ -54,6 +55,7 @@ namespace NeuralNetwork.Scripts.Controllers
         }
         public override void InstanceReset()
         {
+            Debug.Log("Instance Reset");
             isDead = false;
             Timer = 0;
             JumpForce = 0;
@@ -79,6 +81,7 @@ namespace NeuralNetwork.Scripts.Controllers
                 DistanceToUp = Vector3.Distance(transform.position, new Vector3(transform.position.x,10,transform.position.z));
                 DistanceToDown = Vector3.Distance(transform.position, new Vector3(transform.position.x,0,transform.position.z));
                 SetInputs();
+                NeuralNet.UseInstance(NeuralNet.ExternalInputs);
                 OnOutput();
                 Timer += Time.deltaTime;
             }

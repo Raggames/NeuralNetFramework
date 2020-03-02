@@ -64,6 +64,7 @@ namespace NeuralNetwork
         
         public double TrainingRate;//gradient d'update des weights
         public double MaxTrainingRate;
+        public double InitialWeightsDelta; // should be something low for Data (0.01), Bigger for GameIA
         public bool AdjustTrainingRateAutomatically;
         [Range(0.01f, 50f)] public float TrainingRateChangePurcentage; //if NeuralNetwork can't upgrade for n = "TrainingRateEvolution", decrease Training Rate by this value
         public int TrainingRateEvolution;
@@ -193,7 +194,7 @@ namespace NeuralNetwork
             }
             if (NewTraining)
             {
-                TrainingBestResults = new double[NeuralNetworkInstances[0].OutputToExternal.Count];
+                TrainingBestResults = new double[NeuralNetworkInstances[0].Controller.EvaluationParameters.Count];
             }
         }
         private void InitializeExecuting(GameObject networkPrefab, ERunningMode eRunningMode, int batchSize)
@@ -217,17 +218,16 @@ namespace NeuralNetwork
       
         public void Genetic_OnInstanceCompare(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
         {
-            Genetic_InstanceEndedCount += 1;
-            Genetic_SolverComparator(instanceNetwork, computedCoeff, solvers, instancehasBestDna);
-            
+            Genetic_LossResultsComparator(instanceNetwork, computedCoeff, solvers, instancehasBestDna);
 
         }
-        private void Genetic_SolverComparator(NeuralNet instance, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
+        private void Genetic_LossResultsComparator(NeuralNet instance, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
         {
+            Genetic_InstanceEndedCount += 1;
             bool hasComputedinstanceNetwork = false;
                 NetData instDna = new NetData();
                 instDna.InstanceWeights = new double[instance.WeightsNumber];
-                instDna.InstanceWeights = instance.GetWeightsAndBiases();
+                instDna.InstanceWeights = instance._NetData.InstanceWeights;
                 instDna.PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
                 for (int i = 0; i < solvers.Count; i++)
                 {
