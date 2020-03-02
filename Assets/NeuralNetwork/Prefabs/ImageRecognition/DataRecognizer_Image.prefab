@@ -46,20 +46,25 @@ MonoBehaviour:
   NeuralNetworkManager: {fileID: 0}
   inputLayerConstructor:
     ThisLayerType: 0
-    Neurons: 2
+    Neurons: 1
     ActivatorFunction: 0
   hiddenLayersConstructor:
   - ThisLayerType: 1
     Neurons: 3
     ActivatorFunction: 0
   - ThisLayerType: 1
-    Neurons: 3
+    Neurons: 2
     ActivatorFunction: 0
   outputLayerConstructor:
     ThisLayerType: 2
-    Neurons: 2
+    Neurons: 1
     ActivatorFunction: 4
   WeightsNumber: 0
+  o_Biases: []
+  outputs: []
+  oGrads: []
+  momentum: 0.01
+  oPrevBiasesDelta: []
   _NetData:
     HasData: 0
     NewTraining: 0
