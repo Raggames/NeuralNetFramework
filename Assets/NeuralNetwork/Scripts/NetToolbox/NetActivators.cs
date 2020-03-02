@@ -1,11 +1,9 @@
 using System;
-using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
-using System.Runtime.InteropServices.WindowsRuntime;
 
-namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
+namespace NeuralNetwork.Scripts.NetToolbox
 {
-    public static class Activator{}
+    public static class NetActivators{}
     public static class IdentityActivator 
     {
         public static double CalculateDerivative(double input)
@@ -98,19 +96,14 @@ namespace NeuralNetwork.Scripts.NeuronActivatorFunctions
 
     public static class AverageActivator
     {
-        public static double[] CalculateDerivative(double[] input)
+        public static double CalculateDerivative(double input, int prevNeur=1)
         {
-            throw new Exception("Derivative is not avalaible for Average Activator");
+            return input * prevNeur;
         }
 
-        public static double[] CalculateValue(double[] input)
+        public static double CalculateValue(double input, int prevNeur=1)
         {
-            double[] average = input;
-            for (int i = 0; i < input.Length; i++)
-            {
-                average[i] /= input.Length;
-            }
-            return average;
+           return input/prevNeur;
         }
     }
     public enum ActivatorType

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using NeuralNetwork.Scripts.Data;
+using NeuralNetwork.Scripts.NetToolbox;
 using NeuralNetwork.Utils;
 using UnityEngine;
 
@@ -84,7 +85,6 @@ namespace NeuralNetwork
         private int DNAVersion;
 
         #endregion
-
         #region Execution
         private void Start()
         {
@@ -115,7 +115,6 @@ namespace NeuralNetwork
             if(!isNeuralNetExecuting) InitializeExecuting(NetWorkPrefab, runningMode, TrainingBatchSize);
         }
         #endregion
-
         #region Initializing
         private void SetManagerData()
         {
@@ -216,22 +215,22 @@ namespace NeuralNetwork
         #endregion
         #region Genetic_TrainingAlgorithm
       
-        public void Genetic_OnInstanceCompare(NeuralNet instanceNetwork, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
+        public void Genetic_OnInstanceCompare(NeuralNet instanceNetwork, double computedCoeff, List<NetLossParameter> solvers, bool instancehasBestDna)
         {
             Genetic_LossResultsComparator(instanceNetwork, computedCoeff, solvers, instancehasBestDna);
 
         }
-        private void Genetic_LossResultsComparator(NeuralNet instance, double computedCoeff, List<NeuralNetworkPerformanceSolver> solvers, bool instancehasBestDna)
+        private void Genetic_LossResultsComparator(NeuralNet instance, double computedCoeff, List<NetLossParameter> solvers, bool instancehasBestDna)
         {
             Genetic_InstanceEndedCount += 1;
             bool hasComputedinstanceNetwork = false;
                 NetData instDna = new NetData();
                 instDna.InstanceWeights = new double[instance.WeightsNumber];
                 instDna.InstanceWeights = instance._NetData.InstanceWeights;
-                instDna.PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
+                instDna.PerformanceSolvers = new List<NetLossParameter>();
                 for (int i = 0; i < solvers.Count; i++)
                 {
-                    NeuralNetworkPerformanceSolver solver = new NeuralNetworkPerformanceSolver();
+                    NetLossParameter solver = new NetLossParameter();
                     solver.ParameterName = solvers[i].ParameterName;
                     solver.ExpectedValue = solvers[i].ExpectedValue;
                     solver.ParameterType = solvers[i].ParameterType;
@@ -416,16 +415,8 @@ namespace NeuralNetwork
         }
     
         #endregion
-        
-        #region BackPropagation_TrainingAlgorithm
-        
-        
-        
-        #endregion
-        
-        
         #region DataManaging
-        private void HandleAndDisplayResults(List<NeuralNetworkPerformanceSolver> solvers)
+        private void HandleAndDisplayResults(List<NetLossParameter> solvers)
         {
             for (int i = 0; i < solvers.Count; i++)
             {
@@ -433,7 +424,7 @@ namespace NeuralNetwork
             }
         }
         
-        private void SaveNetData(double[] instanceWeights, NeuralNet instance, List<NeuralNetworkPerformanceSolver> solvers, double notationCoefficient)
+        private void SaveNetData(double[] instanceWeights, NeuralNet instance, List<NetLossParameter> solvers, double notationCoefficient)
         {
             if (NewTraining)
             {
@@ -450,6 +441,7 @@ namespace NeuralNetwork
             NetData.NetworkTrainingRate = TrainingRate;
             NetData.DNAVersion++;
             NetData.HasData = true;
+            ActualBestDNA = NetData;
             // Serialize
             NeuralNetworkSerializer.Save(NetData, SaveNetDataFileName);
         }

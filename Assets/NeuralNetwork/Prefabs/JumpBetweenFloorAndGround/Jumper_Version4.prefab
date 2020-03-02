@@ -54,20 +54,20 @@ MonoBehaviour:
   hiddenLayersConstructor:
   - ThisLayerType: 1
     Neurons: 20
-    ActivatorFunction: 0
-  - ThisLayerType: 0
+    ActivatorFunction: 2
+  - ThisLayerType: 1
     Neurons: 18
-    ActivatorFunction: 0
-  - ThisLayerType: 0
+    ActivatorFunction: 2
+  - ThisLayerType: 1
     Neurons: 14
-    ActivatorFunction: 0
-  - ThisLayerType: 0
+    ActivatorFunction: 2
+  - ThisLayerType: 1
     Neurons: 7
-    ActivatorFunction: 0
+    ActivatorFunction: 2
   outputLayerConstructor:
     ThisLayerType: 2
     Neurons: 2
-    ActivatorFunction: 0
+    ActivatorFunction: 1
   sequenceIndexor: []
   WeightsNumber: 0
   o_Biases: []

@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 
-namespace NeuralNetwork.Scripts.Data
+namespace NeuralNetwork.Scripts.NetToolbox
 {
     [Serializable]
-    public class NeuralNetworkPerformanceSolver
+    public class NetLossParameter
     {
         public string ParameterName;
         public double EvaluationParameter; // result at the InstanceEnd 

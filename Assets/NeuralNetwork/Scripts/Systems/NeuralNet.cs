@@ -4,10 +4,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using NeuralNetwork.Scripts.Data;
-using NeuralNetwork.Scripts.NeuronActivatorFunctions;
+using NeuralNetwork.Scripts.NetToolbox;
 using NeuralNetwork.Utils;
 using UnityEngine;
-using Activator = NeuralNetwork.Scripts.NeuronActivatorFunctions.Activator;
 using Random = System.Random;
 
 
@@ -470,7 +469,7 @@ namespace NeuralNetwork
                 for (int i = 0; i < hid; i++)
                 {
                     h_Outputs[0][i] =
-                        ActivatorFunctionDouble(hiddenLayersConstructor[0].ActivatorFunction, hiddenSums[i], false);
+                        ActivatorFunctionDouble(hiddenLayersConstructor[0].ActivatorFunction, hiddenSums[i], false, numInput);
                 }
 
                 for (int i = 0; i < numOutput; i++)
@@ -496,7 +495,7 @@ namespace NeuralNetwork
                 {
                     for (int i = 0; i < numOutput; i++)
                     {
-                        outputSums[i] = ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputSums[i], false);
+                        outputSums[i] = ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputSums[i], false, numHidden[0]);
                     }
                     outputs = outputSums;
                     Debug.Log("Output Generic Analog Activator");
@@ -531,7 +530,7 @@ namespace NeuralNetwork
                         for (int i = 0; i < numHidden[H]; i++)
                         {
                             h_Outputs[H][i] = ActivatorFunctionDouble(hiddenLayersConstructor[H].ActivatorFunction,
-                                hiddensSums[i], false);
+                                hiddensSums[i], false, numInput);
                         }
                     }
 
@@ -555,7 +554,7 @@ namespace NeuralNetwork
                         for (int i = 0; i < numHidden[H + 1]; i++)
                         {
                             h_Outputs[H + 1][i] = ActivatorFunctionDouble(hiddenLayersConstructor[H+1].ActivatorFunction,
-                                hiddensSums[i], false);
+                                hiddensSums[i], false, numHidden[H]);
                         }
                     }
 
@@ -590,7 +589,7 @@ namespace NeuralNetwork
                 {
                     for (int i = 0; i < numOutput; i++)
                     {
-                        outputSums[i] = ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputSums[i], false);
+                        outputSums[i] = ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputSums[i], false, numHidden[numHidden.Count-1]);
                     }
 
                     outputs = outputSums;
@@ -634,7 +633,7 @@ namespace NeuralNetwork
                 outputValues += outputs[i].ToString();
             }
         }
-        private static double ActivatorFunctionDouble(ActivatorType activatorType, double entry, bool isDerivative)
+        private static double ActivatorFunctionDouble(ActivatorType activatorType, double entry, bool isDerivative, int prevNeurons = 1)
         {
             if (!isDerivative)
             {
@@ -652,7 +651,9 @@ namespace NeuralNetwork
                     case ActivatorType.Tanh :
                         entry = TanhActivator.CalculateValue(entry);
                         break;
-                    
+                    case ActivatorType.Average:
+                        entry = AverageActivator.CalculateValue(entry, prevNeurons);
+                        break; 
                 }
             }
 
@@ -672,7 +673,9 @@ namespace NeuralNetwork
                     case ActivatorType.Tanh :
                         entry = TanhActivator.CalculateDerivative(entry);
                         break;
-                   
+                    case ActivatorType.Average:
+                        entry = AverageActivator.CalculateValue(entry, prevNeurons);
+                        break; 
                 }
             }
             
@@ -684,12 +687,12 @@ namespace NeuralNetwork
             double[] result = new double[entry.Length];
             if (isDerivative)
             {
-                result = Scripts.NeuronActivatorFunctions.SoftmaxActivator.CalculateDerivative(entry, error);
+                result = Scripts.NetToolbox.SoftmaxActivator.CalculateDerivative(entry, error);
             }
 
             if (!isDerivative)
             {
-                result = Scripts.NeuronActivatorFunctions.SoftmaxActivator.CalculateValue(entry);
+                result = Scripts.NetToolbox.SoftmaxActivator.CalculateValue(entry);
 
             }
 
@@ -756,7 +759,7 @@ namespace NeuralNetwork
         #endregion
         
         #region Genetic
-        public void Genetic_OnInstanceEnd(List<NeuralNetworkPerformanceSolver> paramatersForEvaluation) // Triggers Only With Genetic Learning
+        public void Genetic_OnInstanceEnd(List<NetLossParameter> paramatersForEvaluation) // Triggers Only With Genetic Learning
         {
             Debug.Log("InstanceEnd");
             if (NeuralNetworkManager.runningMode == NeuralNetworkManager.ERunningMode.Train)
@@ -770,11 +773,11 @@ namespace NeuralNetwork
             
         }
         public void Genetic_ComputeLossFunction(
-            List<NeuralNetworkPerformanceSolver> errorParameters)
+            List<NetLossParameter> errorParameters)
         {
             // Compare Values to Actual DNA evaluation parameters values
             double performanceIndex = 0; // so we need to set-up a performance value wich will compare values from ActualBestDna parameters to this instance parameters
-            List<NeuralNetworkPerformanceSolver> actualDnaSolvers = new List<NeuralNetworkPerformanceSolver>();
+            List<NetLossParameter> actualDnaSolvers = new List<NetLossParameter>();
             if (NeuralNetworkManager.ActualBestDNA.PerformanceSolvers.Count == errorParameters.Count)
             {
                 actualDnaSolvers =
@@ -852,7 +855,7 @@ namespace NeuralNetwork
             random = new Random(0);
             double[] randomizedWeights = new  double[dataWeights.Length];
             randomizedWeights = dataWeights.ToArray();
-            double lo = TrainingRate;
+            double lo = -TrainingRate;
             double hi = TrainingRate;
             for (int i = 0; i < randomizedWeights.Length; ++i)
                 randomizedWeights[i] += (hi - lo) * random.NextDouble() + lo;

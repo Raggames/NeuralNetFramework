@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NeuralNetwork.Scripts.NetToolbox;
 using UnityEngine;
 
 namespace NeuralNetwork.Scripts.Data
@@ -14,7 +15,7 @@ namespace NeuralNetwork.Scripts.Data
 
         public double[] InstanceWeights;
 
-        public List<NeuralNetworkPerformanceSolver> PerformanceSolvers = new List<NeuralNetworkPerformanceSolver>();
+        public List<NetLossParameter> PerformanceSolvers = new List<NetLossParameter>();
         public double PerformanceCoefficient;
         public double NetworkTrainingRate;
 

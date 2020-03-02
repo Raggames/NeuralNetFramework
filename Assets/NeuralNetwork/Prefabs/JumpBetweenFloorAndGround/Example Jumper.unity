@@ -582,12 +582,12 @@ MonoBehaviour:
   SaveFile: 1
   Epochs: 200
   TrainingBatchSize: 21
-  TrainingRate: 5
-  MaxTrainingRate: 5
-  InitialWeightsDelta: 0.1
+  TrainingRate: 0.5
+  MaxTrainingRate: 0.5
+  InitialWeightsDelta: 0.5
   AdjustTrainingRateAutomatically: 1
-  TrainingRateChangePurcentage: 6.1
-  TrainingRateEvolution: 3
+  TrainingRateChangePurcentage: 0.01
+  TrainingRateEvolution: 5
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   DelayBeforeRestart: 1

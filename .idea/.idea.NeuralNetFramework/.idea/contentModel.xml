@@ -32,11 +32,11 @@
             </e>
             <e p="Data" t="Include">
               <e p="NetData.cs" t="Include" />
-              <e p="NeuralNetworkPerformanceSolver.cs" t="Include" />
               <e p="NeuralNetworkSerializer.cs" t="Include" />
             </e>
-            <e p="NeuronActivatorFunctions" t="Include">
-              <e p="Activator.cs" t="Include" />
+            <e p="NetToolbox" t="Include">
+              <e p="NetActivators.cs" t="Include" />
+              <e p="NetLossParameter.cs" t="Include" />
             </e>
             <e p="NeuronNetwork" t="Include">
               <e p="NetLayerConstructor.cs" t="Include" />

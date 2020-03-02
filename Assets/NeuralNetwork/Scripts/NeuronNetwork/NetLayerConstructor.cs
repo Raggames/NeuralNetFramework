@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using NeuralNetwork.Scripts.NeuronActivatorFunctions;
+using NeuralNetwork.Scripts.NetToolbox;
 using UnityEngine;
-using Activator = NeuralNetwork.Scripts.NeuronActivatorFunctions.Activator;
 
 namespace NeuralNetwork
 {
