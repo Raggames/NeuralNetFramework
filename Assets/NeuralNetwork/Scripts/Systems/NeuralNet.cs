@@ -7,6 +7,7 @@ using NeuralNetwork.Scripts.Data;
 using NeuralNetwork.Scripts.NeuronActivatorFunctions;
 using NeuralNetwork.Utils;
 using UnityEngine;
+using Activator = NeuralNetwork.Scripts.NeuronActivatorFunctions.Activator;
 using Random = System.Random;
 
 
@@ -123,6 +124,7 @@ namespace NeuralNetwork
 
         private void InitializeNetwork()
         {
+            Debug.Log("Initializing Network");
             // Retrieving Network Construction Values And Adding 'X' Hidden Layers =====================================
             numInput = inputLayerConstructor.Neurons;
             inputLayerConstructor.Activator = ActivatorFactory.Produce(inputLayerConstructor.ActivatorFunction);
@@ -362,7 +364,7 @@ namespace NeuralNetwork
             inputTest[0] = 0;
             inputTest[1] = 1;
             inputTest[2] = 2;
-            ExecuteSequence(inputTest, 1);
+            ComputeOutputs(inputTest, numHidden.Count);
         }
         public double[] GetWeightsAndBiases()
         {
@@ -439,37 +441,39 @@ namespace NeuralNetwork
         }
         
 
-        private double[] ExecuteSequence(double[] xValues, int hiddenLayersCount)
+        private double[] ComputeOutputs(double[] xValues, int hiddenLayersCount)
         {
             if (xValues.Length != numInput)
                 throw new Exception("Bad xValues array length");
             
             double[] outputSums = new double[outputLayerConstructor.Neurons];
-            double computedOutput = 0;
+            
             for (int i = 0; i < inputs.Length; i++)
             {
                 inputs[i] = xValues[i];
             }
-            // Input To First Hidden
+            
+            // ONE HIDDEN LAYER NETWORK ================================================================================
             if (hiddenLayersCount==1)
             {
+                // Input To First Hidden
                 int hid = numHidden[0];
-                double[] hiddensSums = new double[hid];
+                double[] hiddenSums = new double[hid];
                 for (int i = 0; i < hid; i++)
                 {
                     for (int j = 0; j < inputLayerConstructor.Neurons; j++)
                     {
-                        hiddensSums[i] += inputs[j] * i_hWeights[j][i]; // Calculate Input*Weights on Input to Hidden layer
+                        hiddenSums[i] += inputs[j] * i_hWeights[j][i]; // Calculate Input*Weights on Input to Hidden layer
                     }
                 }
                 for (int i = 0; i < hid; i++)
                 {
-                    hiddensSums[i] += h_Biases[0][i];
+                    hiddenSums[i] += h_Biases[0][i];
                 }
 
                 for (int i = 0; i < hid; i++)
                 {
-                    h_Outputs[0][i] = hiddenLayersConstructor[0].Activator.CalculateValue(hiddensSums[i]);
+                    h_Outputs[0][i] = hiddenLayersConstructor[0].Activator.CalculateValue(hiddenSums[i]);
                 }
 
                 for (int i = 0; i < numOutput; i++)
@@ -479,13 +483,131 @@ namespace NeuralNetwork
                         outputSums[i] += h_Outputs[0][j] * L_h_hWeights[0][j][i];
                     }
                 }
+
+                for (int i = 0; i < numOutput; i++)
+                {
+                    outputSums[i] += o_Biases[i];
+                }
+                // Case SoftMax => We want all the outputs to be computed as an unique sample
+                if (outputLayerConstructor.ActivatorFunction == ActivatorType.Softmax)
+                {
+                    double[] softMaxOutput = outputLayerConstructor.Activator.CalculateValues(outputSums);
+                    outputs = softMaxOutput;
+                    Debug.Log("Output Softmax Activator");
+                }
+                else
+                {
+                    for (int i = 0; i < numOutput; i++)
+                    {
+                        outputSums[i] = outputLayerConstructor.Activator.CalculateValue(outputSums[i]);
+                    }
+                    outputs = outputSums;
+                    Debug.Log("Output Generic Analog Activator");
+
+                }
+                
+                
             }
+            // MULTIPLE HIDDEN LAYERS NETWORK ================================================================================
+            if (hiddenLayersCount > 1)
+            {
+                for (int H = 0; H < hiddenLayersCount; H++)
+                {
                     
-                    
-                    
-                    
+                    double[] hiddensSums = new double[numHidden[H]];
+                    // Input To Hidden 0
+                    if (H == 0)
+                    {
+                        for (int i = 0; i < numHidden[H]; i++)
+                        {
+                            for (int j = 0; j < inputLayerConstructor.Neurons; j++)
+                            {
+                                hiddensSums[i] +=
+                                    inputs[j] * i_hWeights[j][i]; // Calculate Input*Weights on Input to Hidden layer
+                            }
+                        }
+
+                        for (int i = 0; i < numHidden[H]; i++)
+                        {
+                            hiddensSums[i] += h_Biases[H][i];
+                        }
+
+                        for (int i = 0; i < numHidden[H]; i++)
+                        {
+                            h_Outputs[H][i] = hiddenLayersConstructor[H].Activator.CalculateValue(hiddensSums[i]);
+                        }
+                    }
+
+                    // Hidden To Hidden
+                    if (H < hiddenLayersCount - 1)
+                    {
+                        hiddensSums = new double[numHidden[H+1]];
+                        for (int i = 0; i < numHidden[H + 1]; i++)
+                        {
+                            for (int j = 0; j < numHidden[H]; j++)
+                            {
+                                hiddensSums[i] += h_Outputs[H][j] * L_h_hWeights[H][j][i];
+                            }
+                        }
+
+                        for (int i = 0; i < numHidden[H + 1]; i++)
+                        {
+                            hiddensSums[i] += h_Biases[H + 1][i];
+                        }
+
+                        for (int i = 0; i < numHidden[H + 1]; i++)
+                        {
+                            h_Outputs[H + 1][i] = hiddenLayersConstructor[H + 1].Activator
+                                .CalculateValue(hiddensSums[i]);
+                        }
+                    }
+
+                    // Hidden To Output
+                    if (H == hiddenLayersCount - 1)
+                    {
+                        for (int i = 0; i < numOutput; i++)
+                        {
+                            for (int j = 0; j < numHidden[H]; j++)
+                            {
+                                outputSums[i] += h_Outputs[H][j] * L_h_hWeights[H][j][i];
+                            }
+                        }
+
+                        for (int i = 0; i < numOutput; i++)
+                        {
+                            outputSums[i] += o_Biases[i];
+                        }
+                    }
+                }
+
+                // Case SoftMax => We want all the outputs to be computed as an unique sample
+                if (outputLayerConstructor.ActivatorFunction == ActivatorType.Softmax)
+                {
+                    double[] softMaxOutput = outputLayerConstructor.Activator.CalculateValues(outputSums);
+                    outputs = softMaxOutput;
+                    Debug.Log("Output Softmax Activator");
+
+                }
+                else
+                {
+                    for (int i = 0; i < numOutput; i++)
+                    {
+                        outputSums[i] = outputLayerConstructor.Activator.CalculateValue(outputSums[i]);
+                    }
+
+                    outputs = outputSums;
+                    Debug.Log("Output Generic Analog Activator");
+
+                }
+            }
+
+            Debug.Log("Sample Loop Executed"); 
             return outputs;
         }
+        
+        
+        
+        
         #endregion
         
         #region BackPropagation

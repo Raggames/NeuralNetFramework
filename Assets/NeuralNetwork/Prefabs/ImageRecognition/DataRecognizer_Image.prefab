@@ -50,7 +50,16 @@ MonoBehaviour:
     ActivatorFunction: 0
   hiddenLayersConstructor:
   - ThisLayerType: 1
-    Neurons: 6
+    Neurons: 3
+    ActivatorFunction: 1
+  - ThisLayerType: 1
+    Neurons: 3
+    ActivatorFunction: 1
+  - ThisLayerType: 1
+    Neurons: 3
+    ActivatorFunction: 1
+  - ThisLayerType: 1
+    Neurons: 2
     ActivatorFunction: 1
   outputLayerConstructor:
     ThisLayerType: 2
@@ -59,7 +68,8 @@ MonoBehaviour:
   ResultArrayTest: []
   WeightsNumber: 0
   o_Biases: []
-  outputs: []
+  outputs:
+  - 0
   oGrads: []
   momentum: 0.01
   oPrevBiasesDelta: []
