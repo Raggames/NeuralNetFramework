@@ -46,27 +46,27 @@ MonoBehaviour:
   NeuralNetworkManager: {fileID: 0}
   inputLayerConstructor:
     ThisLayerType: 0
-    Neurons: 4
+    Neurons: 3
     ActivatorFunction: 0
   hiddenLayersConstructor:
   - ThisLayerType: 1
-    Neurons: 10
+    Neurons: 6
     ActivatorFunction: 0
   - ThisLayerType: 1
-    Neurons: 10
+    Neurons: 6
     ActivatorFunction: 0
   - ThisLayerType: 1
-    Neurons: 10
+    Neurons: 6
     ActivatorFunction: 0
   - ThisLayerType: 1
-    Neurons: 2
+    Neurons: 6
     ActivatorFunction: 0
   - ThisLayerType: 1
-    Neurons: 2
+    Neurons: 6
     ActivatorFunction: 0
   outputLayerConstructor:
     ThisLayerType: 2
-    Neurons: 6
+    Neurons: 3
     ActivatorFunction: 4
   ResultArrayTest: []
   WeightsNumber: 0

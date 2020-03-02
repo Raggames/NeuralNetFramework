@@ -382,11 +382,11 @@ namespace NeuralNetwork
                             {
                                 result[k++] = L_h_hWeights[i][j][l];
                             }
-                            if (j == L_h_hWeights[i][j].Length - 1)
+                            if (j == L_h_hWeights[i].Length - 1)
                             {
                                 for (int l = 0; l < h_Biases[i+1].Length; l++)
                                 {
-                                    result[k++] = h_Biases[i][l];
+                                    result[k++] = h_Biases[i+1][l];
                                 }
                             }
                         }
@@ -400,7 +400,7 @@ namespace NeuralNetwork
                             {
                                 result[k++] = L_h_hWeights[i][j][l];
                             }
-                            if (j == L_h_hWeights[i][j].Length - 1)
+                            if (j == L_h_hWeights[i].Length - 1)
                             {
                                 for (int l = 0; l < o_Biases.Length; l++)
                                 {
