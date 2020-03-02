@@ -51,22 +51,10 @@ MonoBehaviour:
   hiddenLayersConstructor:
   - ThisLayerType: 1
     Neurons: 6
-    ActivatorFunction: 0
-  - ThisLayerType: 1
-    Neurons: 6
-    ActivatorFunction: 0
-  - ThisLayerType: 1
-    Neurons: 6
-    ActivatorFunction: 0
-  - ThisLayerType: 1
-    Neurons: 6
-    ActivatorFunction: 0
-  - ThisLayerType: 1
-    Neurons: 6
-    ActivatorFunction: 0
+    ActivatorFunction: 1
   outputLayerConstructor:
     ThisLayerType: 2
-    Neurons: 3
+    Neurons: 1
     ActivatorFunction: 4
   ResultArrayTest: []
   WeightsNumber: 0

@@ -38,6 +38,7 @@
             <e p="NeuronActivatorFunctions" t="Include">
               <e p="Activator.cs" t="Include" />
               <e p="ActivatorFactory.cs" t="Include" />
+              <e p="IdentityActivator.cs" t="Include" />
               <e p="ReluActivator.cs" t="Include" />
               <e p="SigmoidActivator.cs" t="Include" />
               <e p="SoftmaxActivator.cs" t="Include" />

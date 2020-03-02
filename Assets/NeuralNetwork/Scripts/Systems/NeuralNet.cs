@@ -214,14 +214,14 @@ namespace NeuralNetwork
                 }
                 // Initialize Weights ======================================================================================
                 
-                //InitializeWeights(WeightsCount());
-                int weightcount = WeightsCount();
-                ResultArrayTest = new double[weightcount];
-                for (int i = 0; i < WeightsCount(); i++)
-                {
-                    ResultArrayTest[i] = i;
-                }
-                SetWeightsAndBiases(ResultArrayTest);
+                InitializeWeights(WeightsCount());
+                //int weightcount = WeightsCount();
+                //ResultArrayTest = new double[weightcount];
+                //for (int i = 0; i < WeightsCount(); i++)
+                //{
+                //    ResultArrayTest[i] = i;
+                //}
+                //SetWeightsAndBiases(ResultArrayTest);
             }
         }
         private static double[][] MakeMatrix(int rows, int cols) // helper for ctor
@@ -354,9 +354,15 @@ namespace NeuralNetwork
                 }
             }
             // END =====================================================================================================
-            Debug.Log(TestConnection);
-            Debug.Log("Set" + ResultArrayTest.Length);
-           ResultArrayTest = GetWeightsAndBiases();
+            //Debug.Log(TestConnection);
+            //Debug.Log("Set" + ResultArrayTest.Length);
+            //ResultArrayTest = GetWeightsAndBiases();
+            
+            double[] inputTest = new double[inputs.Length];
+            inputTest[0] = 0;
+            inputTest[1] = 1;
+            inputTest[2] = 2;
+            ExecuteSequence(inputTest, 1);
         }
         public double[] GetWeightsAndBiases()
         {
@@ -433,17 +439,47 @@ namespace NeuralNetwork
         }
         
 
-        private double[] ExecuteSequence(double[] xValues)
+        private double[] ExecuteSequence(double[] xValues, int hiddenLayersCount)
         {
             if (xValues.Length != numInput)
                 throw new Exception("Bad xValues array length");
-            double[] outputs = new double[OutputToExternal.Count];
+            
+            double[] outputSums = new double[outputLayerConstructor.Neurons];
             double computedOutput = 0;
             for (int i = 0; i < inputs.Length; i++)
             {
-                
+                inputs[i] = xValues[i];
             }
-                    
+            // Input To First Hidden
+            if (hiddenLayersCount==1)
+            {
+                int hid = numHidden[0];
+                double[] hiddensSums = new double[hid];
+                for (int i = 0; i < hid; i++)
+                {
+                    for (int j = 0; j < inputLayerConstructor.Neurons; j++)
+                    {
+                        hiddensSums[i] += inputs[j] * i_hWeights[j][i]; // Calculate Input*Weights on Input to Hidden layer
+                    }
+                }
+                for (int i = 0; i < hid; i++)
+                {
+                    hiddensSums[i] += h_Biases[0][i];
+                }
+
+                for (int i = 0; i < hid; i++)
+                {
+                    h_Outputs[0][i] = hiddenLayersConstructor[0].Activator.CalculateValue(hiddensSums[i]);
+                }
+
+                for (int i = 0; i < numOutput; i++)
+                {
+                    for (int j = 0; j < numHidden[0]; j++)
+                    {
+                        outputSums[i] += h_Outputs[0][j] * L_h_hWeights[0][j][i];
+                    }
+                }
+            }
                     
                     
                     
