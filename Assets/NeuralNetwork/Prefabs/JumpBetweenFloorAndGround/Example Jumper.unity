@@ -538,27 +538,29 @@ MonoBehaviour:
   NetWorkPrefab: {fileID: 3956378676603637949, guid: 6ef4c5a1b65ffaf4ba99906bc60c3a74,
     type: 3}
   IANetworkName: JumpV1
-  SaveNetDataFileName: JumpV1_dna_1
+  SaveNetDataFileName: JumpV1_autoSave_1
   NetData:
     HasData: 0
     NewTraining: 0
+    autoSaveIncrement: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
     InstanceWeights: []
+    DNAVersion: 0
     PerformanceSolvers: []
     PerformanceCoefficient: 0
     NetworkTrainingRate: 0
-    DNAVersion: 0
-    autoSaveIncrement: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
     HasData: 0
     NewTraining: 0
+    autoSaveIncrement: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
     InstanceWeights: []
+    DNAVersion: 0
     PerformanceSolvers:
     - ParameterName: 
       EvaluationParameter: 0
@@ -567,8 +569,6 @@ MonoBehaviour:
       ExpectedValue: 0
     PerformanceCoefficient: 0
     NetworkTrainingRate: 0
-    DNAVersion: 0
-    autoSaveIncrement: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
   Genetic_InstanceEndedCount: 0
@@ -582,6 +582,9 @@ MonoBehaviour:
   SaveFile: 1
   Epochs: 200
   TrainingBatchSize: 21
+  NetworkTrainingStatistics:
+    TrainingSessionStatistics: []
+    Name: 
   TrainingRate: 0.5
   MaxTrainingRate: 0.5
   InitialWeightsDelta: 0.5
@@ -591,6 +594,7 @@ MonoBehaviour:
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   DelayBeforeRestart: 1
+  EpochTimer: 0
   TrainingBestResults: []
 --- !u!1 &913758364
 GameObject:
@@ -792,28 +796,28 @@ MonoBehaviour:
   NetData:
     HasData: 0
     NewTraining: 0
+    autoSaveIncrement: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
     InstanceWeights: []
+    DNAVersion: 0
     PerformanceSolvers: []
     PerformanceCoefficient: 0
     NetworkTrainingRate: 0
-    DNAVersion: 0
-    autoSaveIncrement: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
     HasData: 0
     NewTraining: 0
+    autoSaveIncrement: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
     InstanceWeights: []
+    DNAVersion: 0
     PerformanceSolvers: []
     PerformanceCoefficient: 0
     NetworkTrainingRate: 0
-    DNAVersion: 0
-    autoSaveIncrement: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
   Genetic_InstanceEndedCount: 0
@@ -827,6 +831,9 @@ MonoBehaviour:
   SaveFile: 0
   Epochs: 10000
   TrainingBatchSize: 1
+  NetworkTrainingStatistics:
+    TrainingSessionStatistics: []
+    Name: 
   TrainingRate: 0.5
   MaxTrainingRate: 0.5
   InitialWeightsDelta: 0
@@ -836,6 +843,7 @@ MonoBehaviour:
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   DelayBeforeRestart: 0
+  EpochTimer: 0
   TrainingBestResults:
   - 0
   - 0

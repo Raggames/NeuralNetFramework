@@ -80,11 +80,10 @@ namespace NeuralNetwork
         private int SequenceCount;
         public int EpochsCount;
         public float DelayBeforeRestart = 1;
-        
-        [Header("Neural Network Evaluation")] 
-        
-        public double[] TrainingBestResults;
 
+        [Header("Training Sessions")] 
+        public float EpochTimer;
+        public double[] TrainingBestResults;
         private int DNAVersion;
 
         #endregion
@@ -108,6 +107,11 @@ namespace NeuralNetwork
             {
                 if(runningMode == ERunningMode.Train) Train();
                 if(runningMode == ERunningMode.Execute) Execute();
+            }
+
+            if (isNeuralNetTraining)
+            {
+                EpochTimer += Time.deltaTime;
             }
         }
         public void Train()
@@ -199,6 +203,7 @@ namespace NeuralNetwork
             {
                 TrainingBestResults = new double[NeuralNetworkInstances[0].Controller.EvaluationParameters.Count];
             }
+            
         }
         private void InitializeExecuting(GameObject networkPrefab, ERunningMode eRunningMode, int batchSize)
         {
@@ -328,8 +333,7 @@ namespace NeuralNetwork
             if (isNeuralNetTraining)
             {
                 EpochsCount++;
-               
-                
+                EpochTimer = 0;
                 // Epochs Are Done------------------------------------------------------------------------------------
                 if (EpochsCount >= Epochs)
                 {
@@ -376,7 +380,7 @@ namespace NeuralNetwork
                     var best = Genetic_ComputeBestPerformanceIndex(epochNetDatas);
                     previousIterationsCoefficients.Add(best.PerformanceCoefficient);
                     // Statistic========================================================================================
-                    NetworkTrainingStatistics.SetStatEntry(EpochsCount, best.PerformanceCoefficient, TrainingRate);
+                    SaveTrainingStatData(best.PerformanceCoefficient);
                     //==================================================================================================
                     if (epochsWithoutDNAEvolutionCount > TrainingRateEvolution)
                     {
@@ -409,7 +413,7 @@ namespace NeuralNetwork
                 if (dnaHasUpgrade)
                 {
                     // Statistic========================================================================================
-                    NetworkTrainingStatistics.SetStatEntry(EpochsCount, bestCoeff, TrainingRate);
+                    SaveTrainingStatData(bestCoeff);
                     //==================================================================================================
                     previousIterationsCoefficients.Clear();
                     previousIterationsCoefficientAverage = 0;
@@ -435,7 +439,15 @@ namespace NeuralNetwork
                 TrainingBestResults[i] = solvers[i].EvaluationParameter;
             }
         }
-        
+
+        private void SaveTrainingStatData(double performanceCoefficient)
+        {
+            NetworkTrainingStatistics.SetStatEntry(EpochsCount, performanceCoefficient, TrainingRate);
+            TrainingStatsData statData = new TrainingStatsData();
+            statData.Name = NetworkTrainingStatistics.Name;
+            statData.TrainingSessionStatistics = NetworkTrainingStatistics.TrainingSessionStatistics;
+            NeuralNetworkSerializer.GenericSave(statData, NetworkTrainingStatistics.Name);
+        }
         private void SaveNetData(double[] instanceWeights, NeuralNet instance, List<NetLossParameter> solvers, double notationCoefficient)
         {
             if (NewTraining)
@@ -464,7 +476,6 @@ namespace NeuralNetwork
             loadedData = NeuralNetworkSerializer.Load(loadedData, fileName);
             return loadedData;
         }
-
         private void BackPropagation_SequenceFinished(NeuralNet instance)
         {
             
