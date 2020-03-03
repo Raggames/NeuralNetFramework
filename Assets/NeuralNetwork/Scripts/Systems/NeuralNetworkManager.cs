@@ -67,12 +67,15 @@ namespace NeuralNetwork
         
         public double TrainingRate;//gradient d'update des weights
         public double InitialWeightsDelta; // should be something low for Data (0.01), Bigger for GameIA
+        public int EpochsCount;
 
         [Header("BackPropagation Settings")] 
         public double WeightDecay = 0.0001f;
         public double Momentum = 0.01f;
         public float DataSplitPurcentage = 80;
+        public double LossResultTrainingBreakPoint;
         public ELossFunction LossFunction;
+        
         public enum ELossFunction
         {
             MeanSquarredError,
@@ -92,7 +95,6 @@ namespace NeuralNetwork
         [SerializeField] private double previousIterationsCoefficientAverage;
         private List<NetData> epochNetDatas = new List<NetData>();
         private int SequenceCount;
-        public int EpochsCount;
         public float DelayBeforeRestart = 1;
 
         [Header("Training Sessions")] 
@@ -203,20 +205,35 @@ namespace NeuralNetwork
         {
             isNeuralNetTraining = true;
             isNeuralNetExecuting = false;
-            int _instanceID = 0;
-            SetManagerData();
-            for (int i = 0; i < batchSize; i++)
+            
+            
+            if (NeuralNetworkInstances.Count == 0)
             {
-                GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
-                NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
-                NeuralNetworkInstances.Add(_instance);
-                _instance.InitializeTraining(eRunningMode,this,  epochs, _instanceID, NetData);
-               _instanceID++;
+                int _instanceID = 0;
+                SetManagerData();
+                for (int i = 0; i < batchSize; i++)
+                {
+                    GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
+                    NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
+                    NeuralNetworkInstances.Add(_instance);
+                    _instance.InitializeTraining(eRunningMode,this,  epochs, _instanceID, NetData);
+                    _instanceID++;
+                }
+                if (NewTraining)
+                {
+                    TrainingBestResults = new double[NeuralNetworkInstances[0].Controller.EvaluationParameters.Count];
+                }
             }
-            if (NewTraining)
+            else
             {
-                TrainingBestResults = new double[NeuralNetworkInstances[0].Controller.EvaluationParameters.Count];
+                EpochsCount = 0;
+                InstanceEndedCount = 0;
+                foreach (var Instance in NeuralNetworkInstances)
+                {
+                   Instance.InitializeTraining(eRunningMode,this,  epochs, Instance.InstanceID, NetData); 
+                }
             }
+            
             
         }
         private void InitializeExecuting(GameObject networkPrefab, ERunningMode eRunningMode, int batchSize)
@@ -460,6 +477,23 @@ namespace NeuralNetwork
                 Debug.Log("Best Accuracy Result for training is : " + bestInstance._NetData.PerformanceCoefficient);
                 Debug.Log("Best Instance is : " + bestInstance.gameObject);
                 // End Training
+                EpochsCount++;
+                if (EpochsCount < Epochs)
+                {
+                    foreach (var inst in NeuralNetworkInstances)
+                    {
+                        inst.Controller.ComputeData();
+                    }
+                }
+                
+                if (EpochsCount == Epochs && isNeuralNetTraining)
+                {
+                    SaveNetData(bestInstance._NetData.InstanceWeights, bestInstance, bestInstance.Controller.EvaluationParameters, bestInstance._NetData.PerformanceCoefficient);
+                    Debug.Log("TrainingEnd");
+                    isNeuralNetTraining = false;
+                    
+                }
+               
             }
         }
 

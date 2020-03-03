@@ -580,23 +580,24 @@ MonoBehaviour:
   NewTraining: 1
   StartMode: 0
   SaveFile: 1
-  Epochs: 2000
+  Epochs: 5
   TrainingBatchSize: 1
   NetworkTrainingStatistics:
     TrainingSessionStatistics: []
     Name: 
   TrainingRate: 0.05
   InitialWeightsDelta: 0.01
+  EpochsCount: 0
   WeightDecay: 0.0001
   Momentum: 0.01
   DataSplitPurcentage: 80
+  LossResultTrainingBreakPoint: 0.02
   LossFunction: 0
   MaxTrainingRate: 5
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 0.2
   EpochsBetweenTrainingRateChange: 0
   previousIterationsCoefficientAverage: 0
-  EpochsCount: 0
   DelayBeforeRestart: 1
   EpochTimer: 0
   TrainingBestResults: []

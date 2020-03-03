@@ -73,7 +73,6 @@ namespace NeuralNetwork
         public bool IsTraining;
 
         public double LossFunctionResult;
-            
         [Header("Input From World and Output To World")]
         public ENetworkImplementation NetworkFunction;
         public enum ENetworkImplementation
@@ -110,7 +109,11 @@ namespace NeuralNetwork
             if (NeuralNetworkManager.runningMode == NeuralNetwork.NeuralNetworkManager.ERunningMode.Train)
             {
                if(NeuralNetworkManager.NewTraining) InitializeNetwork(NeuralNetworkManager.InitialWeightsDelta);
-               if(!NeuralNetworkManager.NewTraining) SetWeightsAndBiasesFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
+               if (!NeuralNetworkManager.NewTraining)
+               {
+                   SetWeightsAndBiasesFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
+                   Controller.ComputeData();
+               }
 
             }
             // Setting Up Network For Execution
@@ -486,7 +489,6 @@ namespace NeuralNetwork
                 {
                     double[] softMaxOutput = SoftmaxActivator(outputSums, false);
                     Array.Copy(softMaxOutput, outputs, softMaxOutput.Length);
-                    Debug.Log("Output Softmax Activator");
                 }
                 else
                 {
@@ -495,7 +497,6 @@ namespace NeuralNetwork
                         outputSums[i] = ActivatorFunctions(outputLayerConstructor.ActivatorFunction, outputSums[i], false, numHidden[0]);
                     }
                     outputs = outputSums;
-                    Debug.Log("Output Generic Analog Activator");
 
                 }
 
@@ -579,7 +580,6 @@ namespace NeuralNetwork
                     double[] softMaxOutput = SoftmaxActivator(outputSums, false);
                     //outputs = new double[softMaxOutput.Length];
                     Array.Copy(softMaxOutput, outputs, softMaxOutput.Length);
-                    Debug.Log("Output Softmax Activator");
 
                 }
                 else
@@ -590,14 +590,12 @@ namespace NeuralNetwork
                     }
 
                     outputs = outputSums;
-                    Debug.Log("Output Generic Analog Activator");
 
                 }
 
                 return outputs;
             }
 
-            Debug.Log("Sample Loop Executed"); 
             return outputs;
         }
 
@@ -797,6 +795,7 @@ namespace NeuralNetwork
             {
                 outputValues += outputs[i].ToString();
             }
+            Debug.Log(outputValues);
         }
         private static double ActivatorFunctions(ActivatorType activatorType, double entry, bool isDerivative, int prevNeurons = 1)
         {
@@ -896,26 +895,49 @@ namespace NeuralNetwork
             int[] sequence = new int[trainData.Length];
             sequence = CreateIndexor(sequence.Length);
             Array.Copy(allData, trainData, trainData.Length);
+            
             while (epoch < maxEpochs)
             {
                 if (epoch > 0)
                 {
+                    LossFunctionResult = 0;
                     double mse_mcee = 0;
                     if (lossFunction == NeuralNetworkManager.ELossFunction.MeanCrossEntropy)
                     {
                         mse_mcee = MeanSquaredError(trainData);
+                        LossFunctionResult = mse_mcee;
+                        if (mse_mcee < NeuralNetworkManager.LossResultTrainingBreakPoint)
+                        {
+                            Debug.Log("Training Sequence has stopped because LossFunction Result achieve Training Break Point. Now Computing Accuracy Test");
+                            Array.Copy(allData, testData, testData.Length);
+                            double accuracy = Accuracy(testData);
+                            _NetData.PerformanceCoefficient = accuracy;
+                            BackPropagation_OnAccuracyComputed(accuracy);
+                            break;
+                        }
                     }
                     if (lossFunction == NeuralNetworkManager.ELossFunction.MeanSquarredError)
                     {
                         mse_mcee = MeanCrossEntropyError(trainData);
+                        LossFunctionResult = mse_mcee;
+                        if (mse_mcee < NeuralNetworkManager.LossResultTrainingBreakPoint)
+                        {
+                            Debug.Log("Training Sequence has stopped because LossFunction Result achieve Training Break Point. Now Computing Accuracy Test");
+                            Array.Copy(allData, testData, testData.Length);
+                            double accuracy = Accuracy(testData);
+                            _NetData.PerformanceCoefficient = accuracy;
+                            BackPropagation_OnAccuracyComputed(accuracy);
+                            break;
+                        }
                     }
                 
-                    LossFunctionResult = mse_mcee;
+                    
                 }
                 
                 ShuffleIndexor(sequence);
                 for (int i = 0; i < trainData.Length; i++)
                 {
+                    
                     int index = sequence[i];
                     Array.Copy(trainData[index], xValues, numInput); // dans le tableau de Data : les valeurs de 0 à numInput => valeurs de test, celles de numInput à numOutput => label / tValues
                     Array.Copy(trainData[index], numInput, tValues, 0, numOutput); // On copie les valeurs du label à part.
@@ -928,7 +950,7 @@ namespace NeuralNetwork
             if (epoch == maxEpochs)
             {
                 Debug.Log("Training Sequence is done. Now Computing Accuracy Test");
-                Array.Copy(allData, testData, allData[0].Length);
+                Array.Copy(allData, testData, testData.Length);
                 double accuracy = Accuracy(testData);
                 _NetData.PerformanceCoefficient = accuracy;
                 BackPropagation_OnAccuracyComputed(accuracy);
@@ -994,10 +1016,15 @@ namespace NeuralNetwork
             double[] tValues = new double[numOutput]; // targets
             double[] yValues; // computed Y
 
+            int[] sequence = new int[testData.Length];
+            sequence = CreateIndexor(sequence.Length);
+           
+            ShuffleIndexor(sequence);
             for (int i = 0; i < testData.Length; ++i)
             {
-                Array.Copy(testData[i], xValues, numInput); // parse test data into x-values and t-values
-                Array.Copy(testData[i], numInput, tValues, 0, numOutput);
+                int index = sequence[i];
+                Array.Copy(testData[index], xValues, numInput); // parse test data into x-values and t-values
+                Array.Copy(testData[index], numInput, tValues, 0, numOutput);
                 yValues = this.ComputeOutputs(xValues);
                 int maxIndex = MaxIndex(yValues); // which cell in yValues has largest value?
 
@@ -1006,6 +1033,7 @@ namespace NeuralNetwork
                 else
                     ++numWrong;
             }
+            Debug.Log(numCorrect + " : correct, " + numWrong + " wrong");
             return (numCorrect * 1.0) / (numCorrect + numWrong); // ugly 2 - check for divide by zero
         }
         
@@ -1123,6 +1151,7 @@ namespace NeuralNetwork
         {
             if (netData.HasData)
             {
+                Debug.Log("Set weights from data");
                     SetWeightsAndBiases(netData.InstanceWeights.ToArray());
             }
             else
