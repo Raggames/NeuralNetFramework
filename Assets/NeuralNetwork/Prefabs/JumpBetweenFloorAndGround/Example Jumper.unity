@@ -538,7 +538,7 @@ MonoBehaviour:
   NetWorkPrefab: {fileID: 3956378676603637949, guid: 6ef4c5a1b65ffaf4ba99906bc60c3a74,
     type: 3}
   IANetworkName: JumpV1
-  SaveNetDataFileName: JumpV1_autoSave_1
+  SaveNetDataFileName: JumpV1_autoSave_2
   NetData:
     HasData: 0
     NewTraining: 0
@@ -571,14 +571,14 @@ MonoBehaviour:
     NetworkTrainingRate: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
-  Genetic_InstanceEndedCount: 0
+  InstanceEndedCount: 0
   runningMode: 0
   LearningLogic: 0
   isNeuralNetTraining: 0
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
   NewTraining: 1
-  StartMode: 0
+  StartMode: 1
   SaveFile: 1
   Epochs: 200
   TrainingBatchSize: 21
@@ -586,13 +586,18 @@ MonoBehaviour:
     TrainingSessionStatistics: []
     Name: 
   TrainingRate: 0.5
-  MaxTrainingRate: 0.5
   InitialWeightsDelta: 0.5
+  EpochsCount: 0
+  WeightDecay: 0.00009999999747378752
+  Momentum: 0.009999999776482582
+  DataSplitPurcentage: 80
+  LossResultTrainingBreakPoint: 0
+  LossFunction: 0
+  MaxTrainingRate: 0.5
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 0.01
-  TrainingRateEvolution: 5
+  EpochsBetweenTrainingRateChange: 0
   previousIterationsCoefficientAverage: 0
-  EpochsCount: 0
   DelayBeforeRestart: 1
   EpochTimer: 0
   TrainingBestResults: []
@@ -820,7 +825,7 @@ MonoBehaviour:
     NetworkTrainingRate: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
-  Genetic_InstanceEndedCount: 0
+  InstanceEndedCount: 0
   runningMode: 0
   LearningLogic: 0
   isNeuralNetTraining: 0
@@ -835,13 +840,18 @@ MonoBehaviour:
     TrainingSessionStatistics: []
     Name: 
   TrainingRate: 0.5
-  MaxTrainingRate: 0.5
   InitialWeightsDelta: 0
+  EpochsCount: 0
+  WeightDecay: 0.00009999999747378752
+  Momentum: 0.009999999776482582
+  DataSplitPurcentage: 80
+  LossResultTrainingBreakPoint: 0
+  LossFunction: 0
+  MaxTrainingRate: 0.5
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 4
-  TrainingRateEvolution: 50
+  EpochsBetweenTrainingRateChange: 0
   previousIterationsCoefficientAverage: 0
-  EpochsCount: 0
   DelayBeforeRestart: 0
   EpochTimer: 0
   TrainingBestResults:

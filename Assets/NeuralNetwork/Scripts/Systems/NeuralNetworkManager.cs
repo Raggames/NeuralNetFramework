@@ -447,7 +447,8 @@ namespace NeuralNetwork
                     SaveTrainingStatData(bestCoeff);
                     //==================================================================================================
                     previousIterationsCoefficients.Clear();
-                    previousIterationsCoefficientAverage = 0;
+                    previousIterationsCoefficients.Add(bestCoeff);
+                    previousIterationsCoefficientAverage = bestCoeff;
                     double actualTrainingRate = TrainingRate;
                     double upgradeDelta = Mathf.Abs((float)bestCoeff - (float)actualCoeff) / bestCoeff * TrainingRateChangePurcentage / 100;
                     actualTrainingRate -= upgradeDelta;
