@@ -53,15 +53,6 @@ MonoBehaviour:
   - ThisLayerType: 1
     Neurons: 16
     ActivatorFunction: 2
-  - ThisLayerType: 1
-    Neurons: 12
-    ActivatorFunction: 2
-  - ThisLayerType: 1
-    Neurons: 8
-    ActivatorFunction: 2
-  - ThisLayerType: 1
-    Neurons: 4
-    ActivatorFunction: 2
   outputLayerConstructor:
     ThisLayerType: 2
     Neurons: 3

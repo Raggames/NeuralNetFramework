@@ -108,9 +108,15 @@ namespace NeuralNetwork
             // Setting Up Network For Training
             if (NeuralNetworkManager.runningMode == NeuralNetwork.NeuralNetworkManager.ERunningMode.Train)
             {
-               if(NeuralNetworkManager.NewTraining) InitializeNetwork(NeuralNetworkManager.InitialWeightsDelta);
+                if (NeuralNetworkManager.NewTraining)
+                {
+                    InitializeNetwork();
+                    SetWeightsAndBiases(InitializeWeights(WeightsCount(), NeuralNetworkManager.InitialWeightsDelta));
+
+                }
                if (!NeuralNetworkManager.NewTraining)
                {
+                   InitializeNetwork();
                    SetWeightsAndBiasesFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
                    Controller.ComputeData();
                }
@@ -129,7 +135,7 @@ namespace NeuralNetwork
       
         #region Network_Management
 
-        private void InitializeNetwork(double initWeightsDelta)
+        private void InitializeNetwork()
         {
             Debug.Log("Initializing Network");
             // Retrieving Network Construction Values And Adding 'X' Hidden Layers =====================================
@@ -160,13 +166,13 @@ namespace NeuralNetwork
                 oGrads = new double[outputLayerConstructor.Neurons];
                 // Weights Delta
                 hPrevWeightsDelta.Add(MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[0].Neurons));
+                
                 hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[0].Neurons]);
                 oPrevWeightsDelta = MakeMatrix(hiddenLayersConstructor[0].Neurons, outputLayerConstructor.Neurons);
                 oPrevBiasesDelta = new double[outputLayerConstructor.Neurons];
             }
             // If Network Contains more than one layer =================================================================
-            {
-                if (hiddenLayersConstructor.Count > 1)
+            if (hiddenLayersConstructor.Count > 1)
                 {
                     for (int i = 0; i < hiddenLayersConstructor.Count; i++)
                     {
@@ -224,13 +230,12 @@ namespace NeuralNetwork
                         }
                     }
                 }
-                // Initialize Weights ======================================================================================
-                
-                InitializeWeights(WeightsCount(), initWeightsDelta);
+            // Initialize Weights ======================================================================================
                 
                 
                 
-            }
+                
+            
         }
         
         private int WeightsCount()
@@ -264,7 +269,7 @@ namespace NeuralNetwork
             return nbr;
         }
 
-        private void InitializeWeights(int nbr, double initWeightsDelta)
+        private double[] InitializeWeights(int nbr, double initWeightsDelta)
         {
             random = new Random(0);
             double[] initialWeights = new  double[nbr];
@@ -273,7 +278,7 @@ namespace NeuralNetwork
             for (int i = 0; i < initialWeights.Length; ++i)
                 initialWeights[i] = (hi - lo) * random.NextDouble() + lo;
             _NetData.InstanceWeights = initialWeights;
-           SetWeightsAndBiases(initialWeights);
+            return initialWeights;
         }
         private void SetWeightsAndBiases(double[] weights)
         {
@@ -695,7 +700,7 @@ namespace NeuralNetwork
                             L_h_hWeights[i][j][k] += delta;
                             L_h_hWeights[i][j][k] += momentum * oPrevWeightsDelta[j][k];
                             L_h_hWeights[i][j][k] -= (weightDecay * L_h_hWeights[i][j][k]);
-                            hPrevWeightsDelta[i + 1][j][k] = delta;
+                            oPrevWeightsDelta[j][k] = delta;
                         }
                     }
                 }

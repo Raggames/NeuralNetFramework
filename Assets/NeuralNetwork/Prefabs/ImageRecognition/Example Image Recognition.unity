@@ -578,7 +578,7 @@ MonoBehaviour:
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
   NewTraining: 1
-  StartMode: 0
+  StartMode: 1
   SaveFile: 1
   Epochs: 5
   TrainingBatchSize: 1
