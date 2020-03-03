@@ -219,13 +219,7 @@ namespace NeuralNetwork
                 
             }
         }
-        private static double[][] MakeMatrix(int rows, int cols) // helper for ctor
-        {
-            double[][] result = new double[rows][];
-            for (int r = 0; r < result.Length; ++r)
-                result[r] = new double[cols];
-            return result;
-        }
+        
         private int WeightsCount()
         {
             int nbr = 0;
@@ -462,7 +456,7 @@ namespace NeuralNetwork
                 for (int i = 0; i < hid; i++)
                 {
                     h_Outputs[0][i] =
-                        ActivatorFunctionDouble(hiddenLayersConstructor[0].ActivatorFunction, hiddenSums[i], false, numInput);
+                        ActivatorFunctions(hiddenLayersConstructor[0].ActivatorFunction, hiddenSums[i], false, numInput);
                 }
 
                 for (int i = 0; i < numOutput; i++)
@@ -488,7 +482,7 @@ namespace NeuralNetwork
                 {
                     for (int i = 0; i < numOutput; i++)
                     {
-                        outputSums[i] = ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputSums[i], false, numHidden[0]);
+                        outputSums[i] = ActivatorFunctions(outputLayerConstructor.ActivatorFunction, outputSums[i], false, numHidden[0]);
                     }
                     outputs = outputSums;
                     Debug.Log("Output Generic Analog Activator");
@@ -522,7 +516,7 @@ namespace NeuralNetwork
 
                         for (int i = 0; i < numHidden[H]; i++)
                         {
-                            h_Outputs[H][i] = ActivatorFunctionDouble(hiddenLayersConstructor[H].ActivatorFunction,
+                            h_Outputs[H][i] = ActivatorFunctions(hiddenLayersConstructor[H].ActivatorFunction,
                                 hiddensSums[i], false, numInput);
                         }
                     }
@@ -546,7 +540,7 @@ namespace NeuralNetwork
 
                         for (int i = 0; i < numHidden[H + 1]; i++)
                         {
-                            h_Outputs[H + 1][i] = ActivatorFunctionDouble(hiddenLayersConstructor[H+1].ActivatorFunction,
+                            h_Outputs[H + 1][i] = ActivatorFunctions(hiddenLayersConstructor[H+1].ActivatorFunction,
                                 hiddensSums[i], false, numHidden[H]);
                         }
                     }
@@ -582,7 +576,7 @@ namespace NeuralNetwork
                 {
                     for (int i = 0; i < numOutput; i++)
                     {
-                        outputSums[i] = ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputSums[i], false, numHidden[numHidden.Count-1]);
+                        outputSums[i] = ActivatorFunctions(outputLayerConstructor.ActivatorFunction, outputSums[i], false, numHidden[numHidden.Count-1]);
                     }
 
                     outputs = outputSums;
@@ -612,7 +606,7 @@ namespace NeuralNetwork
             for (int i = 0; i < oGrads.Length; i++)
             {
                 double derivative =
-                    ActivatorFunctionDouble(outputLayerConstructor.ActivatorFunction, outputs[i], true, numHidden[numHidden.Count-1]);
+                    ActivatorFunctions(outputLayerConstructor.ActivatorFunction, outputs[i], true, numHidden[numHidden.Count-1]);
                 oGrads[i] = derivative * (tValues[i] - outputs[i]);
             }
             
@@ -625,18 +619,101 @@ namespace NeuralNetwork
                 {
                     for (int j = 0; j < hGrads[i].Length; j++)
                     {
-                        double derivative = ActivatorFunctionDouble(hiddenLayersConstructor[i].ActivatorFunction,
-                            h_Outputs[i][j], true, numHidden[numHidden.Count - 1]);
+                        double derivative = ActivatorFunctions(hiddenLayersConstructor[i].ActivatorFunction,
+                            h_Outputs[i][j], true, numHidden[i]);
                         double sum = 0.0;
                         for (int k = 0; k < numOutput; k++)
                         {
                             double x = oGrads[k] * L_h_hWeights[i][j][k];
+                            sum += x;
                         }
                         hGrads[i][j] = derivative * sum;
                     }
                 }
+
+                if (i < hiddenIndex && i >= 0)
+                {
+                    for (int j = 0; j < hGrads[i].Length; j++)
+                    {
+                        double derivative = ActivatorFunctions(hiddenLayersConstructor[i].ActivatorFunction,
+                            h_Outputs[i][j], true, numHidden[i]);
+                        double sum = 0.0;
+                        for (int k = 0; k < numOutput; k++)
+                        {
+                            double x = hGrads[i+1][k] * L_h_hWeights[i][j][k];
+                            sum += x;
+                        }
+                        hGrads[i][j] = derivative * sum;
+                    }
+                }
+            }
+            //============================================================================================================
+            // Mise à jour des weights et de biais (pas d'ordre nécessaire pour la mise à jour du poids)
+            for (int i = 0; i < i_hWeights.Length; i++)
+            {
+                for (int j = 0; j < i_hWeights[i].Length; j++)
+                {
+                    double delta = trainingRate * hGrads[0][j] * inputs[i]; 
+                    i_hWeights[i][j] += delta;
+                    i_hWeights[i][j] += momentum * hPrevWeightsDelta[0][i][j];
+                    i_hWeights[i][j] -= (weightDecay * i_hWeights[i][j]);
+                    hPrevWeightsDelta[0][i][j] = delta; 
+                }
+            }
+            for (int i = 0; i < L_h_hWeights.Count; i++)
+            {
+                if (i < L_h_hWeights.Count - 1)
+                {
+                    for (int j = 0; j < L_h_hWeights[i].Length; j++)
+                    {
+                        for (int k = 0; k < L_h_hWeights[i][j].Length; k++)
+                        {
+                            double delta = trainingRate * hGrads[i + 1][k] * h_Outputs[j][k];
+                            L_h_hWeights[i][j][k] += delta;
+                            L_h_hWeights[i][j][k] += momentum * hPrevWeightsDelta[i + 1][j][k];
+                            L_h_hWeights[i][j][k] -= (weightDecay * L_h_hWeights[i][j][k]);
+                            hPrevWeightsDelta[i + 1][j][k] = delta;
+                        }
+                    }
+                }
+
+                if (i == L_h_hWeights.Count - 1)
+                {
+                    for (int j = 0; j < L_h_hWeights[i].Length; j++)
+                    {
+                        for (int k = 0; k < L_h_hWeights[i][j].Length; k++)
+                        {
+                            double delta = trainingRate * oGrads[k] * h_Outputs[j][k];
+                            L_h_hWeights[i][j][k] += delta;
+                            L_h_hWeights[i][j][k] += momentum * oPrevWeightsDelta[j][k];
+                            L_h_hWeights[i][j][k] -= (weightDecay * L_h_hWeights[i][j][k]);
+                            hPrevWeightsDelta[i + 1][j][k] = delta;
+                        }
+                    }
+                }
                 
             }
+
+            for (int i = 0; i < h_Biases.Count; i++)
+            {
+                for (int j = 0; j < h_Biases[i].Length; j++)
+                {
+                    double delta = trainingRate * hGrads[i][j];
+                    h_Biases[i][j] += delta;
+                    h_Biases[i][j] += momentum * hPrevBiasesDelta[i][j];
+                    h_Biases[i][j] -= weightDecay * h_Biases[i][j];
+                    hPrevBiasesDelta[i][j] = delta;
+                }
+            }
+
+            for (int i = 0; i < o_Biases.Length; i++)
+            {
+                double delta = trainingRate * oGrads[i];
+                o_Biases[i] += delta;
+                o_Biases[i] += momentum * oPrevBiasesDelta[i];
+                o_Biases[i] -= weightDecay * o_Biases[i];
+            }
+           
             
         }
         
@@ -644,6 +721,31 @@ namespace NeuralNetwork
         #endregion
         
         #region Utils
+        private static void Normalize(double[][] dataMatrix, int[] cols)
+        {
+            // normalize specified cols by computing (x - mean) / sd for each value
+            foreach (int col in cols)
+            {
+                double sum = 0.0;
+                for (int i = 0; i < dataMatrix.Length; ++i)
+                    sum += dataMatrix[i][col];
+                double mean = sum / dataMatrix.Length;
+                sum = 0.0;
+                for (int i = 0; i < dataMatrix.Length; ++i)
+                    sum += (dataMatrix[i][col] - mean) * (dataMatrix[i][col] - mean);
+                // thanks to Dr. W. Winfrey, Concord Univ., for catching bug in original code
+                double sd = Math.Sqrt(sum / (dataMatrix.Length - 1));
+                for (int i = 0; i < dataMatrix.Length; ++i)
+                    dataMatrix[i][col] = (dataMatrix[i][col] - mean) / sd;
+            }
+        }
+        private static double[][] MakeMatrix(int rows, int cols) // helper for ctor
+        {
+            double[][] result = new double[rows][];
+            for (int r = 0; r < result.Length; ++r)
+                result[r] = new double[cols];
+            return result;
+        }
         private static double[] CreateIndexor(int lenght)
         {
             double[] indexor = new double[lenght];
@@ -661,7 +763,7 @@ namespace NeuralNetwork
                 outputValues += outputs[i].ToString();
             }
         }
-        private static double ActivatorFunctionDouble(ActivatorType activatorType, double entry, bool isDerivative, int prevNeurons = 1)
+        private static double ActivatorFunctions(ActivatorType activatorType, double entry, bool isDerivative, int prevNeurons = 1)
         {
             if (!isDerivative)
             {
