@@ -9,11 +9,31 @@ public abstract class NeuralNetController : MonoBehaviour
 {
     public NeuralNet NeuralNet;
     public List<NetLossParameter> EvaluationParameters = new List<NetLossParameter>();
-    
-        public abstract void SetInputs();
-        public abstract void OnOutput();
-        public abstract void OnInstanceFail();
-        public abstract void InstanceReset();
+
+
+    public virtual void ComputeData()
+    {
+        
+    }
+    public virtual void SetInputs()
+    {
+        
+    }
+    public virtual void OnOutput()
+    {
+            
+    }
+
+    public virtual void OnInstanceFail()
+    {
+            
+    }
+
+    public virtual void InstanceReset()
+    {
+            
+    }
+      
 
 
 }

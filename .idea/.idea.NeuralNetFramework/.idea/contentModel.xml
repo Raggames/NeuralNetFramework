@@ -27,6 +27,7 @@
           <e p="ResearchNeuralNetworkDemo.cs" t="Include" />
           <e p="Scripts" t="Include">
             <e p="Controllers" t="Include">
+              <e p="DataController.cs" t="Include" />
               <e p="JumperController.cs" t="Include" />
               <e p="ShooterController.cs" t="Include" />
             </e>

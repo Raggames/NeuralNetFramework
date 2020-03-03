@@ -141,6 +141,9 @@ namespace NeuralNetwork
             // Initialize Arrays And Matrix ============================================================================
             inputs = new double[inputLayerConstructor.Neurons];
             i_hWeights = MakeMatrix(inputLayerConstructor.Neurons, hiddenLayersConstructor[0].Neurons);
+            hPrevWeightsDelta.Add(MakeMatrix(inputLayerConstructor.Neurons,
+                hiddenLayersConstructor[0].Neurons));
+            
             // If Network contains only one layer ======================================================================
             if (hiddenLayersConstructor.Count == 1)
             {
@@ -174,8 +177,8 @@ namespace NeuralNetwork
                             // Gradients
                             hGrads.Add(new double[hiddenLayersConstructor[i].Neurons]);
                             // Weights Delta
-                            hPrevWeightsDelta.Add(MakeMatrix(inputLayerConstructor.Neurons,
-                                hiddenLayersConstructor[i].Neurons));
+                            hPrevWeightsDelta.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons,
+                                hiddenLayersConstructor[i + 1].Neurons));
                             hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[i].Neurons]);
                         }
 
@@ -193,7 +196,7 @@ namespace NeuralNetwork
                             // Weights Delta
                             hPrevWeightsDelta.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons,
                                 hiddenLayersConstructor[i + 1].Neurons));
-                            hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[i + 1].Neurons]);
+                            hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[i].Neurons]);
                         }
 
                         // => Setting up last hidden layer neurons and output layer neurons and biases
@@ -206,11 +209,15 @@ namespace NeuralNetwork
                             h_Outputs.Add(new double[hiddenLayersConstructor[i].Neurons]);  // <= ADDED ON DEBUG 
                             outputs = new double[outputLayerConstructor.Neurons];
                             // Gradients
+                            hGrads.Add(new double[hiddenLayersConstructor[i].Neurons]);
                             oGrads = new double[outputLayerConstructor.Neurons];
                             // Weights Delta
+                            hPrevWeightsDelta.Add(MakeMatrix(hiddenLayersConstructor[i].Neurons, // ????????
+                                outputLayerConstructor.Neurons));
                             oPrevWeightsDelta = MakeMatrix(hiddenLayersConstructor[i].Neurons,
                                 outputLayerConstructor.Neurons);
                             oPrevBiasesDelta = new double[outputLayerConstructor.Neurons];
+                            hPrevBiasesDelta.Add(new double[hiddenLayersConstructor[i].Neurons]);
                         }
                     }
                 }
@@ -671,7 +678,7 @@ namespace NeuralNetwork
                     {
                         for (int k = 0; k < L_h_hWeights[i][j].Length; k++)
                         {
-                            double delta = trainingRate * hGrads[i + 1][k] * h_Outputs[j][k];
+                            double delta = trainingRate * hGrads[i + 1][k] * h_Outputs[i][j];
                             L_h_hWeights[i][j][k] += delta;
                             L_h_hWeights[i][j][k] += momentum * hPrevWeightsDelta[i + 1][j][k];
                             L_h_hWeights[i][j][k] -= (weightDecay * L_h_hWeights[i][j][k]);
@@ -686,7 +693,7 @@ namespace NeuralNetwork
                     {
                         for (int k = 0; k < L_h_hWeights[i][j].Length; k++)
                         {
-                            double delta = trainingRate * oGrads[k] * h_Outputs[j][k];
+                            double delta = trainingRate * oGrads[k] * h_Outputs[i][j];
                             L_h_hWeights[i][j][k] += delta;
                             L_h_hWeights[i][j][k] += momentum * oPrevWeightsDelta[j][k];
                             L_h_hWeights[i][j][k] -= (weightDecay * L_h_hWeights[i][j][k]);
@@ -867,7 +874,7 @@ namespace NeuralNetwork
         
         #region BackPropagation
 
-        public void Train(double[][] allData, int maxEpochs, double learnRate, double momentum, double weightDecay, NeuralNetworkManager.ELossFunction lossFunction, int splitPurcentage)
+        public void Train(double[][] allData, int maxEpochs, double learnRate, double momentum, double weightDecay, NeuralNetworkManager.ELossFunction lossFunction, float splitPurcentage)
         {
             int epoch = 0;
             
@@ -881,27 +888,31 @@ namespace NeuralNetwork
             int totRows = allData.Length;
             int numCols = allData[0].Length;
 
-            int trainRows = (int)(totRows * (splitPurcentage/100)); // hard-coded 80-20 split
+            int trainRows = (int)(totRows * (splitPurcentage/100f)); // hard-coded 80-20 split
             int testRows = totRows - trainRows;
 
             double[][] trainData = new double[trainRows][];
             double[][]  testData = new double[testRows][];
             int[] sequence = new int[trainData.Length];
             sequence = CreateIndexor(sequence.Length);
-            
+            Array.Copy(allData, trainData, trainData.Length);
             while (epoch < maxEpochs)
             {
-                double mse_mcee = 0;
-                if (lossFunction == NeuralNetworkManager.ELossFunction.MeanCrossEntropy)
+                if (epoch > 0)
                 {
-                    mse_mcee = MeanSquaredError(trainData);
-                }
-                if (lossFunction == NeuralNetworkManager.ELossFunction.MeanSquarredError)
-                {
-                    mse_mcee = MeanCrossEntropyError(trainData);
+                    double mse_mcee = 0;
+                    if (lossFunction == NeuralNetworkManager.ELossFunction.MeanCrossEntropy)
+                    {
+                        mse_mcee = MeanSquaredError(trainData);
+                    }
+                    if (lossFunction == NeuralNetworkManager.ELossFunction.MeanSquarredError)
+                    {
+                        mse_mcee = MeanCrossEntropyError(trainData);
+                    }
+                
+                    LossFunctionResult = mse_mcee;
                 }
                 
-                LossFunctionResult = mse_mcee;
                 ShuffleIndexor(sequence);
                 for (int i = 0; i < trainData.Length; i++)
                 {
@@ -1154,7 +1165,7 @@ namespace NeuralNetwork
 
         private void TrainBackpropagate(double[][] entryValues)
         {
-            
+            Train(entryValues, NeuralNetworkManager.Epochs, NeuralNetworkManager.TrainingRate, NeuralNetworkManager.Momentum, NeuralNetworkManager.WeightDecay, NeuralNetworkManager.LossFunction, NeuralNetworkManager.DataSplitPurcentage);
         }
         
         #endregion

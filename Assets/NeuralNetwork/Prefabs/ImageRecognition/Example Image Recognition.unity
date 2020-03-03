@@ -503,7 +503,7 @@ GameObject:
   - component: {fileID: 879517444}
   - component: {fileID: 879517445}
   m_Layer: 0
-  m_Name: Image Recognize
+  m_Name: DataTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -542,23 +542,25 @@ MonoBehaviour:
   NetData:
     HasData: 0
     NewTraining: 0
+    autoSaveIncrement: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
     InstanceWeights: []
+    DNAVersion: 0
     PerformanceSolvers: []
     PerformanceCoefficient: 0
     NetworkTrainingRate: 0
-    DNAVersion: 0
-    autoSaveIncrement: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
     HasData: 0
     NewTraining: 0
+    autoSaveIncrement: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
     InstanceWeights: []
+    DNAVersion: 0
     PerformanceSolvers:
     - ParameterName: 
       EvaluationParameter: 0
@@ -567,11 +569,9 @@ MonoBehaviour:
       ExpectedValue: 0
     PerformanceCoefficient: 0
     NetworkTrainingRate: 0
-    DNAVersion: 0
-    autoSaveIncrement: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
-  Genetic_InstanceEndedCount: 0
+  InstanceEndedCount: 0
   runningMode: 0
   LearningLogic: 1
   isNeuralNetTraining: 0
@@ -580,16 +580,25 @@ MonoBehaviour:
   NewTraining: 1
   StartMode: 0
   SaveFile: 1
-  Epochs: 200
+  Epochs: 2000
   TrainingBatchSize: 1
-  TrainingRate: 5
+  NetworkTrainingStatistics:
+    TrainingSessionStatistics: []
+    Name: 
+  TrainingRate: 0.05
+  InitialWeightsDelta: 0.01
+  WeightDecay: 0.0001
+  Momentum: 0.01
+  DataSplitPurcentage: 80
+  LossFunction: 0
   MaxTrainingRate: 5
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 0.2
-  TrainingRateEvolution: 3
+  EpochsBetweenTrainingRateChange: 0
   previousIterationsCoefficientAverage: 0
   EpochsCount: 0
   DelayBeforeRestart: 1
+  EpochTimer: 0
   TrainingBestResults: []
 --- !u!1 &913758364
 GameObject:

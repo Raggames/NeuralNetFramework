@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5481102409517396105}
   - component: {fileID: 5481102409517396104}
+  - component: {fileID: 8414154901164965639}
   m_Layer: 0
   m_Name: DataRecognizer_Image
   m_TagString: Untagged
@@ -46,50 +47,60 @@ MonoBehaviour:
   NeuralNetworkManager: {fileID: 0}
   inputLayerConstructor:
     ThisLayerType: 0
-    Neurons: 3
+    Neurons: 4
     ActivatorFunction: 0
   hiddenLayersConstructor:
   - ThisLayerType: 1
-    Neurons: 3
-    ActivatorFunction: 1
+    Neurons: 16
+    ActivatorFunction: 2
   - ThisLayerType: 1
-    Neurons: 3
-    ActivatorFunction: 1
+    Neurons: 12
+    ActivatorFunction: 2
   - ThisLayerType: 1
-    Neurons: 3
-    ActivatorFunction: 1
+    Neurons: 8
+    ActivatorFunction: 2
   - ThisLayerType: 1
-    Neurons: 3
-    ActivatorFunction: 1
+    Neurons: 4
+    ActivatorFunction: 2
   outputLayerConstructor:
     ThisLayerType: 2
     Neurons: 3
-    ActivatorFunction: 4
-  ResultArrayTest: []
+    ActivatorFunction: 5
+  sequenceIndexor: 
   WeightsNumber: 0
-  o_Biases: []
-  outputs:
-  - 0
-  oGrads: []
-  momentum: 0.01
-  oPrevBiasesDelta: []
   _NetData:
     HasData: 0
     NewTraining: 0
+    autoSaveIncrement: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
     InstanceWeights: []
+    DNAVersion: 0
     PerformanceSolvers: []
     PerformanceCoefficient: 0
     NetworkTrainingRate: 0
-    DNAVersion: 0
-    autoSaveIncrement: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
   InstanceID: 0
   IsExecuting: 0
   IsTraining: 0
-  Controller: {fileID: 0}
+  LossFunctionResult: 0
+  NetworkFunction: 0
+  Controller: {fileID: 8414154901164965639}
   inputStreamOn: 0
   ExternalInputs: []
   OutputToExternal: []
+--- !u!114 &8414154901164965639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5481102409517396106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5f8ab0b96504282992e329c963b80cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NeuralNet: {fileID: 0}
+  EvaluationParameters: []

@@ -69,8 +69,9 @@ namespace NeuralNetwork
         public double InitialWeightsDelta; // should be something low for Data (0.01), Bigger for GameIA
 
         [Header("BackPropagation Settings")] 
-        public double WeightDecay;
-        public double Momentum;
+        public double WeightDecay = 0.0001f;
+        public double Momentum = 0.01f;
+        public float DataSplitPurcentage = 80;
         public ELossFunction LossFunction;
         public enum ELossFunction
         {
