@@ -25,7 +25,7 @@ namespace NeuralNetwork
         public NetData ActualBestDNA;
         private List<NetData> evaluateUpgradedsDNAOfEpoch = new List<NetData>();
         private List<NetData> keepAllInstancesDNAOfEpoch = new List<NetData>();
-        public int Genetic_InstanceEndedCount;
+        public int InstanceEndedCount;
         
         [Header("Networks Management")] 
         
@@ -63,14 +63,27 @@ namespace NeuralNetwork
         
         public NetworkTrainingStatistics NetworkTrainingStatistics = new NetworkTrainingStatistics();
         
-        [Header("Training : Genetic")]
+        [Header("Training")]
         
         public double TrainingRate;//gradient d'update des weights
-        public double MaxTrainingRate;
         public double InitialWeightsDelta; // should be something low for Data (0.01), Bigger for GameIA
+
+        [Header("BackPropagation Settings")] 
+        public double WeightDecay;
+        public double Momentum;
+        public ELossFunction LossFunction;
+        public enum ELossFunction
+        {
+            MeanSquarredError,
+            MeanCrossEntropy,
+        }     
+        private List<NeuralNet> saveTrainingNeuralNetsForCompare = new List<NeuralNet>();
+
+        [Header("Genetic Settings")]
+        public double MaxTrainingRate;
         public bool AdjustTrainingRateAutomatically;
         [Range(0.01f, 50f)] public float TrainingRateChangePurcentage; //if NeuralNetwork can't upgrade for n = "TrainingRateEvolution", decrease Training Rate by this value
-        public int TrainingRateEvolution;
+        public int EpochsBetweenTrainingRateChange;
         private bool DNAShouldUpgrade;
         private bool ForceInstanceDNAReset; //if iteration don't get any upgrade avec n = TrainingRateEvolution epochs, reset on DNA data
         private int epochsWithoutDNAEvolutionCount;
@@ -231,7 +244,7 @@ namespace NeuralNetwork
         }
         private void Genetic_LossResultsComparator(NeuralNet instance, double computedCoeff, List<NetLossParameter> solvers, bool instancehasBestDna)
         {
-            Genetic_InstanceEndedCount += 1;
+            InstanceEndedCount += 1;
             bool hasComputedinstanceNetwork = false;
                 NetData instDna = new NetData();
                 instDna.InstanceWeights = new double[instance.WeightsNumber];
@@ -258,7 +271,7 @@ namespace NeuralNetwork
                     DNAShouldUpgrade = true;
                 }
 
-                if (Genetic_InstanceEndedCount >= NeuralNetworkInstances.Count)
+                if (InstanceEndedCount >= NeuralNetworkInstances.Count)
                 {
                     if (NetData.HasData == false)
                     {
@@ -293,9 +306,9 @@ namespace NeuralNetwork
                     }
 
                     //InstancesEndedCount++;
-                    if (Genetic_InstanceEndedCount >= NeuralNetworkInstances.Count && hasComputedinstanceNetwork)
+                    if (InstanceEndedCount >= NeuralNetworkInstances.Count && hasComputedinstanceNetwork)
                     {
-                        Debug.Log("Starting Next Epoch : InstancesEndedCount = " + Genetic_InstanceEndedCount);
+                        Debug.Log("Starting Next Epoch : InstancesEndedCount = " + InstanceEndedCount);
                         Genetic_RestartEpochDelay();
                     }
                 }
@@ -347,7 +360,7 @@ namespace NeuralNetwork
                     Debug.Log("ENDING TRAINING EPOCHS");
                 }
                 /////Case Genetic-------------------------------------------------------------------------------------
-                if (Genetic_InstanceEndedCount >= NeuralNetworkInstances.Count)
+                if (InstanceEndedCount >= NeuralNetworkInstances.Count)
                 {
                     Genetic_RestartInstances(NeuralNetworkInstances);
                 }
@@ -365,8 +378,8 @@ namespace NeuralNetwork
             }
             ForceInstanceDNAReset = false;
             DNAShouldUpgrade = false;
-            Debug.Log(Genetic_InstanceEndedCount + "instanceEndedcount after RestartInstance();");
-            Genetic_InstanceEndedCount = 0;
+            Debug.Log(InstanceEndedCount + "instanceEndedcount after RestartInstance();");
+            InstanceEndedCount = 0;
             evaluateUpgradedsDNAOfEpoch.Clear();
             epochNetDatas.Clear();
         }
@@ -382,7 +395,7 @@ namespace NeuralNetwork
                     // Statistic========================================================================================
                     SaveTrainingStatData(best.PerformanceCoefficient);
                     //==================================================================================================
-                    if (epochsWithoutDNAEvolutionCount > TrainingRateEvolution)
+                    if (epochsWithoutDNAEvolutionCount > EpochsBetweenTrainingRateChange)
                     {
                         ForceInstanceDNAReset = true;
                         double averageCoefficient = 0;
@@ -429,7 +442,36 @@ namespace NeuralNetwork
         }
     
         #endregion
+        #region BackPropagation_Training
+
+        public void BackPropagation_OnAccuracyResult(NeuralNet instance, double accuracy)
+        {
+            InstanceEndedCount += 1;
+            NetData instDna = new NetData();
+            instDna.InstanceWeights = new double[instance.WeightsNumber];
+            instDna.InstanceWeights = instance._NetData.InstanceWeights;
+            // _instanceNetworkEvaluate.PerformanceSolvers = solvers;
+            instDna.PerformanceCoefficient = accuracy;
+            saveTrainingNeuralNetsForCompare.Add(instance); // list is filled with all item each epoch. 
+            if (InstanceEndedCount >= NeuralNetworkInstances.Count)
+            {
+                var bestInstance = BackPropagation_CompareAccuracyResults(saveTrainingNeuralNetsForCompare);
+                Debug.Log("Best Accuracy Result for training is : " + bestInstance._NetData.PerformanceCoefficient);
+                Debug.Log("Best Instance is : " + bestInstance.gameObject);
+                // End Training
+            }
+        }
+
+        private NeuralNet BackPropagation_CompareAccuracyResults(List<NeuralNet> neuralNets)
+        {
+            saveTrainingNeuralNetsForCompare.Sort(delegate(NeuralNet aData, NeuralNet bData)
+                {
+                    return aData._NetData.PerformanceCoefficient.CompareTo(bData._NetData.PerformanceCoefficient);
+                });
+            return saveTrainingNeuralNetsForCompare[0];
+        }
         
+        #endregion
         
         #region DataManaging
         private void HandleAndDisplayResults(List<NetLossParameter> solvers)

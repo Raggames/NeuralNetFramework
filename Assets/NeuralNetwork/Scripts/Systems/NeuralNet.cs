@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using NeuralNetwork.Scripts.Data;
 using NeuralNetwork.Scripts.NetToolbox;
 using NeuralNetwork.Utils;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using Random = System.Random;
 
@@ -28,7 +29,7 @@ namespace NeuralNetwork
         /// <summary>
         /// Network ====================================================================================================
         /// </summary>
-        [SerializeField] private double[] sequenceIndexor;
+        [SerializeField] private int[] sequenceIndexor;
         
         //==============================================================================================================
         public int WeightsNumber;
@@ -41,26 +42,26 @@ namespace NeuralNetwork
         
         private double[] inputs;
         
-        [SerializeField] private double[][] i_hWeights; // First Hidden Layer : input to Hidden1
-        [SerializeField] private List<double[][]> L_h_hWeights = new List<double[][]>(); //Middle Hidden Layer    // Last Hidden Layer : hidden to output
-        [SerializeField] private List<double[]> h_Biases = new List<double[]>(); 
-        [SerializeField] private List<double[]> h_Outputs = new List<double[]>();
-        [SerializeField] private double[] o_Biases;
+        private double[][] i_hWeights; // First Hidden Layer : input to Hidden1
+        private List<double[][]> L_h_hWeights = new List<double[][]>(); //Middle Hidden Layer    // Last Hidden Layer : hidden to output
+        private List<double[]> h_Biases = new List<double[]>(); 
+        private List<double[]> h_Outputs = new List<double[]>();
+        private double[] o_Biases;
 
-        [SerializeField] private double[] outputs;
+        private double[] outputs;
 
         // Gradients de Back-Propagation 
-        [SerializeField] private double[] oGrads; // output gradients for back-propagation
-        [SerializeField] private List<double[]> hGrads = new List<double[]>(); // hidden gradients for back-propagation
+        private double[] oGrads; // output gradients for back-propagation
+        private List<double[]> hGrads = new List<double[]>(); // hidden gradients for back-propagation
 
         // Weight Decay
         private double weightDecay = 0.0001;
         // Momentums de Back-Propagation
-        [SerializeField] private double momentum = 0.01;
-        [SerializeField] private List<double[][]> hPrevWeightsDelta = new List<double[][]>();  
-        [SerializeField] private List<double[]> hPrevBiasesDelta = new List<double[]>();
-        [SerializeField] private double[][] oPrevWeightsDelta;
-        [SerializeField] private double[] oPrevBiasesDelta;
+        private double momentum = 0.01;
+        private List<double[][]> hPrevWeightsDelta = new List<double[][]>();  
+        private List<double[]> hPrevBiasesDelta = new List<double[]>();
+        private double[][] oPrevWeightsDelta;
+        private double[] oPrevBiasesDelta;
 
         
         //==============================================================================================================
@@ -71,6 +72,8 @@ namespace NeuralNetwork
         public bool IsExecuting;
         public bool IsTraining;
 
+        public double LossFunctionResult;
+            
         [Header("Input From World and Output To World")]
         public ENetworkImplementation NetworkFunction;
         public enum ENetworkImplementation
@@ -79,7 +82,7 @@ namespace NeuralNetwork
             GameEntityControl,
         }
         public NeuralNetController Controller;
-        public bool inputStreamOn;
+        public bool inputStreamOn;// Allow the Controller to Use connected instance
         public double[] ExternalInputs;
         public double[] OutputToExternal;
         
@@ -717,12 +720,12 @@ namespace NeuralNetwork
             
         }
         
-        
         #endregion
         
         #region Utils
         private static void Normalize(double[][] dataMatrix, int[] cols)
         {
+            cols = CreateIndexor(cols.Length);
             // normalize specified cols by computing (x - mean) / sd for each value
             foreach (int col in cols)
             {
@@ -746,15 +749,40 @@ namespace NeuralNetwork
                 result[r] = new double[cols];
             return result;
         }
-        private static double[] CreateIndexor(int lenght)
+        private static int[] CreateIndexor(int lenght)
         {
-            double[] indexor = new double[lenght];
+            int[] indexor = new int[lenght];
             for (int i = 0; i < lenght; i++)
             {
                 indexor[i] = i;
             }
             return indexor;
         }
+        private static void ShuffleIndexor(int[] sequence)
+        {
+            for (int i = 0; i < sequence.Length; ++i)
+            {
+                int r = random.Next(i, sequence.Length);
+                int tmp = sequence[r];
+                sequence[r] = sequence[i];
+                sequence[i] = tmp;
+            }
+        }
+        private static int MaxIndex(double[] vector) // helper for Accuracy()
+        {
+            // index of largest value
+            int bigIndex = 0;
+            double biggestVal = vector[0];
+            for (int i = 0; i < vector.Length; ++i)
+            {
+                if (vector[i] > biggestVal)
+                {
+                    biggestVal = vector[i]; bigIndex = i;
+                }
+            }
+            return bigIndex;
+        }
+
         private static void DisplayOutputStrings(double[] outputs)
         {
             string outputValues = "";
@@ -838,17 +866,69 @@ namespace NeuralNetwork
         #endregion
         
         #region BackPropagation
-        
-        private void BackPropagation_OnSequenceEnd(double[] result)
+
+        public void Train(double[][] allData, int maxEpochs, double learnRate, double momentum, double weightDecay, NeuralNetworkManager.ELossFunction lossFunction, int splitPurcentage)
         {
-            for (int i = 0; i < result.Length; i++)
+            int epoch = 0;
+            
+            Normalize(allData, new int[numInput]);
+            
+            double[] xValues = new double[numInput];
+            double[] yValues = new double[numOutput];
+            double[] tValues = new double[numOutput];
+            // Splitting The AllData between trainData and testData
+            Random rnd = new Random(0);
+            int totRows = allData.Length;
+            int numCols = allData[0].Length;
+
+            int trainRows = (int)(totRows * (splitPurcentage/100)); // hard-coded 80-20 split
+            int testRows = totRows - trainRows;
+
+            double[][] trainData = new double[trainRows][];
+            double[][]  testData = new double[testRows][];
+            int[] sequence = new int[trainData.Length];
+            sequence = CreateIndexor(sequence.Length);
+            
+            while (epoch < maxEpochs)
             {
-                OutputToExternal[i] = result[i];
+                double mse_mcee = 0;
+                if (lossFunction == NeuralNetworkManager.ELossFunction.MeanCrossEntropy)
+                {
+                    mse_mcee = MeanSquaredError(trainData);
+                }
+                if (lossFunction == NeuralNetworkManager.ELossFunction.MeanSquarredError)
+                {
+                    mse_mcee = MeanCrossEntropyError(trainData);
+                }
+                
+                LossFunctionResult = mse_mcee;
+                ShuffleIndexor(sequence);
+                for (int i = 0; i < trainData.Length; i++)
+                {
+                    int index = sequence[i];
+                    Array.Copy(trainData[index], xValues, numInput); // dans le tableau de Data : les valeurs de 0 à numInput => valeurs de test, celles de numInput à numOutput => label / tValues
+                    Array.Copy(trainData[index], numInput, tValues, 0, numOutput); // On copie les valeurs du label à part.
+                    ComputeOutputs(xValues);
+                    BackPropagateGradient(tValues, learnRate, momentum, weightDecay);
+                }
+                epoch++;
             }
-            if (NeuralNetworkManager.runningMode == NeuralNetworkManager.ERunningMode.Train)
+
+            if (epoch == maxEpochs)
             {
-                // BackPropagation Loop
+                Debug.Log("Training Sequence is done. Now Computing Accuracy Test");
+                Array.Copy(allData, testData, allData[0].Length);
+                double accuracy = Accuracy(testData);
+                _NetData.PerformanceCoefficient = accuracy;
+                BackPropagation_OnAccuracyComputed(accuracy);
             }
+            
+        }
+       
+        
+        private void BackPropagation_OnAccuracyComputed(double result)
+        {
+           NeuralNetworkManager.BackPropagation_OnAccuracyResult(this, result);
         }
         
         private double MeanCrossEntropyError(double[][] trainData)
@@ -892,6 +972,32 @@ namespace NeuralNetwork
 
             return sumSquaredError / trainData.Length;
         }
+        
+        public double Accuracy(double[][] testData) 
+        {
+            // Pourcentage en utilisant la méthode "Plus haute Valeur Gagnante" dans les outputs.
+            // Ici on ignora la valeur réelle des outputs, pour ne garder que son poids statistique. 
+            int numCorrect = 0;
+            int numWrong = 0;
+            double[] xValues = new double[numInput]; // inputs
+            double[] tValues = new double[numOutput]; // targets
+            double[] yValues; // computed Y
+
+            for (int i = 0; i < testData.Length; ++i)
+            {
+                Array.Copy(testData[i], xValues, numInput); // parse test data into x-values and t-values
+                Array.Copy(testData[i], numInput, tValues, 0, numOutput);
+                yValues = this.ComputeOutputs(xValues);
+                int maxIndex = MaxIndex(yValues); // which cell in yValues has largest value?
+
+                if (tValues[maxIndex] == 1.0) // ugly. consider AreEqual(double x, double y)
+                    ++numCorrect;
+                else
+                    ++numWrong;
+            }
+            return (numCorrect * 1.0) / (numCorrect + numWrong); // ugly 2 - check for divide by zero
+        }
+        
         #endregion
         
         #region Genetic
@@ -1033,18 +1139,24 @@ namespace NeuralNetwork
                 IsTraining = false;
                 IsExecuting = true;
                 inputStreamOn = true;
-                
             }
         }
-        public void UseInstance(double[] entryValues)
+        public void UseInstance(double[] xValuesSimpleData = null, double[][] xValuesTrainData = null)
         {
-            if(NetworkFunction == ENetworkImplementation.GameEntityControl) UseGameEntity(entryValues);
+            if(NetworkFunction == ENetworkImplementation.GameEntityControl) TrainGenetic(xValuesSimpleData);
+            if(NetworkFunction == ENetworkImplementation.DataBasePrediction) TrainBackpropagate(xValuesTrainData);
         }
-        private void UseGameEntity(double[] entryValues)
+        private void TrainGenetic(double[] entryValues)
         {
             ComputeOutputs(entryValues);
             OutputToExternal = outputs;
         }
+
+        private void TrainBackpropagate(double[][] entryValues)
+        {
+            
+        }
+        
         #endregion
       
 
