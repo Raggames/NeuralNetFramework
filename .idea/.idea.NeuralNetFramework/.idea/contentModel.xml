@@ -47,6 +47,7 @@
               <e p="NeuralNet.cs" t="Include" />
               <e p="NeuralNetController.cs" t="Include" />
               <e p="NeuralNetworkManager.cs" t="Include" />
+              <e p="SQLReader.cs" t="Include" />
             </e>
             <e p="Utils" t="Include">
               <e p="NeuralMathCompute.cs" t="Include" />
