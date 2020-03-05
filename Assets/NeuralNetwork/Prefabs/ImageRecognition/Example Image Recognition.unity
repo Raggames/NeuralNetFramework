@@ -580,7 +580,7 @@ MonoBehaviour:
   NewTraining: 1
   StartMode: 1
   SaveFile: 1
-  Epochs: 5
+  Epochs: 50
   TrainingBatchSize: 1
   NetworkTrainingStatistics:
     TrainingSessionStatistics: []
@@ -598,7 +598,7 @@ MonoBehaviour:
   TrainingRateChangePurcentage: 0.2
   EpochsBetweenTrainingRateChange: 0
   previousIterationsCoefficientAverage: 0
-  DelayBeforeRestart: 1
+  DelayBeforeRestart: 0.1
   EpochTimer: 0
   TrainingBestResults: []
 --- !u!1 &913758364

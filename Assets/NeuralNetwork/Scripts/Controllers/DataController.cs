@@ -1,4 +1,6 @@
 using System;
+using UnityEngine;
+
 namespace NeuralNetwork.Scripts.Controllers
 {
     public class DataController : NeuralNetController
@@ -175,13 +177,14 @@ namespace NeuralNetwork.Scripts.Controllers
 
         private void Start()
         {
-            CreateData();
-            NeuralNet = GetComponent<NeuralNet>();
-            ComputeData();
+            
         }
 
         public override void ComputeData()
         {
+            Debug.Log("Compute Data");
+            CreateData();
+            NeuralNet = GetComponent<NeuralNet>();
             NeuralNet.UseInstance(null, allData);
         }
         

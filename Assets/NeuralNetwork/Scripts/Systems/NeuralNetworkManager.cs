@@ -206,7 +206,6 @@ namespace NeuralNetwork
             isNeuralNetTraining = true;
             isNeuralNetExecuting = false;
             
-            
             if (NeuralNetworkInstances.Count == 0)
             {
                 int _instanceID = 0;
@@ -463,41 +462,63 @@ namespace NeuralNetwork
         #endregion
         #region BackPropagation_Training
 
-        public void BackPropagation_OnAccuracyResult(NeuralNet instance, double accuracy)
+        public void BackPropagation_OnEpochDone(NeuralNet instance)
         {
             InstanceEndedCount += 1;
-            NetData instDna = new NetData();
-            instDna.InstanceWeights = new double[instance.WeightsNumber];
-            instDna.InstanceWeights = instance._NetData.InstanceWeights;
-            // _instanceNetworkEvaluate.PerformanceSolvers = solvers;
-            instDna.PerformanceCoefficient = accuracy;
-            saveTrainingNeuralNetsForCompare.Add(instance); // list is filled with all item each epoch. 
             if (InstanceEndedCount >= NeuralNetworkInstances.Count)
             {
-                var bestInstance = BackPropagation_CompareAccuracyResults(saveTrainingNeuralNetsForCompare);
-                Debug.Log("Best Accuracy Result for training is : " + bestInstance._NetData.PerformanceCoefficient);
-                Debug.Log("Best Instance is : " + bestInstance.gameObject);
-                // End Training
+               // End Training
                 EpochsCount++;
                 if (EpochsCount < Epochs)
                 {
-                    foreach (var inst in NeuralNetworkInstances)
-                    {
-                        inst.Controller.ComputeData();
-                    }
+                    StartCoroutine(BackPropagation_WaitDelayBeforeNewEpoch(DelayBeforeRestart));
                 }
                 
                 if (EpochsCount == Epochs && isNeuralNetTraining)
                 {
-                    SaveNetData(bestInstance._NetData.InstanceWeights, bestInstance, bestInstance.Controller.EvaluationParameters, bestInstance._NetData.PerformanceCoefficient);
-                    Debug.Log("TrainingEnd");
-                    isNeuralNetTraining = false;
-                    
+                    BackPropagation_OnTrainingDone(instance);
                 }
                
             }
         }
 
+        public void BackPropagation_OnTrainingDone(NeuralNet instance)
+        {
+            instance.GetAccuracy();
+            NetData instDna = new NetData();
+            instDna.InstanceWeights = new double[instance.WeightsNumber];
+            instDna.InstanceWeights = instance._NetData.InstanceWeights;
+            // _instanceNetworkEvaluate.PerformanceSolvers = solvers;
+            instDna.PerformanceCoefficient = instance._NetData.PerformanceCoefficient;
+            saveTrainingNeuralNetsForCompare.Add(instance); // list is filled with all item each epoch. 
+            var bestInstance = BackPropagation_CompareAccuracyResults(saveTrainingNeuralNetsForCompare);
+            Debug.Log("Best Accuracy Result for training is : " + bestInstance._NetData.PerformanceCoefficient);
+            Debug.Log("Best Instance is : " + bestInstance.gameObject);
+                   
+            SaveNetData(bestInstance._NetData.InstanceWeights, bestInstance, bestInstance.Controller.EvaluationParameters, bestInstance._NetData.PerformanceCoefficient);
+            Debug.Log("TrainingEnd");
+            isNeuralNetTraining = false;
+            EpochsCount = 0;
+            InstanceEndedCount = 0;
+        }
+        private void BackPropagation_StartNextEpoch()
+        {
+            foreach (var inst in NeuralNetworkInstances)
+            {
+                inst.ComputeEpoch(TrainingRate, Momentum, WeightDecay);
+            }
+        }
+        IEnumerator BackPropagation_WaitDelayBeforeNewEpoch(float time)
+        {
+            float timer = 0;
+            while (timer < time)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            BackPropagation_StartNextEpoch();
+      
+        }
         private NeuralNet BackPropagation_CompareAccuracyResults(List<NeuralNet> neuralNets)
         {
             saveTrainingNeuralNetsForCompare.Sort(delegate(NeuralNet aData, NeuralNet bData)
@@ -554,11 +575,7 @@ namespace NeuralNetwork
             loadedData = NeuralNetworkSerializer.Load(loadedData, fileName);
             return loadedData;
         }
-        private void BackPropagation_SequenceFinished(NeuralNet instance)
-        {
-            
-        }
-        
+      
         #endregion
     }
 }

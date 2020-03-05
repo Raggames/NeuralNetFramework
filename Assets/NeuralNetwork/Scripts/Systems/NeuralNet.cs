@@ -19,18 +19,18 @@ namespace NeuralNetwork
         #region Fields
         [Header("Neural Network Architecture")]
         
-        [HideInInspector] 
         public NeuralNetworkManager NeuralNetworkManager;
         
         public NetLayerConstructor inputLayerConstructor = new NetLayerConstructor();
         public List<NetLayerConstructor> hiddenLayersConstructor = new List<NetLayerConstructor>();
         public NetLayerConstructor outputLayerConstructor = new NetLayerConstructor();
-
+        
+        #endregion
         /// <summary>
         /// Network ====================================================================================================
         /// </summary>
-        [SerializeField] private int[] sequenceIndexor;
         
+        #region ArchitectureFields
         //==============================================================================================================
         public int WeightsNumber;
 
@@ -63,9 +63,10 @@ namespace NeuralNetwork
         private double[][] oPrevWeightsDelta;
         private double[] oPrevBiasesDelta;
 
-        
+        #endregion
+        #region ExecutionFields
         //==============================================================================================================
-        [HideInInspector] public NetData _NetData;
+        public NetData _NetData;
         
         [Header("Network Execution")]
         public int InstanceID;
@@ -84,7 +85,11 @@ namespace NeuralNetwork
         public bool inputStreamOn;// Allow the Controller to Use connected instance
         public double[] ExternalInputs;
         public double[] OutputToExternal;
-        
+
+        private double[][] allData;
+        private double[][] trainData;
+        private double[][] testData;
+        private int[] sequence;
         #endregion
         
         #region Initialisation
@@ -108,15 +113,24 @@ namespace NeuralNetwork
             // Setting Up Network For Training
             if (NeuralNetworkManager.runningMode == NeuralNetwork.NeuralNetworkManager.ERunningMode.Train)
             {
-                if (NeuralNetworkManager.NewTraining)
+                if (NeuralNetworkManager.StartMode == NeuralNetworkManager.EStartMode.NewTraining)
                 {
-                    InitializeNetwork();
-                    SetWeightsAndBiases(InitializeWeights(WeightsCount(), NeuralNetworkManager.InitialWeightsDelta));
-
+                    if (NeuralNetworkManager.NewTraining)
+                    {
+                        ConstructNetwork();
+                        SetWeightsAndBiases(InitializeWeights(WeightsCount(), NeuralNetworkManager.InitialWeightsDelta));
+                        Controller.ComputeData();
+                    }
+                    if (!NeuralNetworkManager.NewTraining)
+                    {
+                        SetWeightsAndBiasesFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
+                        Controller.ComputeData();
+                    }
                 }
-               if (!NeuralNetworkManager.NewTraining)
+               if (NeuralNetworkManager.StartMode == NeuralNetworkManager.EStartMode.LoadFromJson)
                {
-                   InitializeNetwork();
+                   WeightsNumber = WeightsCount();
+                   ConstructNetwork();
                    SetWeightsAndBiasesFromData(_NetData, NeuralNetworkManager.LearningLogic, NeuralNetworkManager.TrainingRate);
                    Controller.ComputeData();
                }
@@ -134,8 +148,7 @@ namespace NeuralNetwork
         #endregion
       
         #region Network_Management
-
-        private void InitializeNetwork()
+        private void ConstructNetwork()
         {
             Debug.Log("Initializing Network");
             // Retrieving Network Construction Values And Adding 'X' Hidden Layers =====================================
@@ -231,13 +244,7 @@ namespace NeuralNetwork
                     }
                 }
             // Initialize Weights ======================================================================================
-                
-                
-                
-                
-            
         }
-        
         private int WeightsCount()
         {
             int nbr = 0;
@@ -363,8 +370,7 @@ namespace NeuralNetwork
                 }
             }
             // END =====================================================================================================
-            int weightcount = WeightsCount();
-            sequenceIndexor = CreateIndexor(weightcount);
+          
            
         }
         public double[] GetWeightsAndBiases()
@@ -437,7 +443,6 @@ namespace NeuralNetwork
                     result[k++] = o_Biases[l];
                 }
             }
-            Debug.Log("Get => " + result);
             return result;
         }
         private double[] ComputeOutputs(double[] xValues)
@@ -726,8 +731,8 @@ namespace NeuralNetwork
                 o_Biases[i] += momentum * oPrevBiasesDelta[i];
                 o_Biases[i] -= weightDecay * o_Biases[i];
             }
-           
-            
+
+            _NetData.InstanceWeights = GetWeightsAndBiases();
         }
         
         #endregion
@@ -878,95 +883,97 @@ namespace NeuralNetwork
         
         #region BackPropagation
 
-        public void Train(double[][] allData, int maxEpochs, double learnRate, double momentum, double weightDecay, NeuralNetworkManager.ELossFunction lossFunction, float splitPurcentage)
+        private void PrepareDataForComputing(double[][] inputedAllData)
         {
-            int epoch = 0;
-            
-            Normalize(allData, new int[numInput]);
-            
-            double[] xValues = new double[numInput];
-            double[] yValues = new double[numOutput];
-            double[] tValues = new double[numOutput];
+            Debug.Log("Prepare For Computing");
+            Normalize(inputedAllData, new int[numInput]);
             // Splitting The AllData between trainData and testData
             Random rnd = new Random(0);
-            int totRows = allData.Length;
-            int numCols = allData[0].Length;
+            random = rnd;
+            int totRows = inputedAllData.Length;
+            int numCols = inputedAllData[0].Length;
 
-            int trainRows = (int)(totRows * (splitPurcentage/100f)); // hard-coded 80-20 split
+            int trainRows = (int)(totRows * (NeuralNetworkManager.DataSplitPurcentage/100f)); // hard-coded 80-20 split
             int testRows = totRows - trainRows;
 
-            double[][] trainData = new double[trainRows][];
-            double[][]  testData = new double[testRows][];
-            int[] sequence = new int[trainData.Length];
+            trainData = new double[trainRows][];
+            testData = new double[testRows][];
+            allData = new double[inputedAllData.Length][];
+            sequence = new int[trainData.Length];
             sequence = CreateIndexor(sequence.Length);
-            Array.Copy(allData, trainData, trainData.Length);
-            
-            while (epoch < maxEpochs)
+            Array.Copy(inputedAllData, allData, inputedAllData.Length);
+            Array.Copy(inputedAllData, trainData, trainData.Length);
+            Array.Copy(inputedAllData, testData, testData.Length);
+            // Training has been initialised, now doin first epoch
+            ComputeEpoch(NeuralNetworkManager.TrainingRate, NeuralNetworkManager.Momentum, NeuralNetworkManager.WeightDecay);
+        }
+        private bool GetLossFunctionError(double[][] allData)
+        {
+            bool state = true;
+            LossFunctionResult = 0;
+            double mse_mcee = 0;
+            if (NeuralNetworkManager.LossFunction == NeuralNetworkManager.ELossFunction.MeanCrossEntropy)
             {
-                if (epoch > 0)
+                mse_mcee = MeanSquaredError(trainData);
+                LossFunctionResult = mse_mcee;
+                if (mse_mcee < NeuralNetworkManager.LossResultTrainingBreakPoint)
                 {
-                    LossFunctionResult = 0;
-                    double mse_mcee = 0;
-                    if (lossFunction == NeuralNetworkManager.ELossFunction.MeanCrossEntropy)
-                    {
-                        mse_mcee = MeanSquaredError(trainData);
-                        LossFunctionResult = mse_mcee;
-                        if (mse_mcee < NeuralNetworkManager.LossResultTrainingBreakPoint)
-                        {
-                            Debug.Log("Training Sequence has stopped because LossFunction Result achieve Training Break Point. Now Computing Accuracy Test");
-                            Array.Copy(allData, testData, testData.Length);
-                            double accuracy = Accuracy(testData);
-                            _NetData.PerformanceCoefficient = accuracy;
-                            BackPropagation_OnAccuracyComputed(accuracy);
-                            break;
-                        }
-                    }
-                    if (lossFunction == NeuralNetworkManager.ELossFunction.MeanSquarredError)
-                    {
-                        mse_mcee = MeanCrossEntropyError(trainData);
-                        LossFunctionResult = mse_mcee;
-                        if (mse_mcee < NeuralNetworkManager.LossResultTrainingBreakPoint)
-                        {
-                            Debug.Log("Training Sequence has stopped because LossFunction Result achieve Training Break Point. Now Computing Accuracy Test");
-                            Array.Copy(allData, testData, testData.Length);
-                            double accuracy = Accuracy(testData);
-                            _NetData.PerformanceCoefficient = accuracy;
-                            BackPropagation_OnAccuracyComputed(accuracy);
-                            break;
-                        }
-                    }
-                
-                    
+                    Debug.Log("Training Sequence has stopped because LossFunction Result achieve Training Break Point. Now Computing Accuracy Test");
+                    Array.Copy(allData, testData, testData.Length);
+                    double accuracy = Accuracy(testData);
+                    _NetData.PerformanceCoefficient = accuracy;
+                    BackPropagation_OnLossFunctionIsUnderBreakPoint();
+                    state = false;
                 }
-                
-                ShuffleIndexor(sequence);
-                for (int i = 0; i < trainData.Length; i++)
+            }
+            if (NeuralNetworkManager.LossFunction == NeuralNetworkManager.ELossFunction.MeanSquarredError)
+            {
+                mse_mcee = MeanCrossEntropyError(trainData);
+                LossFunctionResult = mse_mcee;
+                if (mse_mcee < NeuralNetworkManager.LossResultTrainingBreakPoint)
                 {
-                    
-                    int index = sequence[i];
-                    Array.Copy(trainData[index], xValues, numInput); // dans le tableau de Data : les valeurs de 0 à numInput => valeurs de test, celles de numInput à numOutput => label / tValues
-                    Array.Copy(trainData[index], numInput, tValues, 0, numOutput); // On copie les valeurs du label à part.
-                    ComputeOutputs(xValues);
-                    BackPropagateGradient(tValues, learnRate, momentum, weightDecay);
+                    Debug.Log("Training Sequence has stopped because LossFunction Result achieve Training Break Point. Now Computing Accuracy Test");
+                    Array.Copy(allData, testData, testData.Length);
+                    double accuracy = Accuracy(testData);
+                    _NetData.PerformanceCoefficient = accuracy;
+                    BackPropagation_OnLossFunctionIsUnderBreakPoint();
+                    state = false;
                 }
-                epoch++;
             }
 
-            if (epoch == maxEpochs)
-            {
-                Debug.Log("Training Sequence is done. Now Computing Accuracy Test");
-                Array.Copy(allData, testData, testData.Length);
-                double accuracy = Accuracy(testData);
-                _NetData.PerformanceCoefficient = accuracy;
-                BackPropagation_OnAccuracyComputed(accuracy);
-            }
-            
+            return state;
         }
-       
-        
-        private void BackPropagation_OnAccuracyComputed(double result)
+        public void ComputeEpoch(double learnRate, double momentum, double weightDecay)
         {
-           NeuralNetworkManager.BackPropagation_OnAccuracyResult(this, result);
+           double[] xValues = new double[numInput];
+           double[] tValues = new double[numOutput];
+           bool continueCompute = GetLossFunctionError(allData);
+           if (continueCompute)
+           {
+               ShuffleIndexor(sequence);
+               for (int i = 0; i < trainData.Length; i++)
+               {
+                   int index = sequence[i];
+                   Array.Copy(trainData[index], xValues, numInput); // dans le tableau de Data : les valeurs de 0 à numInput => valeurs de test, celles de numInput à numOutput => label / tValues
+                   Array.Copy(trainData[index], numInput, tValues, 0, numOutput); // On copie les valeurs du label à part.
+                   ComputeOutputs(xValues);
+                   BackPropagateGradient(tValues, learnRate, momentum, weightDecay);
+               }
+               NeuralNetworkManager.BackPropagation_OnEpochDone(this); 
+           }
+        }
+
+        public void GetAccuracy()
+        {
+            Debug.Log("Training Sequence is done. Now Computing Accuracy Test");
+            double accuracy = Accuracy(testData);
+            _NetData.PerformanceCoefficient = accuracy;
+        }
+        
+        private void BackPropagation_OnLossFunctionIsUnderBreakPoint()
+        {
+            Debug.Log("Ending training. Instance got under Error breakpoint");
+           NeuralNetworkManager.BackPropagation_OnTrainingDone(this);
         }
         
         private double MeanCrossEntropyError(double[][] trainData)
@@ -1010,8 +1017,7 @@ namespace NeuralNetwork
 
             return sumSquaredError / trainData.Length;
         }
-        
-        public double Accuracy(double[][] testData) 
+        private double Accuracy(double[][] testData) 
         {
             // Pourcentage en utilisant la méthode "Plus haute Valeur Gagnante" dans les outputs.
             // Ici on ignora la valeur réelle des outputs, pour ne garder que son poids statistique. 
@@ -1177,7 +1183,7 @@ namespace NeuralNetwork
                 IsTraining = true;
                 IsExecuting = false;
                 inputStreamOn = true;
-               
+                
             }
             if (eRunningMode == NeuralNetworkManager.ERunningMode.Execute)
             {
@@ -1199,7 +1205,7 @@ namespace NeuralNetwork
 
         private void TrainBackpropagate(double[][] entryValues)
         {
-            Train(entryValues, NeuralNetworkManager.Epochs, NeuralNetworkManager.TrainingRate, NeuralNetworkManager.Momentum, NeuralNetworkManager.WeightDecay, NeuralNetworkManager.LossFunction, NeuralNetworkManager.DataSplitPurcentage);
+            PrepareDataForComputing(entryValues);
         }
         
         #endregion

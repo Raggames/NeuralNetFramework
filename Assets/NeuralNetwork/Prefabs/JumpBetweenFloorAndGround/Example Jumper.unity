@@ -539,19 +539,6 @@ MonoBehaviour:
     type: 3}
   IANetworkName: JumpV1
   SaveNetDataFileName: JumpV1_autoSave_2
-  NetData:
-    HasData: 0
-    NewTraining: 0
-    autoSaveIncrement: 0
-    NeuralNetworkName: 
-    StartTrainingRate: 0
-    InstanceWeights: []
-    DNAVersion: 0
-    PerformanceSolvers: []
-    PerformanceCoefficient: 0
-    NetworkTrainingRate: 0
-    InputLayerNeurons: 0
-    OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
     HasData: 0
@@ -598,7 +585,7 @@ MonoBehaviour:
   TrainingRateChangePurcentage: 0.01
   EpochsBetweenTrainingRateChange: 0
   previousIterationsCoefficientAverage: 0
-  DelayBeforeRestart: 1
+  DelayBeforeRestart: 0.1
   EpochTimer: 0
   TrainingBestResults: []
 --- !u!1 &913758364
@@ -798,19 +785,6 @@ MonoBehaviour:
     type: 3}
   IANetworkName: Find Vector 3
   SaveNetDataFileName: FindVector3
-  NetData:
-    HasData: 0
-    NewTraining: 0
-    autoSaveIncrement: 0
-    NeuralNetworkName: 
-    StartTrainingRate: 0
-    InstanceWeights: []
-    DNAVersion: 0
-    PerformanceSolvers: []
-    PerformanceCoefficient: 0
-    NetworkTrainingRate: 0
-    InputLayerNeurons: 0
-    OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
     HasData: 0
