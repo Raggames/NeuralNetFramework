@@ -538,7 +538,7 @@ MonoBehaviour:
   NetWorkPrefab: {fileID: 5481102409517396106, guid: f70ee8cb52216054cbae8de003ac5af8,
     type: 3}
   IANetworkName: dataPrediction
-  SaveNetDataFileName: dataPrediction_96purcent
+  SaveNetDataFileName: dataPrediction_dna_NoNorm
   NetData:
     HasData: 0
     NewTraining: 0
@@ -574,13 +574,13 @@ MonoBehaviour:
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
   InstanceEndedCount: 0
-  runningMode: 1
+  runningMode: 0
   LearningLogic: 1
   isNeuralNetTraining: 0
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
   NewExecution: 1
-  StartMode: 1
+  StartMode: 0
   SaveFile: 1
   Epochs: 500
   TrainingBatchSize: 1

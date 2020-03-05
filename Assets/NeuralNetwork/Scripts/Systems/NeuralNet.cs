@@ -779,7 +779,7 @@ namespace NeuralNetwork
             }
         }
 
-        private static void NormalizeExecute(double[] input)
+        private static void NormalizeLinear(double[] input)
         {
             double sum = 0.0;
             for (int i = 0; i < input.Length; ++i)
@@ -923,7 +923,7 @@ namespace NeuralNetwork
         {
             Debug.Log("Prepare For Computing");
             LossFunctionResult = 1;
-            Normalize(inputedAllData, new int[numInput]);
+           // Normalize(inputedAllData, new int[numInput]);
             // Splitting The AllData between trainData and testData
             Random rnd = new Random(0);
             random = rnd;
@@ -1032,7 +1032,7 @@ namespace NeuralNetwork
 
         public void ComputeAndDisplay(double[][] entryValues, double[] tValues)
         {
-            Normalize(entryValues, new int[numInput]);
+            //Normalize(entryValues, new int[numInput]);
            
             ComputeOutputs(entryValues[0]);
             ExternalInputs = tValues;
