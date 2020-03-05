@@ -631,23 +631,30 @@ MonoBehaviour:
   NetWorkPrefab: {fileID: 715012276351570980, guid: 2c45cc7ba1bfc5548ac655d4db2845bb,
     type: 3}
   IANetworkName: Shooter_V1
+  SaveNetDataFileName: DNA_Shooter_V6
   NetData:
     HasData: 0
     NewTraining: 0
+    autoSaveIncrement: 0
     NeuralNetworkName: 
     StartTrainingRate: 0
-    NeuralNetworkDna:
-      Weights: []
-      Biases: []
-    NetworkTrainingRate: 0
+    InstanceWeights: []
+    DNAVersion: 0
     PerformanceSolvers: []
     PerformanceCoefficient: 0
-    DNAVersion: 0
-  SaveNetDataFileName: DNA_Shooter_V6
+    DataPrediction_Accuracy: 0
+    NetworkTrainingRate: 0
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
   NeuralNetworkInstances: []
   ActualBestDNA:
+    HasData: 0
+    NewTraining: 0
+    autoSaveIncrement: 0
+    NeuralNetworkName: 
+    StartTrainingRate: 0
     InstanceWeights: []
-    InstanceBiases: []
+    DNAVersion: 0
     PerformanceSolvers:
     - ParameterName: Time
       EvaluationParameter: 30
@@ -660,29 +667,39 @@ MonoBehaviour:
       ParameterType: 1
       ExpectedValue: 0
     PerformanceCoefficient: 0
-  EvaluateDNAForInstancesIteration: []
-  InstancesEndedCount: 0
-  NetworkFunction: 1
-  NetworkMode: 0
-  ForceGeneticsRandomization: 0
-  AbsoluteValues: 1
+    DataPrediction_Accuracy: 0
+    NetworkTrainingRate: 0
+    InputLayerNeurons: 0
+    OutputLayerNeurons: 0
+  InstanceEndedCount: 0
+  runningMode: 0
+  LearningLogic: 0
   isNeuralNetTraining: 0
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
-  NewTraining: 1
-  LoadFromJson: 0
-  TrainMode: 0
+  NewExecution: 1
+  StartMode: 1
   SaveFile: 1
-  TrainingRate: 1
-  MaxTrainingRate: 5
   Epochs: 200
-  TrainingBatchSize: 25
+  TrainingBatchSize: 40
+  NetworkTrainingStatistics:
+    TrainingSessionStatistics: []
+    Name: 
+  TrainingRate: 5
+  InitialWeightsDelta: 0.5
+  EpochsCount: 0
+  WeightDecay: 0.00009999999747378752
+  Momentum: 0.009999999776482582
+  DataSplitPurcentage: 80
+  LossResultTrainingBreakPoint: 0
+  LossFunction: 0
+  MaxTrainingRate: 5
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 0.2
-  TrainingRateEvolution: 10
+  EpochsBetweenTrainingRateChange: 0
   previousIterationsCoefficientAverage: 0
-  EpochsCount: 0
-  DNAVersion: 0
+  DelayBeforeRestart: 1
+  EpochTimer: 0
   TrainingBestResults: []
 --- !u!1 &913758364
 GameObject:

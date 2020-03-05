@@ -43,6 +43,11 @@ namespace NeuralNetwork.Scripts.Controllers
             
         }
 
+        public override void ComputeData()
+        {
+            
+        }
+        
         void RandomPosition()
         {
             Vector3 RandomPos = new Vector3();
@@ -93,6 +98,7 @@ namespace NeuralNetwork.Scripts.Controllers
                     OnInstanceFail();
                 }
                 SetInputs();
+                NeuralNet.UseInstance(NeuralNet.ExternalInputs);
                 OnOutput();
             }
         }
