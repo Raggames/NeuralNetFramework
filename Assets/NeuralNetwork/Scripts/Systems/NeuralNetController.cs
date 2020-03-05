@@ -10,6 +10,10 @@ public abstract class NeuralNetController : MonoBehaviour
     public NeuralNet NeuralNet;
     public List<NetLossParameter> EvaluationParameters = new List<NetLossParameter>();
 
+    public virtual void Execute()
+    {
+        
+    }
 
     public virtual void ComputeData()
     {

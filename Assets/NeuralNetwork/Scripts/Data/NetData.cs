@@ -21,6 +21,7 @@ namespace NeuralNetwork.Scripts.Data
         public int DNAVersion;
         public List<NetLossParameter> PerformanceSolvers = new List<NetLossParameter>();
         public double PerformanceCoefficient;
+        public double DataPrediction_Accuracy;
         public double NetworkTrainingRate;
         //Architecture
         //===========================================================================================

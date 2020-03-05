@@ -44,7 +44,7 @@ namespace NeuralNetwork
         [SerializeField] public bool isNeuralNetTraining;
         [SerializeField] public bool isNeuralNetExecuting;
         [HideInInspector] public bool LoadFromBlueprint;
-        [HideInInspector] public bool NewTraining = true;//check if instances is new or has already iterated
+        public bool NewExecution = true;//check if instances is new or has already iterated
         [Header("Training General Settings")] 
         public EStartMode StartMode;//should manager looks for an existing load and get it or no ?
         public enum EStartMode
@@ -107,14 +107,7 @@ namespace NeuralNetwork
         private void Start()
         {
             NetworkTrainingStatistics.Name = IANetworkName + "_TrainingStatistics";
-            if (StartMode == EStartMode.NewTraining)
-            {
-                NewTraining = true;
-            }
-            else
-            {
-                NewTraining = false;
-            }
+            
         }
 
         private void Update()
@@ -167,7 +160,6 @@ namespace NeuralNetwork
             {
                 NetData = LoadNetData(SaveNetDataFileName);
                 Debug.Log("Loaded from Json");
-                NewTraining = NetData.NewTraining;
                 ActualBestDNA.PerformanceSolvers = NetData.PerformanceSolvers;
                 ActualBestDNA.InstanceWeights = NetData.InstanceWeights;
                 ActualBestDNA.PerformanceCoefficient = NetData.PerformanceCoefficient;
@@ -218,7 +210,7 @@ namespace NeuralNetwork
                     _instance.InitializeTraining(eRunningMode,this,  epochs, _instanceID, NetData);
                     _instanceID++;
                 }
-                if (NewTraining)
+                if (NewExecution)
                 {
                     TrainingBestResults = new double[NeuralNetworkInstances[0].Controller.EvaluationParameters.Count];
                 }
@@ -241,13 +233,23 @@ namespace NeuralNetwork
             isNeuralNetExecuting = true;
             int _instanceID = 0;
             ForceSetManagerData();
-            for (int i = 0; i < batchSize; i++)
+            if (NeuralNetworkInstances.Count == 0)
             {
-                GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
-                NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
-                NeuralNetworkInstances.Add(_instance);
-                _instance.InitializeTraining(eRunningMode, this, 1, _instanceID, NetData);
-                _instanceID++;
+                for (int i = 0; i < batchSize; i++)
+                {
+                    GameObject _instanceNet = Instantiate(networkPrefab, this.transform);
+                    NeuralNet _instance = _instanceNet.GetComponent<NeuralNet>();
+                    NeuralNetworkInstances.Add(_instance);
+                    _instance.InitializeTraining(eRunningMode, this, 1, _instanceID, NetData);
+                    _instanceID++;
+                }
+            }
+            else
+            {
+                foreach (var Instance in NeuralNetworkInstances)
+                {
+                    Instance.InitializeTraining(eRunningMode,this,  1, Instance.InstanceID, NetData); 
+                }
             }
             
         }
@@ -484,28 +486,33 @@ namespace NeuralNetwork
 
         public void BackPropagation_OnTrainingDone(NeuralNet instance)
         {
-            instance.GetAccuracy();
+            
             NetData instDna = new NetData();
             instDna.InstanceWeights = new double[instance.WeightsNumber];
             instDna.InstanceWeights = instance._NetData.InstanceWeights;
             // _instanceNetworkEvaluate.PerformanceSolvers = solvers;
+            instance.GetAccuracyOnTestData();
+            instance.GetErrorOnTestData();
             instDna.PerformanceCoefficient = instance._NetData.PerformanceCoefficient;
+            instDna.DataPrediction_Accuracy = instance._NetData.DataPrediction_Accuracy;
+            SaveTrainingStatData(instance._NetData.PerformanceCoefficient, instance._NetData.DataPrediction_Accuracy);
             saveTrainingNeuralNetsForCompare.Add(instance); // list is filled with all item each epoch. 
             var bestInstance = BackPropagation_CompareAccuracyResults(saveTrainingNeuralNetsForCompare);
-            Debug.Log("Best Accuracy Result for training is : " + bestInstance._NetData.PerformanceCoefficient);
+            Debug.Log("Best Accuracy Result for training is : " + bestInstance._NetData.DataPrediction_Accuracy);
             Debug.Log("Best Instance is : " + bestInstance.gameObject);
-                   
             SaveNetData(bestInstance._NetData.InstanceWeights, bestInstance, bestInstance.Controller.EvaluationParameters, bestInstance._NetData.PerformanceCoefficient);
-            Debug.Log("TrainingEnd");
             isNeuralNetTraining = false;
             EpochsCount = 0;
             InstanceEndedCount = 0;
+            
+            Debug.Log("TrainingEnd");
+
         }
         private void BackPropagation_StartNextEpoch()
         {
             foreach (var inst in NeuralNetworkInstances)
             {
-                inst.ComputeEpoch(TrainingRate, Momentum, WeightDecay);
+                inst.ComputeAndTrain(TrainingRate, Momentum, WeightDecay);
             }
         }
         IEnumerator BackPropagation_WaitDelayBeforeNewEpoch(float time)
@@ -539,9 +546,9 @@ namespace NeuralNetwork
             }
         }
 
-        private void SaveTrainingStatData(double performanceCoefficient)
+        public void SaveTrainingStatData(double performanceCoefficient, double accuracy = 0)
         {
-            NetworkTrainingStatistics.SetStatEntry(EpochsCount, performanceCoefficient, TrainingRate);
+            NetworkTrainingStatistics.SetStatEntry(EpochsCount, performanceCoefficient, TrainingRate, accuracy);
             TrainingStatsData statData = new TrainingStatsData();
             statData.Name = NetworkTrainingStatistics.Name;
             statData.TrainingSessionStatistics = NetworkTrainingStatistics.TrainingSessionStatistics;
@@ -549,12 +556,12 @@ namespace NeuralNetwork
         }
         private void SaveNetData(double[] instanceWeights, NeuralNet instance, List<NetLossParameter> solvers, double notationCoefficient)
         {
-            if (NewTraining)
+            if (NewExecution)
             {
                 NetData.StartTrainingRate = TrainingRate;
                 NetData.NewTraining = false;
             }
-            NewTraining = false;
+            NewExecution = false;
             NetData.InstanceWeights = new double[instance.WeightsNumber];
             NetData.InstanceWeights = instanceWeights;
             NetData.PerformanceSolvers = solvers;

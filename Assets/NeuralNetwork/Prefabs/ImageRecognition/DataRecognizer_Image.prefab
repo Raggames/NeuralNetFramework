@@ -51,13 +51,18 @@ MonoBehaviour:
     ActivatorFunction: 0
   hiddenLayersConstructor:
   - ThisLayerType: 1
+    Neurons: 48
+    ActivatorFunction: 2
+  - ThisLayerType: 1
+    Neurons: 32
+    ActivatorFunction: 2
+  - ThisLayerType: 1
     Neurons: 16
     ActivatorFunction: 2
   outputLayerConstructor:
     ThisLayerType: 2
     Neurons: 3
     ActivatorFunction: 5
-  sequenceIndexor: 
   WeightsNumber: 0
   _NetData:
     HasData: 0
@@ -69,6 +74,7 @@ MonoBehaviour:
     DNAVersion: 0
     PerformanceSolvers: []
     PerformanceCoefficient: 0
+    DataPrediction_Accuracy: 0
     NetworkTrainingRate: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0

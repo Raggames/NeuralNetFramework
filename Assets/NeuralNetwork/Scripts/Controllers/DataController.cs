@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Random = System.Random;
 
 namespace NeuralNetwork.Scripts.Controllers
 {
@@ -179,13 +180,33 @@ namespace NeuralNetwork.Scripts.Controllers
         {
             
         }
-
+        
         public override void ComputeData()
         {
             Debug.Log("Compute Data");
             CreateData();
             NeuralNet = GetComponent<NeuralNet>();
             NeuralNet.UseInstance(null, allData);
+        }
+
+        public override void Execute()
+        {
+            CreateData();
+            int index = UnityEngine.Random.Range(0, allData.Length);
+            double[][] input = new double[1][];
+            input[0] = new double[4];
+            double[] tValue = new double[3];
+            for (int i = 0; i < input[0].Length; i++)
+            {
+                input[0][i] = allData[index][i];
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                tValue[i] = allData[index][4 + i];
+            }
+            NeuralNet = GetComponent<NeuralNet>();
+            NeuralNet.ComputeAndDisplay(input, tValue);
         }
         
         public override void SetInputs()

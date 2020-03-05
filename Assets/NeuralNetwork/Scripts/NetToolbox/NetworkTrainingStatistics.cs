@@ -8,12 +8,13 @@ namespace NeuralNetwork.Scripts.NetToolbox
     {
         public List<TrainStatWrapper> TrainingSessionStatistics = new List<TrainStatWrapper>();
         public string Name;
-        public void SetStatEntry(int epochIndex, double epochBestLoss, double epochTrainingRate)
+        public void SetStatEntry(int epochIndex, double epochBestLoss, double epochTrainingRate, double accuracy = 0)
         {
             TrainStatWrapper wrap = new TrainStatWrapper();
             wrap.WrappedStats.Add(epochIndex);
             wrap.WrappedStats.Add(epochBestLoss);
             wrap.WrappedStats.Add(epochTrainingRate);
+            wrap.WrappedStats.Add(accuracy);
             TrainingSessionStatistics.Add(wrap);
            
         }

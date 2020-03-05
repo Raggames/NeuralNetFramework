@@ -537,8 +537,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NetWorkPrefab: {fileID: 5481102409517396106, guid: f70ee8cb52216054cbae8de003ac5af8,
     type: 3}
-  IANetworkName: ImaRecog
-  SaveNetDataFileName: ImaRecog_save_0
+  IANetworkName: dataPrediction
+  SaveNetDataFileName: dataPrediction_96purcent
   NetData:
     HasData: 0
     NewTraining: 0
@@ -549,6 +549,7 @@ MonoBehaviour:
     DNAVersion: 0
     PerformanceSolvers: []
     PerformanceCoefficient: 0
+    DataPrediction_Accuracy: 0
     NetworkTrainingRate: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
@@ -568,37 +569,38 @@ MonoBehaviour:
       ParameterType: 0
       ExpectedValue: 0
     PerformanceCoefficient: 0
+    DataPrediction_Accuracy: 0
     NetworkTrainingRate: 0
     InputLayerNeurons: 0
     OutputLayerNeurons: 0
   InstanceEndedCount: 0
-  runningMode: 0
+  runningMode: 1
   LearningLogic: 1
   isNeuralNetTraining: 0
   isNeuralNetExecuting: 0
   LoadFromBlueprint: 0
-  NewTraining: 1
+  NewExecution: 1
   StartMode: 1
   SaveFile: 1
-  Epochs: 50
+  Epochs: 500
   TrainingBatchSize: 1
   NetworkTrainingStatistics:
     TrainingSessionStatistics: []
     Name: 
   TrainingRate: 0.05
-  InitialWeightsDelta: 0.01
+  InitialWeightsDelta: 0.2
   EpochsCount: 0
   WeightDecay: 0.0001
   Momentum: 0.01
-  DataSplitPurcentage: 80
-  LossResultTrainingBreakPoint: 0.02
+  DataSplitPurcentage: 99
+  LossResultTrainingBreakPoint: 0.000000001
   LossFunction: 0
   MaxTrainingRate: 5
   AdjustTrainingRateAutomatically: 1
   TrainingRateChangePurcentage: 0.2
   EpochsBetweenTrainingRateChange: 0
   previousIterationsCoefficientAverage: 0
-  DelayBeforeRestart: 0.1
+  DelayBeforeRestart: 0.05
   EpochTimer: 0
   TrainingBestResults: []
 --- !u!1 &913758364
